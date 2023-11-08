@@ -1,4 +1,4 @@
-# sifis-generate
+# ci-generate
 
 [![Actions Status][actions badge]][actions]
 [![LICENSE][license badge]][license]
@@ -27,7 +27,7 @@ tests and implement further checks.
 
 ## Commands
 
-To see the list of supported commands, run: `sifis-generate --help`
+To see the list of supported commands, run: `ci-generate --help`
 
 Each command has an optional argument to define a license and an optional argument to
  override the project name instead of using the last component of the project-path.
@@ -36,19 +36,19 @@ Each command has an optional argument to define a license and an optional argume
 ### cargo
 
 ```
-$ sifis-generate cargo [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate cargo [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
 ```
 
 ### maven
 
 ```
-$ sifis-generate maven [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-group project-path
+$ ci-generate maven [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-group project-path
 ```
 
 ### meson
 
 ```
-$ sifis-generate meson [--kind meson-project-kind] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate meson [--kind meson-project-kind] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
 ```
 
 Admitted values for the `kind` argument:
@@ -59,18 +59,18 @@ Admitted values for the `kind` argument:
 ### poetry
 
 ```
-$ sifis-generate poetry [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate poetry [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
 ```
 
 ### yarn
 
 ```
-$ sifis-generate yarn [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate yarn [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
 ```
 
 ## Configuration
 
-It is possible to save a `config.toml` in `${XDG_CONFIG_HOME}/sifis-generate` (Usually `~/.config/sifis-generate`) with overrides for
+It is possible to save a `config.toml` in `${XDG_CONFIG_HOME}/ci-generate` (Usually `~/.config/ci-generate`) with overrides for
  all the default and optional values, e.g:
 
 ``` toml
@@ -84,12 +84,12 @@ kind = "c++"
 Will override the default `license` and `meson.kind` configuration items and it would be equivalent to call:
 
 ``` sh
-$ sifis-generate meson -k c++ -l BSD-3-Clause
+$ ci-generate meson -k c++ -l BSD-3-Clause
 ```
 
 The cli arguments take priority over the built-in defaults and the `config.toml` overrides so
 ```
-$ sifis-generate meson -l LGPL-2.1
+$ ci-generate meson -l LGPL-2.1
 ```
 
 Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the command line.
@@ -98,14 +98,10 @@ Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the comma
 
 Released under the [MIT License](LICENSES/MIT.txt).
 
-## Acknowledgements
-
-This software has been developed in the scope of the H2020 project SIFIS-Home with GA n. 952652.
-
 <!-- Links -->
-[actions]: https://github.com/sifis-home/sifis-generate/actions
+[actions]: https://github.com/SoftengPoliTo/ci-generate/actions
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/sifis-home/sifis-generate/workflows/sifis-generate/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/ci-generate/workflows/ci-generate/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

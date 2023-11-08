@@ -9,13 +9,13 @@ use figment::{Figment, Profile};
 use figment::{Metadata, Provider};
 use serde::{Deserialize, Serialize};
 
-use sifis_generate::{CreateCi, CreateProject};
+use ci_generate::{CreateCi, CreateProject};
 
-use sifis_generate::cargo::Cargo;
-use sifis_generate::maven::Maven;
-use sifis_generate::meson::{Meson, ProjectKind};
-use sifis_generate::poetry::Poetry;
-use sifis_generate::yarn::Yarn;
+use ci_generate::cargo::Cargo;
+use ci_generate::maven::Maven;
+use ci_generate::meson::{Meson, ProjectKind};
+use ci_generate::poetry::Poetry;
+use ci_generate::yarn::Yarn;
 
 use tracing_subscriber::EnvFilter;
 
@@ -181,7 +181,7 @@ fn local_config() -> anyhow::Result<PathBuf> {
                 .ok_or_else(|| anyhow!("Cannot find the home directory"))
         })?;
 
-    Ok(config_dir.join("sifis-generate").join("config.toml"))
+    Ok(config_dir.join("ci-generate").join("config.toml"))
 }
 
 fn main() -> anyhow::Result<()> {

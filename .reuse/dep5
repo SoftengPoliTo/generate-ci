@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: sifis-generate
-Source: https://github.com/sifis-home/sifis-generate
+Upstream-Name: ci-generate
+Source: https://github.com/SoftengPoliTo/ci-generate
 
 Files: *
-Copyright: 2022 sifis-home
+Copyright: 2023 SoftengPoliTo
 License: MIT

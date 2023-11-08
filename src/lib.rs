@@ -41,17 +41,17 @@ pub trait CreateProject {
     ) -> Result<()>;
 }
 
-struct SifisTemplate {
+struct CiTemplate {
     context: HashMap<&'static str, Value>,
     files: HashMap<PathBuf, &'static str>,
     dirs: Vec<PathBuf>,
     env: Environment<'static>,
 }
 
-impl SifisTemplate {
+impl CiTemplate {
     fn render(self) -> Result<()> {
         //let mut env = Environment::new();
-        let SifisTemplate {
+        let CiTemplate {
             context,
             files,
             dirs,
@@ -163,12 +163,12 @@ trait BuildTemplate {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> SifisTemplate {
+    ) -> CiTemplate {
         let (files, dirs, context) =
             self.define(project_path, project_name, license, github_branch);
         let env = build_environment(Self::get_templates());
 
-        SifisTemplate {
+        CiTemplate {
             context,
             files,
             dirs,
@@ -214,7 +214,7 @@ pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
 }
 
 pub(crate) fn compute_template(
-    mut template: SifisTemplate,
+    mut template: CiTemplate,
     license: &dyn license::License,
     project_path: &Path,
 ) -> Result<()> {

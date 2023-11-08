@@ -1,5 +1,5 @@
 [package]
-name = "sifis-generate-fuzz"
+name = "ci-generate-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -10,7 +10,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
-[dependencies.sifis-generate]
+[dependencies.ci-generate]
 path = ".."
 
 # Prevent this from interfering with workspaces

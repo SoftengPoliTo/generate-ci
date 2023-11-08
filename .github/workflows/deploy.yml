@@ -19,7 +19,7 @@ jobs:
       with:
         toolchain: stable
 
-    - name: Build sifis-generate
+    - name: Build ci-generate
       run: |
         cargo build --release
 
@@ -35,9 +35,9 @@ jobs:
       shell: bash
       run: |
         ARCHIVE_TARGET="x86_64-pc-windows-msvc"
-        ARCHIVE_NAME="sifis-generate-${{ steps.tagName.outputs.tag }}-$ARCHIVE_TARGET"
+        ARCHIVE_NAME="ci-generate-${{ steps.tagName.outputs.tag }}-$ARCHIVE_TARGET"
         ARCHIVE_FILE="${ARCHIVE_NAME}.zip"
-        7z a ${ARCHIVE_FILE} ./target/release/sifis-generate.exe
+        7z a ${ARCHIVE_FILE} ./target/release/ci-generate.exe
         echo "file=$ARCHIVE_FILE" >> $GITHUB_OUTPUT
         echo "name=$ARCHIVE_NAME.zip" >> $GITHUB_OUTPUT
 
@@ -74,7 +74,7 @@ jobs:
       run: |
         sudo apt-get install musl-tools
 
-    - name: Build sifis-generate
+    - name: Build ci-generate
       run: |
         # TODO: Remember to add RUSTFLAGS=+crt-static for musl target when
         # static linkage will not be the default behaviour
@@ -82,7 +82,7 @@ jobs:
 
     - name: Strip binary
       run: |
-        strip target/${{ matrix.target }}/release/sifis-generate
+        strip target/${{ matrix.target }}/release/ci-generate
 
     - name: Get the version
       id: tagName
@@ -93,9 +93,9 @@ jobs:
     - name: Build package
       id: package
       run: |
-        TAR_FILE=sifis-generate-${{ steps.tagName.outputs.tag }}-${{ matrix.target }}
+        TAR_FILE=ci-generate-${{ steps.tagName.outputs.tag }}-${{ matrix.target }}
         cd target/${{ matrix.target }}/release
-        tar -czvf $GITHUB_WORKSPACE/$TAR_FILE.tar.gz sifis-generate
+        tar -czvf $GITHUB_WORKSPACE/$TAR_FILE.tar.gz ci-generate
         echo "name=$TAR_FILE" >> $GITHUB_OUTPUT
         echo "file=$TAR_FILE.tar.gz" >> $GITHUB_OUTPUT
 
