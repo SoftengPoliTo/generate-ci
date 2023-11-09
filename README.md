@@ -2,6 +2,7 @@
 
 [![Actions Status][actions badge]][actions]
 [![LICENSE][license badge]][license]
+[![dependency status][status badge]][status]
 
 This tool generates either new projects for some build systems or configuration
 files for some Continuous Integration with the use of templates.
@@ -101,7 +102,9 @@ Released under the [MIT License](LICENSES/MIT.txt).
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/ci-generate/actions
 [license]: LICENSES/MIT.txt
+[status]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate
 
 <!-- Badges -->
 [actions badge]: https://github.com/SoftengPoliTo/ci-generate/workflows/ci-generate/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[status badge]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate/status.svg
