@@ -1,6 +1,7 @@
 # ci-generate
 
 [![Actions Status][actions badge]][actions]
+[![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 [![dependency status][status badge]][status]
 
@@ -101,10 +102,12 @@ Released under the [MIT License](LICENSES/MIT.txt).
 
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/ci-generate/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/ci-generate
 [license]: LICENSES/MIT.txt
 [status]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate
 
 <!-- Badges -->
 [actions badge]: https://github.com/SoftengPoliTo/ci-generate/workflows/ci-generate/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/ci-generate/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [status badge]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate/status.svg
