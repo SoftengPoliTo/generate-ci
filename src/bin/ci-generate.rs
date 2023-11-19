@@ -293,8 +293,11 @@ mod tests {
     }
 
     #[test]
-    fn from_id_IOtest() {
+    fn from_id_test_valid() {
         assert!(from_id("BSD-1-Clause").is_ok());
+    }
+    #[test]
+    fn from_id_test_invalid() {
         assert!(from_id("AFL-3.0-False").is_err());
     }
 
