@@ -14,6 +14,9 @@ use tracing::debug;
 
 use filters::*;
 
+use mockall::{automock, predicate::*};
+
+
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
@@ -41,6 +44,7 @@ pub trait CreateProject {
     ) -> Result<()>;
 }
 
+
 struct CiTemplate {
     context: HashMap<&'static str, Value>,
     files: HashMap<PathBuf, &'static str>,
@@ -48,7 +52,9 @@ struct CiTemplate {
     env: Environment<'static>,
 }
 
+#[automock]
 impl CiTemplate {
+
     fn render(self) -> Result<()> {
         //let mut env = Environment::new();
         let CiTemplate {
@@ -77,7 +83,7 @@ impl CiTemplate {
 
         Ok(())
     }
-
+    
     fn add_license(
         &mut self,
         license: &dyn license::License,
@@ -222,4 +228,88 @@ pub(crate) fn compute_template(
     template.add_license(license, project_path)?;
 
     template.render()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    //Strong doubts about the effectiveness of this test
+    #[test]
+    fn build_environment_test() {
+        assert!(build_environment(&[("index.html", "Hello {{ name }} !")]).add_template("index.html", "Hello {{ name }} !").is_ok());
+    }
+
+    #[test]
+    fn citemplate_add_license_test() {
+        let mut template = CiTemplate {
+            context: HashMap::new(),
+            files: HashMap::new(),
+            dirs: Vec::new(),
+            env: Environment::new(),
+        };
+        assert!(template.add_license("Apache-2.0".parse().unwrap(), Path::new("/home/user/project")).is_ok());
+    }
+    #[test]
+    fn citemplate_add_license_mock_test() {
+        let mut mock = MockCiTemplate::new();
+        mock.expect_add_license()
+        .times(1)
+        .returning(|_, _| Ok(()));
+    
+        assert!(mock.add_license("Apache-2.0".parse().unwrap(), Path::new("/home/user/project")).is_ok())
+    }
+    #[test]
+    fn citemplate_add_reuse_test() {
+        let mut template = CiTemplate {
+            context: HashMap::new(),
+            files: HashMap::new(),
+            dirs: Vec::new(),
+            env: Environment::new(),
+        };
+        assert!(template.add_reuse("Apache-2.0".parse().unwrap(), Path::new("/home/user/project")).is_ok());
+    }
+    #[test]
+    fn citemplate_render_test() {
+        let template = CiTemplate {
+            context: HashMap::new(),
+            files: HashMap::new(),
+            dirs: Vec::new(),
+            env: Environment::new(),
+        };
+        assert!(template.render().is_ok());
+    }
+    // Better than the previous one?
+    #[test]
+    fn citemplate_render_mock_test() {
+        let mut mock = MockCiTemplate::new();
+        mock.expect_render()
+        .times(1)
+        .returning(|| Ok(()));
+    
+        assert!(mock.render().is_ok())
+    }
+    
+    // Are they all necessary?
+    #[test]
+    fn define_name_valid_test() {
+        assert!(define_name("test-project", Path::new("/home/user/Desktop/project")).is_ok());
+    }
+    #[test]
+    fn define_name_empty_test() {
+        assert!(define_name("", Path::new("/home/user/Desktop/project")).is_ok());
+    }
+    #[test]
+    fn define_name_invalid_test() {
+        assert!(define_name("", Path::new("")).is_err())
+    }
+
+    #[test]
+    fn define_license_valid_test() {
+        assert!(define_license("AFL-3.0").is_ok())
+    }
+    #[test]
+    fn define_license_invalid_test() {
+        assert!(define_license("POL-3.0").is_err())
+    }
 }

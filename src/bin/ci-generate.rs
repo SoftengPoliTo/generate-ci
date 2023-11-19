@@ -279,3 +279,35 @@ fn main() -> anyhow::Result<()> {
         _ => unreachable!("unexpected command"),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn local_config_output_test() {
+        let config_file = local_config().unwrap();
+        assert!(local_config().is_ok());
+        assert!(config_file.is_absolute());
+        assert!(config_file.ends_with("config.toml"), "created configuration file => {:?}", config_file);
+    }
+
+    #[test]
+    fn from_id_IOtest() {
+        assert!(from_id("BSD-1-Clause").is_ok());
+        assert!(from_id("AFL-3.0-False").is_err());
+    }
+
+    //I don't think there is any difference between the two
+    #[test]
+    fn project_kind_test_valid() {
+        assert!(project_kind("c").is_ok());
+        //assert!(project_kind("c++").is_ok());
+        
+    }
+    #[test]
+    fn project_kind_test_invalid() {
+        assert!(project_kind("C++").is_err());
+    }
+
+}

@@ -17,6 +17,7 @@ dirs = "^5.0"
 figment = { version = "^0.10", features = ["toml"] }
 license = "^3.1"
 minijinja = "^1.0"
+mockall = "0.11.4"
 serde = { version = "1", features = ["derive"] }
 textwrap = "0.16"
 tracing = "0.1"
