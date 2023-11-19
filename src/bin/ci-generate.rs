@@ -289,7 +289,11 @@ mod tests {
         let config_file = local_config().unwrap();
         assert!(local_config().is_ok());
         assert!(config_file.is_absolute());
-        assert!(config_file.ends_with("config.toml"), "created configuration file => {:?}", config_file);
+        assert!(
+            config_file.ends_with("config.toml"),
+            "created configuration file => {:?}",
+            config_file
+        );
     }
 
     #[test]
@@ -306,11 +310,9 @@ mod tests {
     fn project_kind_test_valid() {
         assert!(project_kind("c").is_ok());
         //assert!(project_kind("c++").is_ok());
-        
     }
     #[test]
     fn project_kind_test_invalid() {
         assert!(project_kind("C++").is_err());
     }
-
 }
