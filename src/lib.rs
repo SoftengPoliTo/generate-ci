@@ -309,8 +309,8 @@ mod tests {
                 Path::new("/home/user/project")
             )
             .is_ok());
-    } 
-    
+    }
+
     #[test]
     fn citemplate_add_reuse_test() {
         let mut template = citemplate_creator();
