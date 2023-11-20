@@ -21,7 +21,7 @@ use tracing_subscriber::EnvFilter;
 
 #[derive(Parser, Debug)]
 struct Opts {
-    /// Use the configuration file instead the one located in ${XDG_CONFIG_HOME}/sifis-generate
+    /// Use the configuration file instead the one located in ${XDG_CONFIG_HOME}/ci-generate
     #[clap(short, long, value_hint = clap::ValueHint::FilePath)]
     config: Option<PathBuf>,
     /// Output the generated paths as they are produced
@@ -261,7 +261,6 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("poetry");
             let data: CommonData = config.extract()?;
-
             Poetry::new().create_project(
                 &data.name,
                 &data.project_path,
@@ -289,11 +288,7 @@ mod tests {
         let config_file = local_config().unwrap();
         assert!(local_config().is_ok());
         assert!(config_file.is_absolute());
-        assert!(
-            config_file.ends_with("config.toml"),
-            "created configuration file => {:?}",
-            config_file
-        );
+        assert!(config_file.ends_with("config.toml"));
     }
 
     #[test]
