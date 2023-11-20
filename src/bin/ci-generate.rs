@@ -300,11 +300,10 @@ mod tests {
         assert!(from_id("AFL-3.0-False").is_err());
     }
 
-    //I don't think there is any difference between the two
     #[test]
     fn project_kind_test_valid() {
         assert!(project_kind("c").is_ok());
-        //assert!(project_kind("c++").is_ok());
+        assert!(project_kind("c++").is_ok());
     }
     #[test]
     fn project_kind_test_invalid() {
