@@ -14,7 +14,6 @@ use tracing::debug;
 
 use filters::*;
 
-
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
@@ -231,7 +230,7 @@ mod tests {
 
     use super::*;
 
-    fn citemplate_creator() -> CiTemplate{
+    fn citemplate_creator() -> CiTemplate {
         CiTemplate {
             context: HashMap::new(),
             files: HashMap::new(),
@@ -243,11 +242,55 @@ mod tests {
     #[test]
     fn build_test() {
         let yarn = Yarn::new();
-        let template = yarn.build(Path::new("~/Desktop/project"), "my_prog", "Apache-2.0", "master");
+        let template = yarn.build(
+            Path::new("~/Desktop/project"),
+            "my_prog",
+            "Apache-2.0",
+            "master",
+        );
 
-        assert!(!template.context.is_empty());
-        assert_eq!(template.dirs, vec![Path::new("~/Desktop/project"), Path::new("~/Desktop/project/.github/workflows")]);
-        assert!(template.files.contains_key(Path::new("~/Desktop/project/README.me")), "{:?}", template.files);
+        assert!(
+            Yarn::new()
+                .build(
+                    Path::new("~/Desktop/project"),
+                    "my_prog",
+                    "Apache-2.0",
+                    "master"
+                )
+                .files
+                .contains_key(Path::new("~/Desktop/project/README.me")),
+            "{:?}",
+            template.files
+        );
+    }
+    #[test]
+    fn build_dirs_test() {
+        assert_eq!(
+            Yarn::new()
+                .build(
+                    Path::new("~/Desktop/project"),
+                    "my_prog",
+                    "Apache-2.0",
+                    "master"
+                )
+                .dirs,
+            vec![
+                Path::new("~/Desktop/project"),
+                Path::new("~/Desktop/project/.github/workflows")
+            ]
+        )
+    }
+    #[test]
+    fn build_fullcontext_test() {
+        assert!(!Yarn::new()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .context
+            .is_empty())
     }
 
     //Strong doubts about the effectiveness of this test
@@ -267,8 +310,8 @@ mod tests {
                 Path::new("/home/user/project")
             )
             .is_ok());
-    } 
-    
+    }
+
     #[test]
     fn citemplate_add_reuse_test() {
         let mut template = citemplate_creator();
@@ -312,5 +355,4 @@ mod tests {
     fn define_license_invalid_test() {
         assert!(define_license("POL-3.0").is_err())
     }
-
 }
