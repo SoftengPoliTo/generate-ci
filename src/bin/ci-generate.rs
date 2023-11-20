@@ -285,24 +285,29 @@ mod tests {
 
     #[test]
     fn local_config_output_test() {
-        let config_file = local_config().unwrap();
-        assert!(local_config().is_ok());
-        assert!(config_file.is_absolute());
-        assert!(config_file.ends_with("config.toml"));
+        assert!(local_config().is_ok())
+    }
+    #[test]
+    fn local_config_absolute_output_test() {
+        assert!(local_config().unwrap().is_absolute())
+    }
+    #[test]
+    fn local_config_correct_toml_test() {
+        assert!(local_config().unwrap().ends_with("config.toml"))
     }
 
     #[test]
     fn from_id_test_valid() {
-        assert!(from_id("BSD-1-Clause").is_ok());
+        assert!(from_id("BSD-1-Clause").is_ok())
     }
     #[test]
     fn from_id_test_invalid() {
-        assert!(from_id("AFL-3.0-False").is_err());
+        assert!(from_id("AFL-3.0-False").is_err())
     }
 
     #[test]
     fn project_kind_test_valid() {
-        assert!(project_kind("c").is_ok());
+        assert!(project_kind("c").is_ok()); //default value
         assert!(project_kind("c++").is_ok());
     }
     #[test]

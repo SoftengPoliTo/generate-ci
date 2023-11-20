@@ -293,7 +293,6 @@ mod tests {
             .is_empty())
     }
 
-    //Strong doubts about the effectiveness of this test
     #[test]
     fn build_environment_test() {
         assert!(build_environment(&[("index.html", "Hello {{ name }} !")])
@@ -310,8 +309,8 @@ mod tests {
                 Path::new("/home/user/project")
             )
             .is_ok());
-    }
-
+    } 
+    
     #[test]
     fn citemplate_add_reuse_test() {
         let mut template = citemplate_creator();
