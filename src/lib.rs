@@ -241,17 +241,15 @@ mod tests {
 
     #[test]
     fn build_contain_files_test() {
-        assert!(
-            Yarn::new()
-                .build(
-                    Path::new("~/Desktop/project"),
-                    "my_prog",
-                    "Apache-2.0",
-                    "master"
-                )
-                .files
-                .contains_key(Path::new("~/Desktop/project/README.md"))
-        );
+        assert!(Yarn::new()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .files
+            .contains_key(Path::new("~/Desktop/project/README.md")));
     }
     #[test]
     fn build_dirs_test() {
