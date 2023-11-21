@@ -265,11 +265,11 @@ mod tests {
     // Test other lib internal functions
     #[test]
     fn define_name_valid_test() {
-        assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
+        assert!(define_name("test-project", Path::new("/Home/Desktop/project")).is_ok());
     }
     #[test]
     fn define_name_emptyname_test() {
-        assert!(define_name("", Path::new("~/Desktop/project")).is_ok());
+        assert!(define_name("", Path::new("/Home/Desktop/project")).is_ok());
     }
     #[test]
     fn define_name_emptypath_test() {
@@ -282,16 +282,6 @@ mod tests {
     #[test]
     fn define_license_invalid_test() {
         assert!(define_license("POL-3.0").is_err())
-    }
-    #[test]
-    #[ignore]
-    fn compute_template_test() {
-        assert!(compute_template(
-            creator_citemplate(),
-            "Apache-2.0".parse().unwrap(),
-            Path::new("~/Desktop/foo.txt")
-        )
-        .is_ok())
     }
     #[test]
     #[ignore]
@@ -311,32 +301,33 @@ mod tests {
     fn create_yarn() -> Yarn {
         Yarn::new()
     }
+    
     #[test]
     fn build_contain_files_test_yarn() {
         assert!(create_yarn()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
             )
             .files
-            .contains_key(Path::new("~/Desktop/project/README.md")));
+            .contains_key(Path::new("/Home/Desktop/project/README.md")));
     }
     #[test]
     fn build_dirs_test_yarn() {
         assert_eq!(
             create_yarn()
                 .build(
-                    Path::new("~/Desktop/project"),
+                    Path::new("/Home/Desktop/project"),
                     "my_prog",
                     "Apache-2.0",
                     "master"
                 )
                 .dirs,
             vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/.github/workflows")
+                Path::new("/Home/Desktop/project"),
+                Path::new("/Home/Desktop/project/.github/workflows")
             ]
         )
     }
@@ -344,7 +335,7 @@ mod tests {
     fn build_fullcontext_test_yarn() {
         assert!(!create_yarn()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
@@ -362,31 +353,31 @@ mod tests {
     fn build_contain_files_test_poetry() {
         assert!(create_poetry()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
             )
             .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
+            .contains_key(Path::new("/Home/Desktop/project/README.md")))
     }
     #[test]
     fn build_dirs_test_poetry() {
         assert_eq!(
             create_poetry()
                 .build(
-                    Path::new("~/Desktop/project"),
+                    Path::new("/Home/Desktop/project"),
                     "my_prog",
                     "Apache-2.0",
                     "master"
                 )
                 .dirs,
             vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/my_prog"),
-                Path::new("~/Desktop/project/my_prog/data"),
-                Path::new("~/Desktop/project/my_prog/tests"),
-                Path::new("~/Desktop/project/.github/workflows")
+                Path::new("/Home/Desktop/project"),
+                Path::new("/Home/Desktop/project/my_prog"),
+                Path::new("/Home/Desktop/project/my_prog/data"),
+                Path::new("/Home/Desktop/project/my_prog/tests"),
+                Path::new("/Home/Desktop/project/.github/workflows")
             ]
         )
     }
@@ -394,7 +385,7 @@ mod tests {
     fn build_fullcontext_test_poetry() {
         assert!(!create_poetry()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
@@ -412,31 +403,31 @@ mod tests {
     fn build_contain_files_test_meson() {
         assert!(create_meson()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
             )
             .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
+            .contains_key(Path::new("/Home/Desktop/project/README.md")))
     }
     #[test]
     fn build_dirs_test_meson() {
         assert_eq!(
             create_meson()
                 .build(
-                    Path::new("~/Desktop/project"),
+                    Path::new("/Home/Desktop/project"),
                     "my_prog",
                     "Apache-2.0",
                     "master"
                 )
                 .dirs,
             vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/cli"),
-                Path::new("~/Desktop/project/lib"),
-                Path::new("~/Desktop/project/tests"),
-                Path::new("~/Desktop/project/.github/workflows")
+                Path::new("/Home/Desktop/project"),
+                Path::new("/Home/Desktop/project/cli"),
+                Path::new("/Home/Desktop/project/lib"),
+                Path::new("/Home/Desktop/project/tests"),
+                Path::new("/Home/Desktop/project/.github/workflows")
             ]
         )
     }
@@ -444,7 +435,7 @@ mod tests {
     fn build_fullcontext_test_meson() {
         assert!(!create_meson()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
@@ -462,30 +453,30 @@ mod tests {
     fn build_contain_files_test_maven() {
         assert!(create_maven()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
             )
             .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
+            .contains_key(Path::new("/Home/Desktop/project/README.md")))
     }
     #[test]
     fn build_content_dirs_test_maven() {
         assert_eq!(
             create_maven()
                 .build(
-                    Path::new("~/Desktop/project"),
+                    Path::new("/Home/Desktop/project"),
                     "my_prog",
                     "Apache-2.0",
                     "master"
                 )
                 .dirs,
             vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/src/main/java/group_name/my_prog"),
-                Path::new("~/Desktop/project/src/test/java/group_name/my_prog/example"),
-                Path::new("~/Desktop/project/.github/workflows")
+                Path::new("/Home/Desktop/project"),
+                Path::new("/Home/Desktop/project/src/main/java/group_name/my_prog"),
+                Path::new("/Home/Desktop/project/src/test/java/group_name/my_prog/example"),
+                Path::new("/Home/Desktop/project/.github/workflows")
             ]
         )
     }
@@ -493,7 +484,7 @@ mod tests {
     fn build_fullcontext_test_maven() {
         assert!(!create_maven()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
@@ -511,31 +502,31 @@ mod tests {
     fn build_contain_files_test_cargo() {
         assert!(create_cargo()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
             )
             .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
+            .contains_key(Path::new("/Home/Desktop/project/README.md")))
     }
     #[test]
     fn build_content_dirs_test_cargo() {
         assert_eq!(
             create_cargo()
                 .build(
-                    Path::new("~/Desktop/project"),
+                    Path::new("/Home/Desktop/project"),
                     "my_prog",
                     "Apache-2.0",
                     "master"
                 )
                 .dirs,
             vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/.github/workflows"),
-                Path::new("~/Desktop/project/docker"),
-                Path::new("~/Desktop/project/fuzz"),
-                Path::new("~/Desktop/project/fuzz/fuzz_targets")
+                Path::new("/Home/Desktop/project"),
+                Path::new("/Home/Desktop/project/.github/workflows"),
+                Path::new("/Home/Desktop/project/docker"),
+                Path::new("/Home/Desktop/project/fuzz"),
+                Path::new("/Home/Desktop/project/fuzz/fuzz_targets")
             ]
         )
     }
@@ -543,12 +534,58 @@ mod tests {
     fn build_fullcontext_test_cargo() {
         assert!(!create_maven()
             .build(
-                Path::new("~/Desktop/project"),
+                Path::new("/Home/Desktop/project"),
                 "my_prog",
                 "Apache-2.0",
                 "master"
             )
             .context
             .is_empty())
+    }
+
+    // Tests impl CreateCi for Cargo
+    #[test]
+    #[ignore]
+    fn createci_cargo() {
+        assert!(create_cargo().create_ci("my_prog", Path::new("/Home/user/Scrivania/project"), "Apache-2.0", "master").is_ok())
+    }
+
+    // Tests impl CreateProject for Maven
+    #[test]
+    #[ignore]
+    fn createproject_maven() {
+        assert!(create_maven().create_project("my_prog", Path::new("/Home/Scrivania/project"), "Apache-2.0", "master").is_ok())
+    }
+
+    // Tests impl CreateProject for Meson
+    #[test]
+    #[ignore]
+    fn createproject_meson() {
+        assert!(create_meson().create_project("my_prog", Path::new("/Home/Scrivania/project"), "Apache-2.0", "master").is_ok())
+    }
+
+    // Tests impl CreateProject for Poetry
+    #[test]
+    #[ignore]
+    fn createproject_poetry() {
+        assert!(create_poetry().create_project("my_prog", Path::new("/Home/Scrivania/project"), "Apache-2.0", "master").is_ok())
+    }
+
+    // Tests impl CreateCi for Yarn
+    #[test]
+    #[ignore]
+    fn createci_yarn() {
+        assert!(create_yarn().create_ci("my_prog", Path::new("/Home/user/Scrivania/project"), "Apache-2.0", "master").is_ok())
+    }
+
+    #[test]
+    #[ignore]
+    fn compute_template_test() {
+        assert!(compute_template(
+            creator_citemplate(),
+            "Apache-2.0".parse().unwrap(),
+            Path::new("/Home/Desktop/foo.txt")
+        )
+        .is_ok())
     }
 }
