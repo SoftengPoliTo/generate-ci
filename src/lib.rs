@@ -293,6 +293,12 @@ mod tests {
         )
         .is_ok())
     }
+    #[test]
+    #[ignore]
+    fn define_name_invalidpath_test() {
+        //TODO: Adjust this section of the define_name() function to make this test work
+        assert!(define_name("", Path::new("Здравствуйте")).is_err())
+    }
 
     #[test]
     fn build_environment_test() {
