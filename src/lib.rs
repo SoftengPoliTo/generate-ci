@@ -276,12 +276,6 @@ mod tests {
         assert!(define_name("", Path::new("")).is_err());
     }
     #[test]
-    #[ignore]
-    fn define_name_invalidpath_test() {
-        //TODO: Adjust this section of the define_name() function to make this test work
-        assert!(define_name("", Path::new("Здравствуйте")).is_err())
-    }
-    #[test]
     fn define_license_valid_test() {
         assert!(define_license("AFL-3.0").is_ok())
     }
@@ -326,7 +320,7 @@ mod tests {
     #[test]
     fn build_dirs_test_yarn() {
         assert_eq!(
-            Yarn::new()
+            create_yarn()
                 .build(
                     Path::new("~/Desktop/project"),
                     "my_prog",
@@ -359,56 +353,196 @@ mod tests {
     }
 
     #[test]
-    fn citemplate_add_license_test() {
-        let mut template = citemplate_creator();
-        assert!(template
-            .add_license(
-                "Apache-2.0".parse().unwrap(),
-                Path::new("/home/user/project")
+    fn build_contain_files_test_poetry() {
+        assert!(create_poetry()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
             )
-            .is_ok());
+            .files
+            .contains_key(Path::new("~/Desktop/project/README.md")))
     }
-
     #[test]
-    fn citemplate_add_reuse_test() {
-        let mut template = citemplate_creator();
-        assert!(template
-            .add_reuse(
-                "Apache-2.0".parse().unwrap(),
-                Path::new("/home/user/project")
+    fn build_dirs_test_poetry() {
+        assert_eq!(
+            create_poetry()
+                .build(
+                    Path::new("~/Desktop/project"),
+                    "my_prog",
+                    "Apache-2.0",
+                    "master"
+                )
+                .dirs,
+            vec![
+                Path::new("~/Desktop/project"),
+                Path::new("~/Desktop/project/my_prog"),
+                Path::new("~/Desktop/project/my_prog/data"),
+                Path::new("~/Desktop/project/my_prog/tests"),
+                Path::new("~/Desktop/project/.github/workflows")
+            ]
+        )
+    }
+    #[test]
+    fn build_fullcontext_test_poetry() {
+        assert!(!create_poetry()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
             )
-            .is_ok());
+            .context
+            .is_empty())
     }
-    #[test]
-    fn citemplate_render_test() {
-        let template = citemplate_creator();
-        assert!(template.render().is_ok());
+
+    // Tests for BilfTemplate trait - Meson
+    fn create_meson() -> Meson {
+        Meson::new(meson::ProjectKind::C)
     }
 
     #[test]
-    fn define_name_valid_test() {
-        assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
+    fn build_contain_files_test_meson() {
+        assert!(create_meson()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .files
+            .contains_key(Path::new("~/Desktop/project/README.md")))
     }
     #[test]
-    fn define_name_emptyname_test() {
-        assert!(define_name("", Path::new("~/Desktop/project")).is_ok());
+    fn build_dirs_test_meson() {
+        assert_eq!(
+            create_meson()
+                .build(
+                    Path::new("~/Desktop/project"),
+                    "my_prog",
+                    "Apache-2.0",
+                    "master"
+                )
+                .dirs,
+            vec![
+                Path::new("~/Desktop/project"),
+                Path::new("~/Desktop/project/cli"),
+                Path::new("~/Desktop/project/lib"),
+                Path::new("~/Desktop/project/tests"),
+                Path::new("~/Desktop/project/.github/workflows")
+            ]
+        )
     }
     #[test]
-    fn define_name_emptypath_test() {
-        assert!(define_name("", Path::new("")).is_err());
+    fn build_fullcontext_test_meson() {
+        assert!(!create_meson()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .context
+            .is_empty())
     }
-    /*#[test]
-    fn define_name_invalidpath_test() {
-        //TODO: Adjust this section of the define_name() function to make this test work
-        assert!(define_name("", Path::new("Здравствуйте")).is_err())
-    }*/
+
+    // Tests for BilfTemplate trait - Maven
+    fn create_maven() -> Maven<'static> {
+        Maven::new("group_name")
+    }
 
     #[test]
-    fn define_license_valid_test() {
-        assert!(define_license("AFL-3.0").is_ok())
+    fn build_contain_files_test_maven() {
+        assert!(create_maven()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .files
+            .contains_key(Path::new("~/Desktop/project/README.md")))
     }
     #[test]
-    fn define_license_invalid_test() {
-        assert!(define_license("POL-3.0").is_err())
+    fn build_content_dirs_test_maven() {
+        assert_eq!(
+            create_maven()
+                .build(
+                    Path::new("~/Desktop/project"),
+                    "my_prog",
+                    "Apache-2.0",
+                    "master"
+                )
+                .dirs,
+            vec![
+                Path::new("~/Desktop/project"),
+                Path::new("~/Desktop/project/src/main/java/group_name/my_prog"),
+                Path::new("~/Desktop/project/src/test/java/group_name/my_prog/example"),
+                Path::new("~/Desktop/project/.github/workflows")
+            ]
+        )
+    }
+    #[test]
+    fn build_fullcontext_test_maven() {
+        assert!(!create_maven()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .context
+            .is_empty())
+    }
+
+    // Tests for BilfTemplate trait - Cargo
+    fn create_cargo() -> Cargo<'static> {
+        Cargo::new("docker_image_description")
+    }
+
+    #[test]
+    fn build_contain_files_test_cargo() {
+        assert!(create_cargo()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .files
+            .contains_key(Path::new("~/Desktop/project/README.md")))
+    }
+    #[test]
+    fn build_content_dirs_test_cargo() {
+        assert_eq!(
+            create_cargo()
+                .build(
+                    Path::new("~/Desktop/project"),
+                    "my_prog",
+                    "Apache-2.0",
+                    "master"
+                )
+                .dirs,
+            vec![
+                Path::new("~/Desktop/project"),
+                Path::new("~/Desktop/project/.github/workflows"),
+                Path::new("~/Desktop/project/docker"),
+                Path::new("~/Desktop/project/fuzz"),
+                Path::new("~/Desktop/project/fuzz/fuzz_targets")
+            ]
+        )
+    }
+    #[test]
+    fn build_fullcontext_test_cargo() {
+        assert!(!create_maven()
+            .build(
+                Path::new("~/Desktop/project"),
+                "my_prog",
+                "Apache-2.0",
+                "master"
+            )
+            .context
+            .is_empty())
     }
 }
