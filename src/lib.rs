@@ -226,11 +226,11 @@ pub(crate) fn compute_template(
 
 #[cfg(test)]
 mod tests {
-    use crate::yarn::Yarn;
-
     use super::*;
+    use crate::{cargo::Cargo, maven::Maven, meson::Meson, poetry::Poetry, yarn::Yarn};
 
-    fn citemplate_creator() -> CiTemplate {
+    // Test on CiTemplate functions
+    fn creator_citemplate() -> CiTemplate {
         CiTemplate {
             context: HashMap::new(),
             files: HashMap::new(),
@@ -240,8 +240,80 @@ mod tests {
     }
 
     #[test]
-    fn build_contain_files_test() {
-        assert!(Yarn::new()
+    fn citemplate_add_license_test() {
+        assert!(creator_citemplate()
+            .add_license(
+                "Apache-2.0".parse().unwrap(),
+                Path::new("/home/user/project")
+            )
+            .is_ok());
+    }
+    #[test]
+    fn citemplate_add_reuse_test() {
+        assert!(creator_citemplate()
+            .add_reuse(
+                "Apache-2.0".parse().unwrap(),
+                Path::new("/home/user/project")
+            )
+            .is_ok());
+    }
+    #[test]
+    fn citemplate_render_test() {
+        assert!(creator_citemplate().render().is_ok());
+    }
+
+    // Test other lib internal functions
+    #[test]
+    fn define_name_valid_test() {
+        assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
+    }
+    #[test]
+    fn define_name_emptyname_test() {
+        assert!(define_name("", Path::new("~/Desktop/project")).is_ok());
+    }
+    #[test]
+    fn define_name_emptypath_test() {
+        assert!(define_name("", Path::new("")).is_err());
+    }
+    #[test]
+    #[ignore]
+    fn define_name_invalidpath_test() {
+        //TODO: Adjust this section of the define_name() function to make this test work
+        assert!(define_name("", Path::new("Здравствуйте")).is_err())
+    }
+    #[test]
+    fn define_license_valid_test() {
+        assert!(define_license("AFL-3.0").is_ok())
+    }
+    #[test]
+    fn define_license_invalid_test() {
+        assert!(define_license("POL-3.0").is_err())
+    }
+    #[test]
+    #[ignore]
+    fn compute_template_test() {
+        assert!(compute_template(
+            creator_citemplate(),
+            "Apache-2.0".parse().unwrap(),
+            Path::new("~/Desktop/foo.txt")
+        )
+        .is_ok())
+    }
+
+    #[test]
+    fn build_environment_test() {
+        assert!(build_environment(&[("index.html", "Hello {{ name }} !")])
+            .add_template("index.html", "Hello {{ name }} !")
+            .is_ok());
+    }
+
+    // Tests for trait BildTemplate - Yarn
+    fn create_yarn() -> Yarn {
+        Yarn::new()
+    }
+    #[test]
+    fn build_contain_files_test_yarn() {
+        assert!(create_yarn()
             .build(
                 Path::new("~/Desktop/project"),
                 "my_prog",
@@ -252,7 +324,7 @@ mod tests {
             .contains_key(Path::new("~/Desktop/project/README.md")));
     }
     #[test]
-    fn build_dirs_test() {
+    fn build_dirs_test_yarn() {
         assert_eq!(
             Yarn::new()
                 .build(
@@ -269,8 +341,8 @@ mod tests {
         )
     }
     #[test]
-    fn build_fullcontext_test() {
-        assert!(!Yarn::new()
+    fn build_fullcontext_test_yarn() {
+        assert!(!create_yarn()
             .build(
                 Path::new("~/Desktop/project"),
                 "my_prog",
@@ -281,11 +353,9 @@ mod tests {
             .is_empty())
     }
 
-    #[test]
-    fn build_environment_test() {
-        assert!(build_environment(&[("index.html", "Hello {{ name }} !")])
-            .add_template("index.html", "Hello {{ name }} !")
-            .is_ok());
+    // Tests for BilfTemplate trait - Poetry
+    fn create_poetry() -> Poetry {
+        Poetry::new()
     }
 
     #[test]
@@ -315,7 +385,6 @@ mod tests {
         assert!(template.render().is_ok());
     }
 
-    // Are they all necessary?
     #[test]
     fn define_name_valid_test() {
         assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
