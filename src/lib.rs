@@ -301,7 +301,7 @@ mod tests {
     fn create_yarn() -> Yarn {
         Yarn::new()
     }
-    
+
     #[test]
     fn build_contain_files_test_yarn() {
         assert!(create_yarn()
@@ -547,35 +547,70 @@ mod tests {
     #[test]
     #[ignore]
     fn createci_cargo() {
-        assert!(create_cargo().create_ci("my_prog", Path::new("/Home/user/Scrivania/project"), "Apache-2.0", "master").is_ok())
+        assert!(create_cargo()
+            .create_ci(
+                "my_prog",
+                Path::new("/Home/user/Scrivania/project"),
+                "Apache-2.0",
+                "master"
+            )
+            .is_ok())
     }
 
     // Tests impl CreateProject for Maven
     #[test]
     #[ignore]
     fn createproject_maven() {
-        assert!(create_maven().create_project("my_prog", Path::new("/Home/Scrivania/project"), "Apache-2.0", "master").is_ok())
+        assert!(create_maven()
+            .create_project(
+                "my_prog",
+                Path::new("/Home/Scrivania/project"),
+                "Apache-2.0",
+                "master"
+            )
+            .is_ok())
     }
 
     // Tests impl CreateProject for Meson
     #[test]
     #[ignore]
     fn createproject_meson() {
-        assert!(create_meson().create_project("my_prog", Path::new("/Home/Scrivania/project"), "Apache-2.0", "master").is_ok())
+        assert!(create_meson()
+            .create_project(
+                "my_prog",
+                Path::new("/Home/Scrivania/project"),
+                "Apache-2.0",
+                "master"
+            )
+            .is_ok())
     }
 
     // Tests impl CreateProject for Poetry
     #[test]
     #[ignore]
     fn createproject_poetry() {
-        assert!(create_poetry().create_project("my_prog", Path::new("/Home/Scrivania/project"), "Apache-2.0", "master").is_ok())
+        assert!(create_poetry()
+            .create_project(
+                "my_prog",
+                Path::new("/Home/Scrivania/project"),
+                "Apache-2.0",
+                "master"
+            )
+            .is_ok())
     }
 
     // Tests impl CreateCi for Yarn
     #[test]
     #[ignore]
     fn createci_yarn() {
-        assert!(create_yarn().create_ci("my_prog", Path::new("/Home/user/Scrivania/project"), "Apache-2.0", "master").is_ok())
+        assert!(create_yarn()
+            .create_ci(
+                "my_prog",
+                Path::new("/Home/user/Scrivania/project"),
+                "Apache-2.0",
+                "master"
+            )
+            .is_ok())
     }
 
     #[test]

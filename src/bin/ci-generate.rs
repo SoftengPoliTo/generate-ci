@@ -284,6 +284,12 @@ mod tests {
     use super::*;
 
     #[test]
+    #[ignore]
+    fn main_test() {
+        assert!(main().is_ok())
+    }
+
+    #[test]
     fn local_config_output_test() {
         assert!(local_config().is_ok())
     }

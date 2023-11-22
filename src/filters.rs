@@ -24,16 +24,23 @@ pub(crate) fn hypens_to_underscores(_state: &State, value: String) -> Result<Str
 
 #[cfg(test)]
 mod tests {
-    use minijinja::Environment;
     use super::*;
+    use minijinja::Environment;
 
     #[test]
     fn comment_license_test() {
-        assert!(comment_license(&Environment::new().empty_state(), String::from("value"), String::from("comment_char")).is_ok())
+        assert!(comment_license(
+            &Environment::new().empty_state(),
+            String::from("value"),
+            String::from("comment_char")
+        )
+        .is_ok())
     }
 
     #[test]
     fn hypens_to_underscores_test() {
-        assert!(hypens_to_underscores(&Environment::new().empty_state(), String::from("value")).is_ok())
+        assert!(
+            hypens_to_underscores(&Environment::new().empty_state(), String::from("value")).is_ok()
+        )
     }
 }
