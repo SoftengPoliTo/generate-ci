@@ -9,7 +9,6 @@ use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use expanduser::expanduser;
 use minijinja::value::Value;
 use minijinja::Environment;
 use tracing::debug;
@@ -223,6 +222,7 @@ pub(crate) fn compute_template(
 
 #[cfg(not(windows))]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
+    use expanduser::expanduser;
     let project_path = if project_path.starts_with("~") {
         let project_path = expanduser(project_path.display().to_string()).unwrap();
         project_path
@@ -243,6 +243,44 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
 #[inline]
 pub fn try_canonicalize<P: AsRef<Path>>(path: P) -> std::io::Result<PathBuf> {
     std::fs::canonicalize(&path)
+}
+
+#[cfg(windows)]
+pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
+    use homedir::get_my_home;
+    // Creation of the $HOME directory
+    let home = get_my_home();
+    let mut home = match home {
+        Ok(x) => x.unwrap(),
+        _ => panic!("Unable to retrieve the home directory from this file system!"),
+    };
+    // Path validation
+    let mut project_path = if project_path.starts_with(r#"~\"#) {
+        let str = project_path.to_str().unwrap();
+        let str = str.replace("~\\", "");
+        home.push(Path::new(&str));
+        home
+    } else {
+        project_path.to_path_buf()
+    };
+    // extenduser in case of relative path
+    project_path = if project_path.is_relative() {
+        let absolute_path = std::fs::canonicalize(project_path).unwrap();
+        absolute_path
+    } else {
+        project_path
+    };
+    // checking the existence of the path derived
+    match project_path.exists() {
+        true => {
+            let str = project_path.to_str().unwrap();
+            let str = str.replace(r#"\\?\"#, "");
+            Ok(Path::new(&str).to_path_buf())
+        }
+        false => {
+            panic!("Path does not exist. Error: {:?}", ErrorKind::NotFound);
+        }
+    }
 }
 
 #[cfg(test)]

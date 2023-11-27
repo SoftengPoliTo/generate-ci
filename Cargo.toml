@@ -26,6 +26,9 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 [target.'cfg(not(windows))'.dependencies]
 expanduser = "1.2.2"
 
+[target.'cfg(windows)'.dependencies]
+homedir = "0.2.1"
+
 [profile.release]
 codegen-units = 1
 debug-assertions = false
