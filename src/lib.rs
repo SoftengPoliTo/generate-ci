@@ -318,27 +318,23 @@ mod tests {
     // Test other lib internal functions
     #[test]
     fn define_name_valid_test() {
-        assert!(define_name(
+        assert_eq!(define_name(
             "test-project",
-            path_validation(Path::new("~/Scrivania/MyProject"))
-                .unwrap()
-                .as_path()
-        )
-        .is_ok());
+            Path::new("~/Desktop/project")
+        ),
+        Ok("test-project"));
     }
     #[test]
     fn define_name_emptyname_test() {
-        assert!(define_name(
+        assert_eq!(define_name(
             "",
-            path_validation(Path::new("~/Scrivania/MyProject"))
-                .unwrap()
-                .as_path()
-        )
-        .is_ok());
+           Path::new("~/Desktop/MyProject")
+        ),
+        Ok("MyProject"));
     }
     #[test]
     fn define_emptypath_test() {
-        assert_eq!(path_validation(Path::new("")).is_err(), true)
+        assert!(path_validation(Path::new("")).is_err())
     }
     #[test]
     fn define_license_valid_test() {
@@ -350,10 +346,7 @@ mod tests {
     }
     #[test]
     fn define_name_invalidpath_test() {
-        assert_eq!(
-            path_validation(Path::new("Здравствуйте")).is_err_and(|x| x == ErrorKind::NotFound),
-            true
-        );
+        assert!(path_validation(Path::new("Здравствуйте")).is_err_and(|x| x == ErrorKind::NotFound));
     }
 
     #[test]
