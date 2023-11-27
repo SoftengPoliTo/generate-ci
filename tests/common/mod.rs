@@ -3,7 +3,7 @@ use ci_generate;
 use sha2::{Digest, Sha256};
 use std::{fs::File, io::Read};
 
-static YARNHASH: &'static [&'static str] = &[
+static YARNHASH: &'static [&str] = &[
     "4ddd0a7e1e16c2750d0fb5b7ef9bb941a5550bcab254c2cdf55e97685822a282",
     "0e9741cd8e316ff9d013249170e8c07a548dbbefdb5ec3d66348a83d318e6c07",
     "c274f80372d90c012937370f0e1f15087d22e308ef98b27cea5dc0d2d088366c",
@@ -11,7 +11,7 @@ static YARNHASH: &'static [&'static str] = &[
     "1636d83f503297df43f0973219ae804c77f892d1a0ec67efea26438fa6de8229",
 ];
 
-static POETRYHASH: &'static [&'static str] = &[
+static POETRYHASH: &'static [&str] = &[
     "68d0db0f7cd1c9b3be3bb06741c32df87e4c5c21d246542af0e1ee43705032ce",
     "e57661eae3b38c320e9d8f214a505a75d53e745f4dffd8c38a23c1e792008d20",
     "5f750b77fdf8b9f7dbdb200ac25fa12b01dfafb883f3f5eaa119cafbdeb37a04",
@@ -25,7 +25,7 @@ static POETRYHASH: &'static [&'static str] = &[
     "64c99914b0f49e4288ec46e21529fd17f04d9bad06c570852894b646c4cf2b78",
 ];
 
-static MESONHASH: &'static [&'static str] = &[
+static MESONHASH: &'static [&str] = &[
     "0f68bf482a2136cd0111d664278648131f1d4a0cfeebc8e9239f4e4949f25056",
     "3862c5d9b405e1f0f10f6301370dcda6282702b1816dd3669253ca4075d0cbdf",
     "2a5d24edd7275ae2ce81e5ae4d66b849d979a671761a1d3bcc714f827b04a70e",
@@ -43,7 +43,7 @@ static MESONHASH: &'static [&'static str] = &[
     "d5a1883706d1d26c89f8ac04f1df8410aee834ed08d17308f75194732dbeba91",
 ];
 
-static MAVENHASH: &'static [&'static str] = &[
+static MAVENHASH: &'static [&str] = &[
     "1ff6e00ba8636fc9adff59ad0aa0449c6050a4ff43d59359224931c9144a26be",
     "e57661eae3b38c320e9d8f214a505a75d53e745f4dffd8c38a23c1e792008d20",
     "5f750b77fdf8b9f7dbdb200ac25fa12b01dfafb883f3f5eaa119cafbdeb37a04",
@@ -55,7 +55,7 @@ static MAVENHASH: &'static [&'static str] = &[
     "64c99914b0f49e4288ec46e21529fd17f04d9bad06c570852894b646c4cf2b78",
 ];
 
-static CARGOHASH: &'static [&'static str] = &[
+static CARGOHASH: &'static [&str] = &[
     "3d741e6841556ec11c0817840a6d3c34456608001d76a2f1237b84cf541af0c7",
     "537ee56f8daa7065ded0b5c52680a65cecf566e0ce3da8bce8fa945d9859ffb4",
     "26712e4fc7ac4040e72ccffae7b68f16e4e6b534fa43273c33f3638deaaa51b9",
