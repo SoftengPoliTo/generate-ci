@@ -318,19 +318,17 @@ mod tests {
     // Test other lib internal functions
     #[test]
     fn define_name_valid_test() {
-        assert_eq!(define_name(
-            "test-project",
-            Path::new("~/Desktop/project")
-        ),
-        Ok("test-project"));
+        assert_eq!(
+            define_name("test-project", Path::new("~/Desktop/project")),
+            Ok("test-project")
+        );
     }
     #[test]
     fn define_name_emptyname_test() {
-        assert_eq!(define_name(
-            "",
-           Path::new("~/Desktop/MyProject")
-        ),
-        Ok("MyProject"));
+        assert_eq!(
+            define_name("", Path::new("~/Desktop/MyProject")),
+            Ok("MyProject")
+        );
     }
     #[test]
     fn define_emptypath_test() {
