@@ -99,7 +99,7 @@ pub fn create_yarn_project() -> Result<()> {
     ci_generate::CreateCi::create_ci(
         &ci_generate::toolchain::yarn::Yarn::new(),
         "",
-        std::path::Path::new("~/Documenti/GitHub/ci-generate/tests/output/yarn_project"),
+        std::path::Path::new("/home/runner/work/ci-generate/ci-generate/target/tmp/yarn_project"),
         "Apache-2.0",
         "main",
     )
@@ -109,7 +109,7 @@ pub fn create_poetry_project() -> Result<()> {
     ci_generate::CreateProject::create_project(
         &ci_generate::toolchain::poetry::Poetry::new(),
         "Myprog",
-        std::path::Path::new("~/Documenti/GitHub/ci-generate/tests/output/poetry_project"),
+        std::path::Path::new("/home/runner/work/ci-generate/ci-generate/target/tmp/poetry_project"),
         "BSD-1-Clause",
         "master",
     )
@@ -119,7 +119,7 @@ pub fn create_meson_project() -> Result<()> {
     ci_generate::CreateProject::create_project(
         &ci_generate::toolchain::meson::Meson::new(ci_generate::toolchain::meson::ProjectKind::C),
         "",
-        std::path::Path::new("~/Documenti/GitHub/ci-generate/tests/output/meson_project"),
+        std::path::Path::new("/home/runner/work/ci-generate/ci-generate/target/tmp/meson_project"),
         "APL-1.0",
         "main",
     )
@@ -129,7 +129,7 @@ pub fn create_maven_project() -> Result<()> {
     ci_generate::CreateProject::create_project(
         &ci_generate::toolchain::maven::Maven::new("POL"),
         "Myprog",
-        std::path::Path::new("~/Documenti/GitHub/ci-generate/tests/output/maven_project"),
+        std::path::Path::new("/home/runner/work/ci-generate/ci-generate/target/tmp/maven_project"),
         "BSD-1-Clause",
         "master",
     )
@@ -139,7 +139,7 @@ pub fn create_cargo_project() -> Result<()> {
     ci_generate::CreateCi::create_ci(
         &ci_generate::toolchain::cargo::Cargo::new("Docker-image"),
         "Project",
-        std::path::Path::new("~/Documenti/GitHub/ci-generate/tests/output/cargo_project"),
+        std::path::Path::new("/home/runner/work/ci-generate/ci-generate/target/tmp/cargo_project"),
         "EUPL-1.2",
         "main",
     )

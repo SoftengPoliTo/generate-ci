@@ -1,4 +1,0 @@
-#ifndef MESON_PROJECT_H
-#define MESON_PROJECT_H
-#endif // MESON_PROJECT_H
-
