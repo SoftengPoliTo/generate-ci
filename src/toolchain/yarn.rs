@@ -5,7 +5,8 @@ use anyhow::Result;
 use minijinja::value::Value;
 
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, BuildTemplate, CreateCi, path_validation,
+    builtin_templates, compute_template, define_license, define_name, path_validation,
+    BuildTemplate, CreateCi,
 };
 
 static YARN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["yarn" =>
@@ -31,9 +32,14 @@ impl CreateCi for Yarn {
             Ok(x) => {
                 let project_name = define_name(project_name, x.as_path());
                 let license = define_license(license)?;
-                let template = Yarn.build(x.as_path(), project_name.unwrap(), license.id(), github_branch);
+                let template = Yarn.build(
+                    x.as_path(),
+                    project_name.unwrap(),
+                    license.id(),
+                    github_branch,
+                );
                 compute_template(template, license, x.as_path())
-            },
+            }
             Err(err) => panic!("Path: {:?}. Verify its correctness", err),
         }
     }

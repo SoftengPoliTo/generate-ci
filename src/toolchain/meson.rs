@@ -6,7 +6,8 @@ use minijinja::value::Value;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, BuildTemplate, CreateProject, path_validation,
+    builtin_templates, compute_template, define_license, define_name, path_validation,
+    BuildTemplate, CreateProject,
 };
 
 const MESON_FILE: &str = "meson.build";
@@ -52,12 +53,16 @@ impl CreateProject for Meson {
             Ok(x) => {
                 let project_name = define_name(project_name, x.as_path());
                 let license = define_license(license)?;
-                let template = self.build(x.as_path(), project_name.unwrap(), license.id(), github_branch);
+                let template = self.build(
+                    x.as_path(),
+                    project_name.unwrap(),
+                    license.id(),
+                    github_branch,
+                );
                 compute_template(template, license, x.as_path())
-            },
+            }
             Err(err) => panic!("Path: {:?}. Verify its correctness", err),
         }
-
     }
 }
 

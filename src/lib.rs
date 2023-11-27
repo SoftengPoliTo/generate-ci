@@ -5,14 +5,14 @@ mod filters;
 
 use std::collections::HashMap;
 use std::fs::{create_dir_all, write};
-use std::path::{Path, PathBuf};
 use std::io::ErrorKind;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
+use expanduser::expanduser;
 use minijinja::value::Value;
 use minijinja::Environment;
 use tracing::debug;
-use expanduser::expanduser;
 
 use filters::*;
 
@@ -190,13 +190,15 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
     environment
 }
 
-
-pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str, ErrorKind> {
-    if project_name.is_empty(){
+pub(crate) fn define_name<'a>(
+    project_name: &'a str,
+    project_path: &'a Path,
+) -> Result<&'a str, ErrorKind> {
+    if project_name.is_empty() {
         let os_name = project_path.file_name();
         let name = os_name.unwrap().to_str();
         Ok(name.unwrap())
-    }  else {
+    } else {
         Ok(project_name)
     }
 }
@@ -220,9 +222,8 @@ pub(crate) fn compute_template(
 }
 
 #[cfg(not(windows))]
-pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind>{
-
-    let project_path = if project_path.starts_with("~"){
+pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
+    let project_path = if project_path.starts_with("~") {
         let project_path = expanduser(project_path.display().to_string()).unwrap();
         project_path
     } else {
@@ -233,7 +234,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind>{
         Ok(true) => {
             let project_path = try_canonicalize(project_path);
             Ok(project_path.unwrap())
-        },
+        }
         _ => Err(ErrorKind::NotFound),
     }
 }
@@ -243,7 +244,6 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind>{
 pub fn try_canonicalize<P: AsRef<Path>>(path: P) -> std::io::Result<PathBuf> {
     std::fs::canonicalize(&path)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -263,19 +263,13 @@ mod tests {
     #[test]
     fn citemplate_add_license_test() {
         assert!(creator_citemplate()
-            .add_license(
-                "Apache-2.0".parse().unwrap(),
-                Path::new("~/project")
-            )
+            .add_license("Apache-2.0".parse().unwrap(), Path::new("~/project"))
             .is_ok());
     }
     #[test]
     fn citemplate_add_reuse_test() {
         assert!(creator_citemplate()
-            .add_reuse(
-                "Apache-2.0".parse().unwrap(),
-                Path::new("~/project")
-            )
+            .add_reuse("Apache-2.0".parse().unwrap(), Path::new("~/project"))
             .is_ok());
     }
     #[test]
@@ -286,14 +280,26 @@ mod tests {
     // Test other lib internal functions
     #[test]
     fn define_name_valid_test() {
-        assert!(define_name("test-project", path_validation(Path::new("~/Scrivania/MyProject")).unwrap().as_path()).is_ok());
+        assert!(define_name(
+            "test-project",
+            path_validation(Path::new("~/Scrivania/MyProject"))
+                .unwrap()
+                .as_path()
+        )
+        .is_ok());
     }
     #[test]
     fn define_name_emptyname_test() {
-        assert!(define_name("", path_validation(Path::new("~/Scrivania/MyProject")).unwrap().as_path()).is_ok());
+        assert!(define_name(
+            "",
+            path_validation(Path::new("~/Scrivania/MyProject"))
+                .unwrap()
+                .as_path()
+        )
+        .is_ok());
     }
     #[test]
-    fn define_emptypath_test(){
+    fn define_emptypath_test() {
         assert_eq!(path_validation(Path::new("")).is_err(), true)
     }
     #[test]
@@ -306,8 +312,10 @@ mod tests {
     }
     #[test]
     fn define_name_invalidpath_test() {
-        assert_eq!(path_validation(Path::new("Здравствуйте")).is_err_and(|x| x == ErrorKind::NotFound), true);
-
+        assert_eq!(
+            path_validation(Path::new("Здравствуйте")).is_err_and(|x| x == ErrorKind::NotFound),
+            true
+        );
     }
 
     #[test]
