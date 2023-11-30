@@ -1,0 +1,10 @@
+---
+source: tests/common/mod.rs
+---
+#include "meson_template.h"
+
+int main()
+{
+
+}
+

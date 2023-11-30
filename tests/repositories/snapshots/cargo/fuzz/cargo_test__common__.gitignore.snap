@@ -1,0 +1,7 @@
+---
+source: tests/common/mod.rs
+---
+target
+corpus
+artifacts
+coverage

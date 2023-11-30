@@ -31,21 +31,22 @@ impl CreateProject for Poetry {
         license: &str,
         github_branch: &str,
     ) -> Result<()> {
-        let project_path = path_validation(project_path);
-        match project_path {
-            Ok(x) => {
-                let project_name = define_name(project_name, x.as_path());
-                let license = define_license(license)?;
-                let template = self.build(
-                    x.as_path(),
-                    project_name.unwrap(),
-                    license.id(),
-                    github_branch,
-                );
-                compute_template(template, license, x.as_path())
-            }
-            Err(err) => panic!("Path: {:?}. Verify its correctness", err),
-        }
+        let project_path = match path_validation(project_path){
+            Ok(x) => x,
+            Err(_) => panic!("Error code: E000"),
+        };
+        let project_name = match define_name(project_name, project_path.as_path()){
+            Ok(x) => x,
+            Err(_) => panic!("Error code: E000"),
+        };
+        let license = define_license(license)?;
+        let template = self.build(
+            project_path.as_path(),
+            project_name,
+            license.id(),
+            github_branch,
+        );
+        compute_template(template, license, project_path.as_path())
     }
 }
 

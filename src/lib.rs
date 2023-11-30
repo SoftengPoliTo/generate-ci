@@ -195,8 +195,14 @@ pub(crate) fn define_name<'a>(
 ) -> Result<&'a str, ErrorKind> {
     if project_name.is_empty() {
         let os_name = project_path.file_name();
-        let name = os_name.unwrap().to_str();
-        Ok(name.unwrap())
+        let name = match os_name {
+            Some(x) => x.to_str(),
+            None => panic!("Error code: E000"),
+        };
+        match name {
+            Some(x) => Ok(x),
+            None => panic!("Error code: E000")
+        }
     } else {
         Ok(project_name)
     }
@@ -224,7 +230,10 @@ pub(crate) fn compute_template(
 pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
     use expanduser::expanduser;
     let project_path = if project_path.starts_with("~") {
-        let project_path = expanduser(project_path.display().to_string()).unwrap();
+        let project_path = match expanduser(project_path.display().to_string()) {
+            Ok(p) => p,
+            Err(_) => panic!("Error code: E000"),
+        };
         project_path
     } else {
         project_path.to_path_buf()
@@ -232,17 +241,15 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
 
     match project_path.try_exists() {
         Ok(true) => {
-            let project_path = try_canonicalize(project_path);
-            Ok(project_path.unwrap())
+            //let project_path = try_canonicalize(project_path);
+            let project_path = std::fs::canonicalize(project_path);
+            match project_path {
+                Ok(x) => Ok(x),
+                Err(_) => Err(ErrorKind::NotFound),
+            }
         }
         _ => Err(ErrorKind::NotFound),
     }
-}
-
-#[cfg(not(windows))]
-#[inline]
-pub fn try_canonicalize<P: AsRef<Path>>(path: P) -> std::io::Result<PathBuf> {
-    std::fs::canonicalize(&path)
 }
 
 #[cfg(windows)]
@@ -251,12 +258,18 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
     // Creation of the $HOME directory
     let home = get_my_home();
     let mut home = match home {
-        Ok(x) => x.unwrap(),
+        Ok(x) => match x {
+            Some(h) => h, 
+            None => panic!("Error code: E000"),
+        },
         _ => panic!("Unable to retrieve the home directory from this file system!"),
     };
     // Path validation
-    let mut project_path = if project_path.starts_with(r#"~\"#) {
-        let str = project_path.to_str().unwrap();
+    let mut project_path = if project_path.starts_with(r#"~\"#){
+        let str = match project_path.to_str() {
+            Some(s) => s,
+            None => panic!("Error code: E000"),
+        };
         let str = str.replace("~\\", "");
         home.push(Path::new(&str));
         home
@@ -264,8 +277,11 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
         project_path.to_path_buf()
     };
     // extenduser in case of relative path
-    project_path = if project_path.is_relative() {
-        let absolute_path = std::fs::canonicalize(project_path).unwrap();
+    project_path = if project_path.is_relative(){
+        let absolute_path = match std::fs::canonicalize(project_path) {
+            Ok(ap) => ap,
+            Err(_) => panic!("Error code: E000"),
+        };
         absolute_path
     } else {
         project_path
@@ -273,13 +289,16 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
     // checking the existence of the path derived
     match project_path.exists() {
         true => {
-            let str = project_path.to_str().unwrap();
+            let str = match project_path.to_str() {
+                Some(s) => s,
+                None => panic!("Error code: E000"),
+            };
             let str = str.replace(r#"\\?\"#, "");
             Ok(Path::new(&str).to_path_buf())
         }
         false => {
             panic!("Path does not exist. Error: {:?}", ErrorKind::NotFound);
-        }
+        },
     }
 }
 

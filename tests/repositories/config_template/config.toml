@@ -1,0 +1,6 @@
+[default]
+license = "EUPL-1.2"
+name = "Personal_Project"
+
+[meson]
+kind = "Cxx"

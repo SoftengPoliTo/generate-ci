@@ -1,0 +1,10 @@
+---
+source: tests/common/mod.rs
+---
+#include "Personal_Project.h"
+
+int main()
+{
+    return 0;
+}
+
