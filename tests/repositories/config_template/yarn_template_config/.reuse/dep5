@@ -1,8 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Personal_Project
-Upstream-Contact: Name Surname <mail@example.com>
-Source: https://your/project/link
-
-Files: *
-Copyright: 2019 Translation Company
-License: EUPL-1.2

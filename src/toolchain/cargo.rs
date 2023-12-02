@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
 use minijinja::value::Value;
 
 use crate::{
     builtin_templates, compute_template, define_license, define_name, path_validation,
-    BuildTemplate, CreateCi,
+    BuildTemplate, CreateCi, error::Result
 };
 
 static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
@@ -35,11 +34,11 @@ impl<'a> CreateCi for Cargo<'a> {
     ) -> Result<()> {
         let project_path = match path_validation(project_path) {
             Ok(x) => x,
-            Err(_) => panic!("Error code: E000"),
+            Err(e) => return Err(e),
         };
         let project_name = match define_name(project_name, project_path.as_path()) {
             Ok(x) => x,
-            Err(_) => panic!("Error code: E000"),
+            Err(e) => return Err(e),
         };
         let license = define_license(license)?;
         let template = self.build(

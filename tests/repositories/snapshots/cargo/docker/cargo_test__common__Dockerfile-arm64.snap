@@ -1,6 +1,0 @@
----
-source: tests/common/mod.rs
----
-FROM arm64v8/alpine
-ADD Project /
-ENTRYPOINT ["/Project"]

@@ -1,4 +1,0 @@
-#ifndef PERSONAL_PROJECT_H
-#define PERSONAL_PROJECT_H
-#endif // PERSONAL_PROJECT_H
-

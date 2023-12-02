@@ -2,13 +2,12 @@ pub mod toolchain;
 pub use toolchain::*;
 
 mod filters;
+mod error;
+use error::{Error,Result};
 
 use std::collections::HashMap;
 use std::fs::{create_dir_all, write};
-use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
-
-use anyhow::Result;
 use minijinja::value::Value;
 use minijinja::Environment;
 use tracing::debug;
@@ -62,7 +61,10 @@ impl CiTemplate {
         // Create dirs
         for dir in dirs {
             debug!("Creating {}", dir.display());
-            create_dir_all(dir)?
+            match create_dir_all(dir){
+                Ok(x) => x,
+                _ => return Err(Error::NoDirExists),
+            }
         }
 
         env.add_filter("comment_license", comment_license);
@@ -71,11 +73,16 @@ impl CiTemplate {
         // Fill in templates
         for (path, template_name) in files {
             debug!("Creating {}", path.display());
-            let template = env.get_template(template_name)?;
-            let filled_template = template.render(&context)?;
-            write(path, filled_template)?;
+            let template = match env.get_template(template_name) {
+                Ok(x) => x,
+                _ => return Err(Error::TemplateNotFound),
+            };
+            let filled_template = match template.render(&context){
+                Ok(x)=> x,
+                _ => return Err(Error::ContextError)
+            };
+            write(path, filled_template);
         }
-
         Ok(())
     }
 
@@ -83,7 +90,7 @@ impl CiTemplate {
         &mut self,
         license: &dyn license::License,
         project_path: &Path,
-    ) -> anyhow::Result<()> {
+    ) -> Result<()> {
         let id = license.id();
         let header = license.header();
 
@@ -109,7 +116,7 @@ impl CiTemplate {
         self.context
             .insert("license", Value::from_serializable(&license_ctx));
 
-        self.env.add_template("build.license", license.text())?;
+        self.env.add_template("build.license", license.text());
 
         Ok(())
     }
@@ -118,7 +125,7 @@ impl CiTemplate {
         &mut self,
         license: &dyn license::License,
         project_path: &Path,
-    ) -> anyhow::Result<()> {
+    ) -> Result<()> {
         // Adds .reuse directory and dep5 file
         let reuse_path = project_path.join(".reuse");
         self.files.insert(reuse_path.join("dep5"), "dep5.reuse");
@@ -136,7 +143,7 @@ impl CiTemplate {
         self.context
             .insert("reuse", Value::from_serializable(&reuse));
 
-        self.env.add_template("dep5.reuse", REUSE_TEMPLATE)?;
+        self.env.add_template("dep5.reuse", REUSE_TEMPLATE);
 
         Ok(())
     }
@@ -192,16 +199,16 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 pub(crate) fn define_name<'a>(
     project_name: &'a str,
     project_path: &'a Path,
-) -> Result<&'a str, ErrorKind> {
+) -> Result<&'a str> {
     if project_name.is_empty() {
         let os_name = project_path.file_name();
         let name = match os_name {
             Some(x) => x.to_str(),
-            None => panic!("Error code: E000"),
+            None => return Err(Error::FileNameError),
         };
         match name {
             Some(x) => Ok(x),
-            None => panic!("Error code: E000")
+            None => Err(Error::UTF8Error)
         }
     } else {
         Ok(project_name)
@@ -211,7 +218,7 @@ pub(crate) fn define_name<'a>(
 pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
     let license = license
         .parse::<&dyn license::License>()
-        .map_err(|_| anyhow::anyhow!("Cannot find License"))?;
+        .map_err(|_| Error::NoLicense)?;
     Ok(license)
 }
 
@@ -227,12 +234,12 @@ pub(crate) fn compute_template(
 }
 
 #[cfg(not(windows))]
-pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
+pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use expanduser::expanduser;
     let project_path = if project_path.starts_with("~") {
         let project_path = match expanduser(project_path.display().to_string()) {
             Ok(p) => p,
-            Err(_) => panic!("Error code: E000"),
+            Err(_) => return Err(Error::ExpandError),
         };
         project_path
     } else {
@@ -241,34 +248,33 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
 
     match project_path.try_exists() {
         Ok(true) => {
-            //let project_path = try_canonicalize(project_path);
             let project_path = std::fs::canonicalize(project_path);
             match project_path {
                 Ok(x) => Ok(x),
-                Err(_) => Err(ErrorKind::NotFound),
+                _ => Err(Error::CanonPathError),
             }
         }
-        _ => Err(ErrorKind::NotFound),
+        _ => Err(Error::PathExistError),
     }
 }
 
 #[cfg(windows)]
-pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
+pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use homedir::get_my_home;
     // Creation of the $HOME directory
     let home = get_my_home();
     let mut home = match home {
         Ok(x) => match x {
             Some(h) => h, 
-            None => panic!("Error code: E000"),
+            None => Err(Error::HomeError),
         },
-        _ => panic!("Unable to retrieve the home directory from this file system!"),
+        _ => Err(Error::HomeError),
     };
     // Path validation
     let mut project_path = if project_path.starts_with(r#"~\"#){
         let str = match project_path.to_str() {
             Some(s) => s,
-            None => panic!("Error code: E000"),
+            None => return Err(Error::ExpandError),
         };
         let str = str.replace("~\\", "");
         home.push(Path::new(&str));
@@ -280,7 +286,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
     project_path = if project_path.is_relative(){
         let absolute_path = match std::fs::canonicalize(project_path) {
             Ok(ap) => ap,
-            Err(_) => panic!("Error code: E000"),
+            Err(_) => return Err(Error::CanonPathError),
         };
         absolute_path
     } else {
@@ -291,13 +297,13 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf, ErrorKind> {
         true => {
             let str = match project_path.to_str() {
                 Some(s) => s,
-                None => panic!("Error code: E000"),
+                None => return Err(Error::UTF8Error),
             };
             let str = str.replace(r#"\\?\"#, "");
             Ok(Path::new(&str).to_path_buf())
         }
         false => {
-            panic!("Path does not exist. Error: {:?}", ErrorKind::NotFound);
+            Err(Error::PathExistError)
         },
     }
 }
@@ -351,7 +357,7 @@ mod tests {
     }
     #[test]
     fn define_emptypath_test() {
-        assert!(path_validation(Path::new("")).is_err())
+        assert_eq!(path_validation(Path::new("")), Err(Error::PathExistError))
     }
     #[test]
     fn define_license_valid_test() {
@@ -359,11 +365,11 @@ mod tests {
     }
     #[test]
     fn define_license_invalid_test() {
-        assert!(define_license("POL-3.0").is_err())
+        assert_eq!(define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense), true)
     }
     #[test]
     fn define_name_invalidpath_test() {
-        assert!(path_validation(Path::new("Здравствуйте")).is_err_and(|x| x == ErrorKind::NotFound));
+        assert!(path_validation(Path::new("~/Desktop/Здравствуйте")).is_err_and(|x| x == Error::PathExistError));
     }
 
     #[test]

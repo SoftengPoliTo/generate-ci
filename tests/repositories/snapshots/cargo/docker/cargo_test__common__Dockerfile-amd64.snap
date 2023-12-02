@@ -1,6 +1,0 @@
----
-source: tests/common/mod.rs
----
-FROM amd64/alpine
-ADD Project /
-ENTRYPOINT ["/Project"]

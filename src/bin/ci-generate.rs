@@ -225,55 +225,55 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CargoData>::globals(matches.clone()))
                 .select("cargo");
             let data: CargoData = config.extract()?;
-            Cargo::new(&data.docker_image_description).create_ci(
+            Ok(Cargo::new(&data.docker_image_description).create_ci(
                 &data.common.name,
                 &data.common.project_path,
                 &data.common.license,
                 &data.common.branch,
-            )
+            )?)
         }
         ("maven", matches) => {
             let config = config
                 .merge(ClapSerialized::<MavenData>::globals(matches.clone()))
                 .select("maven");
             let data: MavenData = config.extract()?;
-            Maven::new(&data.group).create_project(
+            Ok(Maven::new(&data.group).create_project(
                 &data.common.name,
                 &data.common.project_path,
                 &data.common.license,
                 &data.common.branch,
-            )
+            )?)
         }
         ("meson", matches) => {
             let config = config
                 .merge(ClapSerialized::<MesonData>::globals(matches.clone()))
                 .select("meson");
             let data: MesonData = config.extract()?;
-            Meson::new(data.kind).create_project(
+            Ok(Meson::new(data.kind).create_project(
                 &data.common.name,
                 &data.common.project_path,
                 &data.common.license,
                 &data.common.branch,
-            )
+            )?)
         }
         ("poetry", matches) => {
             let config = config
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("poetry");
             let data: CommonData = config.extract()?;
-            Poetry::new().create_project(
+            Ok(Poetry::new().create_project(
                 &data.name,
                 &data.project_path,
                 &data.license,
                 &data.branch,
-            )
+            )?)
         }
         ("yarn", matches) => {
             let config = config
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("yarn");
             let data: CommonData = config.extract()?;
-            Yarn::new().create_ci(&data.name, &data.project_path, &data.license, &data.branch)
+            Ok(Yarn::new().create_ci(&data.name, &data.project_path, &data.license, &data.branch)?)
         }
         _ => unreachable!("unexpected command"),
     }
