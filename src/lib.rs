@@ -352,9 +352,8 @@ mod tests {
     }
     #[test]
     fn define_license_invalid_test() {
-        assert_eq!(
-            define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense),
-            true
+        assert!(
+            define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense)
         )
     }
     #[test]
@@ -417,7 +416,7 @@ mod tests {
             .is_empty())
     }
 
-    // Tests for BilfTemplate trait - Poetry
+    // Tests for BildTemplate trait - Poetry
     fn create_poetry() -> Poetry {
         Poetry::new()
     }
@@ -467,7 +466,7 @@ mod tests {
             .is_empty())
     }
 
-    // Tests for BilfTemplate trait - Meson
+    // Tests for BildTemplate trait - Meson
     fn create_meson() -> Meson {
         Meson::new(meson::ProjectKind::C)
     }
@@ -517,7 +516,7 @@ mod tests {
             .is_empty())
     }
 
-    // Tests for BilfTemplate trait - Maven
+    // Tests for BildTemplate trait - Maven
     fn create_maven() -> Maven<'static> {
         Maven::new("group_name")
     }
@@ -566,7 +565,7 @@ mod tests {
             .is_empty())
     }
 
-    // Tests for BilfTemplate trait - Cargo
+    // Tests for BildTemplate trait - Cargo
     fn create_cargo() -> Cargo<'static> {
         Cargo::new("docker_image_description")
     }
