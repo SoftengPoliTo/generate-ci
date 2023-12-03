@@ -104,7 +104,7 @@ The first time the command
 cargo insta test 
 ```
 
-is executed, snaps are created with the current content of the  files being tested, which will be considered as basic snapshots. 
+When it is executed, snaps are created with the current content of the files being tested, which will be considered as basic snapshots. 
 Once the basic snapshots have been created, you can run the previous command again to perform a content test by producing new snapshots that will then be compared with the basic snapshots.
 
 ### Updating insta tests
@@ -116,19 +116,18 @@ In case of failure, the command
 cargo insta review --include-hidden
 ```
 
-will allow you to review the differences between the two snaps and possibly accept the changes.
+will allow you to review the differences between the two snaps and possibly accept the changes. The `--include-hidden` option is important to add in this context because it allows you to verify the snap of hidden files or folders, present in template creation for example.
 
 With this in mind, it is possible to test a series of snapshots of different contents.
 
 #### Configuration files
 
-It is possible to test the contents of a custom configuration `.toml` file. For example:
+It is possible to test the content of a custom configuration `.toml` file. Refer to the section [Configuration](#configuration) to set up a tamplate with personal `config.toml`. For example, it is possible to use:
 
 ``` sh
 ci-generate -c tests/repositories/config_template/config.toml meson -l=APL-1.0 -b=master tests/repositories/config_template/meson_template_config
 ```
-
-The previous command allows the creation of a `meson` template through the use of a configuration file. Through snapshot tests, it is possible to create a basic version of the snap and later verify any changes by rerunning the insta test command. 
+to create a meson template with a previously created configuration file.
 
 #### Templates
 

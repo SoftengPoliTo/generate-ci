@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use minijinja::value::Value;
 
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, path_validation,
-    BuildTemplate, CreateCi, error::Result
+    builtin_templates, compute_template, define_license, define_name, error::Result,
+    path_validation, BuildTemplate, CreateCi,
 };
 
 static YARN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["yarn" =>
@@ -37,10 +37,10 @@ impl CreateCi for Yarn {
         };
         let license = define_license(license)?;
         let template = Yarn.build(
-                project_path.as_path(),
-                project_name,
-                license.id(),
-                github_branch,
+            project_path.as_path(),
+            project_name,
+            license.id(),
+            github_branch,
         );
         compute_template(template, license, project_path.as_path())
     }

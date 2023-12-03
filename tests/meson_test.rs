@@ -23,5 +23,8 @@ fn test_meson() {
 #[test]
 fn test_meson_config() {
     compare_config_toml_wih_expected_one(&PathBuf::from(CONFIG_S), &PathBuf::from(CONFIG_R));
-    compare_template_output_with_expected_one(&PathBuf::from(SNAPSHOT_PATH_C), &PathBuf::from(REPO_C));
+    compare_template_output_with_expected_one(
+        &PathBuf::from(SNAPSHOT_PATH_C),
+        &PathBuf::from(REPO_C),
+    );
 }

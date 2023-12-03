@@ -1,0 +1,11 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+#include "Personal_Project.h"
+
+int main()
+{
+
+}
+

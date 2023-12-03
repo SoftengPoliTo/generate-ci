@@ -1,0 +1,4 @@
+#ifndef MESON_TEMPLATE_H
+#define MESON_TEMPLATE_H
+#endif // MESON_TEMPLATE_H
+

@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use minijinja::value::Value;
 
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, path_validation,
-    BuildTemplate, CreateProject, error::Result
+    builtin_templates, compute_template, define_license, define_name, error::Result,
+    path_validation, BuildTemplate, CreateProject,
 };
 
 static MAVEN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["maven" =>

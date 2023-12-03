@@ -273,7 +273,12 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("yarn");
             let data: CommonData = config.extract()?;
-            Ok(Yarn::new().create_ci(&data.name, &data.project_path, &data.license, &data.branch)?)
+            Ok(Yarn::new().create_ci(
+                &data.name,
+                &data.project_path,
+                &data.license,
+                &data.branch,
+            )?)
         }
         _ => unreachable!("unexpected command"),
     }

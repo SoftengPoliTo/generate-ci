@@ -1,15 +1,15 @@
 pub mod toolchain;
 pub use toolchain::*;
 
-mod filters;
 mod error;
-use error::{Error,Result};
+mod filters;
 
+use error::{Error, Result};
+use minijinja::value::Value;
+use minijinja::Environment;
 use std::collections::HashMap;
 use std::fs::{create_dir_all, write};
 use std::path::{Path, PathBuf};
-use minijinja::value::Value;
-use minijinja::Environment;
 use tracing::debug;
 
 use filters::*;
@@ -61,7 +61,7 @@ impl CiTemplate {
         // Create dirs
         for dir in dirs {
             debug!("Creating {}", dir.display());
-            match create_dir_all(dir){
+            match create_dir_all(dir) {
                 Ok(x) => x,
                 _ => return Err(Error::NoDirExists),
             }
@@ -77,20 +77,16 @@ impl CiTemplate {
                 Ok(x) => x,
                 _ => return Err(Error::TemplateNotFound),
             };
-            let filled_template = match template.render(&context){
-                Ok(x)=> x,
-                _ => return Err(Error::ContextError)
+            let filled_template = match template.render(&context) {
+                Ok(x) => x,
+                _ => return Err(Error::NoContext),
             };
-            write(path, filled_template);
+            let _ = write(path, filled_template);
         }
         Ok(())
     }
 
-    fn add_license(
-        &mut self,
-        license: &dyn license::License,
-        project_path: &Path,
-    ) -> Result<()> {
+    fn add_license(&mut self, license: &dyn license::License, project_path: &Path) -> Result<()> {
         let id = license.id();
         let header = license.header();
 
@@ -116,16 +112,12 @@ impl CiTemplate {
         self.context
             .insert("license", Value::from_serializable(&license_ctx));
 
-        self.env.add_template("build.license", license.text());
+        let _ = self.env.add_template("build.license", license.text());
 
         Ok(())
     }
 
-    fn add_reuse(
-        &mut self,
-        license: &dyn license::License,
-        project_path: &Path,
-    ) -> Result<()> {
+    fn add_reuse(&mut self, license: &dyn license::License, project_path: &Path) -> Result<()> {
         // Adds .reuse directory and dep5 file
         let reuse_path = project_path.join(".reuse");
         self.files.insert(reuse_path.join("dep5"), "dep5.reuse");
@@ -143,7 +135,7 @@ impl CiTemplate {
         self.context
             .insert("reuse", Value::from_serializable(&reuse));
 
-        self.env.add_template("dep5.reuse", REUSE_TEMPLATE);
+        let _ = self.env.add_template("dep5.reuse", REUSE_TEMPLATE);
 
         Ok(())
     }
@@ -196,19 +188,16 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
     environment
 }
 
-pub(crate) fn define_name<'a>(
-    project_name: &'a str,
-    project_path: &'a Path,
-) -> Result<&'a str> {
+pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
     if project_name.is_empty() {
         let os_name = project_path.file_name();
         let name = match os_name {
             Some(x) => x.to_str(),
-            None => return Err(Error::FileNameError),
+            None => return Err(Error::FileNameNotFound),
         };
         match name {
             Some(x) => Ok(x),
-            None => Err(Error::UTF8Error)
+            None => Err(Error::UTF8Check),
         }
     } else {
         Ok(project_name)
@@ -239,7 +228,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     let project_path = if project_path.starts_with("~") {
         let project_path = match expanduser(project_path.display().to_string()) {
             Ok(p) => p,
-            Err(_) => return Err(Error::ExpandError),
+            Err(_) => return Err(Error::ExpandUser),
         };
         project_path
     } else {
@@ -251,10 +240,10 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
             let project_path = std::fs::canonicalize(project_path);
             match project_path {
                 Ok(x) => Ok(x),
-                _ => Err(Error::CanonPathError),
+                _ => Err(Error::CanonicalPath),
             }
         }
-        _ => Err(Error::PathExistError),
+        _ => Err(Error::PathNotExist),
     }
 }
 
@@ -265,16 +254,16 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     let home = get_my_home();
     let mut home = match home {
         Ok(x) => match x {
-            Some(h) => h, 
-            None => Err(Error::HomeError),
+            Some(h) => h,
+            None => return Err(Error::HomeDir),
         },
-        _ => Err(Error::HomeError),
+        _ => return Err(Error::HomeDir),
     };
     // Path validation
-    let mut project_path = if project_path.starts_with(r#"~\"#){
+    let mut project_path = if project_path.starts_with(r#"~\"#) {
         let str = match project_path.to_str() {
             Some(s) => s,
-            None => return Err(Error::ExpandError),
+            None => return Err(Error::ExpandUser),
         };
         let str = str.replace("~\\", "");
         home.push(Path::new(&str));
@@ -283,10 +272,10 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         project_path.to_path_buf()
     };
     // extenduser in case of relative path
-    project_path = if project_path.is_relative(){
+    project_path = if project_path.is_relative() {
         let absolute_path = match std::fs::canonicalize(project_path) {
             Ok(ap) => ap,
-            Err(_) => return Err(Error::CanonPathError),
+            Err(_) => return Err(Error::CanonicalPath),
         };
         absolute_path
     } else {
@@ -297,14 +286,12 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         true => {
             let str = match project_path.to_str() {
                 Some(s) => s,
-                None => return Err(Error::UTF8Error),
+                None => return Err(Error::UTF8Check),
             };
             let str = str.replace(r#"\\?\"#, "");
             Ok(Path::new(&str).to_path_buf())
         }
-        false => {
-            Err(Error::PathExistError)
-        },
+        false => Err(Error::PathNotExist),
     }
 }
 
@@ -357,7 +344,7 @@ mod tests {
     }
     #[test]
     fn define_emptypath_test() {
-        assert_eq!(path_validation(Path::new("")), Err(Error::PathExistError))
+        assert_eq!(path_validation(Path::new("")), Err(Error::PathNotExist))
     }
     #[test]
     fn define_license_valid_test() {
@@ -365,11 +352,15 @@ mod tests {
     }
     #[test]
     fn define_license_invalid_test() {
-        assert_eq!(define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense), true)
+        assert_eq!(
+            define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense),
+            true
+        )
     }
     #[test]
     fn define_name_invalidpath_test() {
-        assert!(path_validation(Path::new("~/Desktop/Здравствуйте")).is_err_and(|x| x == Error::PathExistError));
+        assert!(path_validation(Path::new("~/Desktop/Здравствуйте"))
+            .is_err_and(|x| x == Error::PathNotExist));
     }
 
     #[test]

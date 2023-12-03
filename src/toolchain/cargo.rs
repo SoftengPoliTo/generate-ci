@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use minijinja::value::Value;
 
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, path_validation,
-    BuildTemplate, CreateCi, error::Result
+    builtin_templates, compute_template, define_license, define_name, error::Result,
+    path_validation, BuildTemplate, CreateCi,
 };
 
 static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
