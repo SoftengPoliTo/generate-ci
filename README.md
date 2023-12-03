@@ -95,6 +95,50 @@ $ ci-generate meson -l LGPL-2.1
 
 Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the command line.
 
+## Testing
+
+In ci-generate we use [insta] (https://insta.rs), a library of snapshots tests for Rust.
+The first time the command 
+
+``` sh
+cargo insta test 
+```
+
+is executed, snaps are created with the current content of the  files being tested, which will be considered as basic snapshots. 
+Once the basic snapshots have been created, you can run the previous command again to perform a content test by producing new snapshots that will then be compared with the basic snapshots.
+
+### Updating insta tests
+
+When the comparison is made between snaps, tests return a **failure** if there are changes from the base snap, or return a **success** if the two snaps coincide. 
+In case of failure, the command 
+
+``` sh
+cargo insta review --include-hidden
+```
+
+will allow you to review the differences between the two snaps and possibly accept the changes.
+
+With this in mind, it is possible to test a series of snapshots of different contents.
+
+#### Configuration files
+
+It is possible to test the contents of a custom configuration `.toml` file. For example:
+
+``` sh
+ci-generate -c tests/repositories/config_template/config.toml meson -l=APL-1.0 -b=master tests/repositories/config_template/meson_template_config
+```
+
+The previous command allows the creation of a `meson` template through the use of a configuration file. Through snapshot tests, it is possible to create a basic version of the snap and later verify any changes by rerunning the insta test command. 
+
+#### Templates
+
+It is possible to perform snapshot tests on the templates created. For example:  
+
+``` sh
+ci-generate cargo --docker-image-description=docker_image --license=EUPL-1.2 --name=Project --branch=main tests/repositories/cargo_template
+```
+The command mentioned above allows the creation of a `cargo` template. Through snapshot tests, it is possible to create a basic version of the snap and later verify any changes by rerunning the insta test command. 
+
 ## License
 
 Released under the [MIT License](LICENSES/MIT.txt).
