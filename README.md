@@ -104,7 +104,7 @@ The first time the command
 cargo insta test 
 ```
 
-When it is executed, snaps are created with the current content of the files being tested, which will be considered as basic snapshots. 
+is executed, snaps are created with the current content of the files being tested, which will be considered as basic snapshots. 
 Once the basic snapshots have been created, you can run the previous command again to perform a content test by producing new snapshots that will then be compared with the basic snapshots.
 
 ### Updating insta tests
