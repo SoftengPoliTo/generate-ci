@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# maven_template
+# tmp_template
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-maven_template's description
+tmp_template's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/maven_template/actions
-[codecov]: https://codecov.io/gh/<your-account>/maven_template
+[actions]: https://github.com/<your-account>/tmp_template/actions
+[codecov]: https://codecov.io/gh/<your-account>/tmp_template
 [license]: LICENSES/BSD-1-Clause.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/maven_template/workflows/maven_template/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/maven_template/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/tmp_template/workflows/tmp_template/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/tmp_template/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-BSD-1-Clause-blue.svg

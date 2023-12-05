@@ -4,7 +4,7 @@ expression: content
 ---
 # Project metadata
 project(
-    'meson_template', # Project name
+    'tmp_template', # Project name
     'c', # Programming language
     license: 'MIT', # Project license
     meson_version: '>= 0.49.0', # Allowed meson versions to build the project

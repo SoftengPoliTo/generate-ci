@@ -97,8 +97,8 @@ Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the comma
 
 ## Testing
 
-In ci-generate we use [insta] (https://insta.rs), a library of snapshots tests for Rust.
-The first time the command 
+We use [insta] (https://insta.rs), a library of snapshots tests for Rust.
+To run tests, launch the following command:
 
 ``` sh
 cargo insta test 

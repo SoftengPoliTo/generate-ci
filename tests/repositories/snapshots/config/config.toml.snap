@@ -1,10 +1,13 @@
 ---
 source: tests/common/mod.rs
-expression: content
+expression: DEFAULT_CONF
 ---
-[default]
-license = "EUPL-1.2"
-name = "Personal_Project"
 
-[meson]
-kind = "Cxx"
+    [default]
+    license = "MIT"
+    branch = "main"
+    name = ""
+
+    [meson]
+    kind = "c"
+

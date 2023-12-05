@@ -1,10 +1,11 @@
 pub mod toolchain;
 pub use toolchain::*;
 
-mod error;
+pub mod error;
+use error::{Error, Result};
+
 mod filters;
 
-use error::{Error, Result};
 use minijinja::value::Value;
 use minijinja::Environment;
 use std::collections::HashMap;
@@ -81,7 +82,7 @@ impl CiTemplate {
                 Ok(x) => x,
                 _ => return Err(Error::NoContext),
             };
-            let _ = write(path, filled_template);
+            write(path, filled_template);
         }
         Ok(())
     }
@@ -112,7 +113,7 @@ impl CiTemplate {
         self.context
             .insert("license", Value::from_serializable(&license_ctx));
 
-        let _ = self.env.add_template("build.license", license.text());
+        self.env.add_template("build.license", license.text());
 
         Ok(())
     }
@@ -135,7 +136,7 @@ impl CiTemplate {
         self.context
             .insert("reuse", Value::from_serializable(&reuse));
 
-        let _ = self.env.add_template("dep5.reuse", REUSE_TEMPLATE);
+        self.env.add_template("dep5.reuse", REUSE_TEMPLATE);
 
         Ok(())
     }
@@ -190,15 +191,11 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 
 pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
     if project_name.is_empty() {
-        let os_name = project_path.file_name();
-        let name = match os_name {
-            Some(x) => x.to_str(),
-            None => return Err(Error::FileNameNotFound),
-        };
-        match name {
+        let name = match project_path.file_name().and_then(|x| x.to_str()) {
             Some(x) => Ok(x),
             None => Err(Error::UTF8Check),
-        }
+        };
+        name
     } else {
         Ok(project_name)
     }
@@ -228,7 +225,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     let project_path = if project_path.starts_with("~") {
         let project_path = match expanduser(project_path.display().to_string()) {
             Ok(p) => p,
-            Err(_) => return Err(Error::ExpandUser),
+            Err(_) => return Err(Error::WrongExpandUser),
         };
         project_path
     } else {
@@ -263,7 +260,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     let mut project_path = if project_path.starts_with(r#"~\"#) {
         let str = match project_path.to_str() {
             Some(s) => s,
-            None => return Err(Error::ExpandUser),
+            None => return Err(Error::WrongExpandUser),
         };
         let str = str.replace("~\\", "");
         home.push(Path::new(&str));
@@ -352,9 +349,7 @@ mod tests {
     }
     #[test]
     fn define_license_invalid_test() {
-        assert!(
-            define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense)
-        )
+        assert!(define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense))
     }
     #[test]
     fn define_name_invalidpath_test() {

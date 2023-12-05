@@ -3,7 +3,7 @@ source: tests/common/mod.rs
 expression: content
 ---
 [tool.poetry]
-name = "Myprog"
+name = "tmp_template"
 version = "0.0"
 description = "Description of your tool"
 authors = ["Name Surname <name.surname@email.org>"]
@@ -15,9 +15,9 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3 :: Only",
 ]
-include = ["README.md", "LICENSE.md", "Myprog/data/*"]
+include = ["README.md", "LICENSE.md", "tmp_template/data/*"]
 packages = [
-    { include = "Myprog" },
+    { include = "tmp_template" },
 ]
 
 [tool.poetry.dependencies]

@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# Project
+# tmp_template
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-Project's description
+tmp_template's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/Project/actions
-[codecov]: https://codecov.io/gh/<your-account>/Project
-[license]: LICENSES/EUPL-1.2.txt
+[actions]: https://github.com/<your-account>/tmp_template/actions
+[codecov]: https://codecov.io/gh/<your-account>/tmp_template
+[license]: LICENSES/BSD-3-Clause.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/Project/workflows/Project/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/Project/branch/master/graph/badge.svg
-[license badge]: https://img.shields.io/badge/license-EUPL-1.2-blue.svg
+[actions badge]: https://github.com/<your-account>/tmp_template/workflows/tmp_template/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/tmp_template/branch/master/graph/badge.svg
+[license badge]: https://img.shields.io/badge/license-BSD-3-Clause-blue.svg

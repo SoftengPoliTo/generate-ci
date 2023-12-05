@@ -1,30 +1,25 @@
 mod common;
-
-use std::path::PathBuf;
-
 use common::*;
 
-const REPO: &str = "tests/repositories/yarn_template/";
+use ci_generate::error::Result;
+use std::{fs, path::Path};
+
+const REPO: &str = "tests/repositories/tmp_template/";
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/yarn/";
 
-const REPO_C: &str = "tests/repositories/config_template/meson_template_config/";
-const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/config/meson/";
-
-const CONFIG_R: &str = "tests/repositories/config_template/config.toml";
-const CONFIG_S: &str = "../repositories/snapshots/config/";
-
-// $ ci-generate yarn --license=Apache-2.0 --name=Test_Project --branch=main tests/repositories/yarn_template
 #[test]
 fn test_yarn() {
-    compare_template_output_with_expected_one(&PathBuf::from(SNAPSHOT_PATH), &PathBuf::from(REPO));
+    fs::create_dir(REPO).unwrap();
+    create_yarn_project().unwrap();
+    compare_template_output_with_expected_one(Path::new(SNAPSHOT_PATH), Path::new(REPO));
 }
 
-// $ ci-generate -c tests/repositories/config_template/config.toml yarn --license=Apache-2.0 --name=Test_Project --branch=main tests/repositories/config_template/yarn_template_config
-#[test]
-fn test_yarn_config() {
-    compare_config_toml_wih_expected_one(&PathBuf::from(CONFIG_S), &PathBuf::from(CONFIG_R));
-    compare_template_output_with_expected_one(
-        &PathBuf::from(SNAPSHOT_PATH_C),
-        &PathBuf::from(REPO_C),
-    );
+fn create_yarn_project() -> Result<()> {
+    ci_generate::CreateCi::create_ci(
+        &ci_generate::toolchain::yarn::Yarn::new(),
+        "",
+        std::path::Path::new(REPO),
+        "BSD-3-Clause",
+        "main",
+    )
 }

@@ -1,0 +1,11 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+#include "tmp_template.h"
+
+int main()
+{
+    return 0;
+}
+

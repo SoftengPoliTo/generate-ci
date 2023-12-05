@@ -1,0 +1,9 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+#ifndef TMP_TEMPLATE_H
+#define TMP_TEMPLATE_H
+#endif // TMP_TEMPLATE_H
+
+
