@@ -2,16 +2,6 @@ use std::{fs, path::Path};
 
 use walkdir::WalkDir;
 
-static DEFAULT_CONF: &str = r#"
-    [default]
-    license = "MIT"
-    branch = "main"
-    name = ""
-
-    [meson]
-    kind = "c"
-"#;
-
 pub fn compare_template_output_with_expected_one(snapshot_path: &Path, template_path: &Path) {
     for entry in WalkDir::new(template_path)
         .follow_links(true)
@@ -37,14 +27,5 @@ fn compare(snapshot_path: &Path, path: &Path, entry: &Path) {
         prepend_module_to_snapshot => false
     },{
         insta::assert_snapshot!(name, content);
-    });
-}
-
-pub fn compare_config_toml_wih_expected_one(snapshot_path: &Path) {
-    insta::with_settings!({
-        snapshot_path => snapshot_path,
-        prepend_module_to_snapshot => false
-    },{
-        insta::assert_snapshot!("config.toml", DEFAULT_CONF);
     });
 }

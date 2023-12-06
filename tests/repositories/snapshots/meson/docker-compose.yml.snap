@@ -1,0 +1,12 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+version: "3.9"
+services:
+  tests:
+    build: .
+    command: ./run_tests.sh
+    volumes:
+      - .:/src
+

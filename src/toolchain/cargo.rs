@@ -20,6 +20,17 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
     ("fuzz.target", "fuzz_target_1.rs")
 ];
 
+pub struct CargoData<'a> {
+    pub docker_image_description: &'a str
+}
+impl<'a> CargoData<'a> {
+    pub fn new(docker_image_description: &'a str) -> Self {
+        Self {
+            docker_image_description,
+        }
+    }
+}
+
 /// A cargo project data.
 #[derive(Default)]
 pub struct Cargo<'a>(&'a str);

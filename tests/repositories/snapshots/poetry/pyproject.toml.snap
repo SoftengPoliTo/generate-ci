@@ -1,0 +1,56 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+[tool.poetry]
+name = "Poetry-project"
+version = "0.0"
+description = "Description of your tool"
+authors = ["Name Surname <name.surname@email.org>"]
+repository = "https://url-to-your-repository.com"
+license = "MIT"
+classifiers = [
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3 :: Only",
+]
+include = ["README.md", "LICENSE.md", "Poetry-project/data/*"]
+packages = [
+    { include = "Poetry-project" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.1"
+pre-commit = "^3.0.4"
+black = "^23.1.0"
+isort = "^5.12.0"
+ruff = "^0.0.63"
+coverage = {extras = ["toml"], version = "^7.1.0"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.ruff]
+line-length = 79
+select = [
+    "F401",
+    "F403",
+]
+
+[tool.coverage.run]
+omit = [".*", "*/site-packages/*"]
+
+[tool.coverage.report]
+fail_under = 60

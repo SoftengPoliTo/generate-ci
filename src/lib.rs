@@ -18,6 +18,24 @@ use filters::*;
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
+
+pub struct CommonData<'a> {
+    pub license: &'a str,
+    pub branch: &'a str,
+    pub name: &'a str,
+    pub project_path: &'a Path ,
+}
+impl<'a> CommonData<'a> {
+    pub fn new(license: &'a str, branch: &'a str, name: &'a str, project_path: &'a Path) -> Self {
+        Self {
+            license,
+            branch,
+            name,
+            project_path,
+        }
+    }
+}
+
 /// Used to create a CI configuration for a project.
 pub trait CreateCi {
     /// Creates a new CI configuration for a project.
@@ -233,21 +251,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     } else {
         project_path.to_path_buf()
     };
-/*
-    match project_path.try_exists() {
-        Ok(true) => {
-            let project_path = std::fs::canonicalize(project_path);
-            match project_path {
-                Ok(x) => Ok(x),
-                _ => Err(Error::CanonicalPath),
-            }
-        }
-        _ => {
-            fs::create_dir(project_path.to_owned())?;
-            Ok(project_path)
-        },
-    }
-*/
+    
     if project_path.try_exists()? {
         let project_path = std::fs::canonicalize(project_path);
         match project_path {

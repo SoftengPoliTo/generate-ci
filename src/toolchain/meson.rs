@@ -36,6 +36,17 @@ pub enum ProjectKind {
     Cxx,
 }
 
+pub struct MesonData {
+    pub kind: ProjectKind,
+}
+impl MesonData {
+    pub fn new(kind: ProjectKind) -> Self {
+        Self {
+            kind
+        }
+    }
+}
+
 /// A meson project data.
 pub struct Meson(ProjectKind);
 
