@@ -97,7 +97,7 @@ Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the comma
 
 ## Testing
 
-We use [insta] (https://insta.rs), a library of snapshots tests for Rust.
+We use [insta] (https://insta.rs), a library of snapshots tests for Rust, as integration tests.
 To run tests, launch the following command:
 
 ``` sh

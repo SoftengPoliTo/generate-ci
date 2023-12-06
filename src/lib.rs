@@ -66,6 +66,7 @@ impl CiTemplate {
                 Ok(x) => x,
                 _ => return Err(Error::NoDirExists),
             }
+
         }
 
         env.add_filter("comment_license", comment_license);
@@ -82,7 +83,7 @@ impl CiTemplate {
                 Ok(x) => x,
                 _ => return Err(Error::NoContext),
             };
-            write(path, filled_template);
+            write(path, filled_template)?;
         }
         Ok(())
     }
@@ -113,7 +114,7 @@ impl CiTemplate {
         self.context
             .insert("license", Value::from_serializable(&license_ctx));
 
-        self.env.add_template("build.license", license.text());
+        self.env.add_template("build.license", license.text())?;
 
         Ok(())
     }
@@ -136,7 +137,7 @@ impl CiTemplate {
         self.context
             .insert("reuse", Value::from_serializable(&reuse));
 
-        self.env.add_template("dep5.reuse", REUSE_TEMPLATE);
+        self.env.add_template("dep5.reuse", REUSE_TEMPLATE)?;
 
         Ok(())
     }
@@ -221,6 +222,7 @@ pub(crate) fn compute_template(
 
 #[cfg(not(windows))]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
+    use std::fs;
     use expanduser::expanduser;
     let project_path = if project_path.starts_with("~") {
         let project_path = match expanduser(project_path.display().to_string()) {
@@ -231,7 +233,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     } else {
         project_path.to_path_buf()
     };
-
+/*
     match project_path.try_exists() {
         Ok(true) => {
             let project_path = std::fs::canonicalize(project_path);
@@ -240,8 +242,25 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
                 _ => Err(Error::CanonicalPath),
             }
         }
-        _ => Err(Error::PathNotExist),
+        _ => {
+            fs::create_dir(project_path.to_owned())?;
+            Ok(project_path)
+        },
     }
+*/
+    if project_path.try_exists()? {
+        let project_path = std::fs::canonicalize(project_path);
+        match project_path {
+            Ok(x) => Ok(x),
+            _ => Err(Error::CanonicalPath),
+        }
+    } else {
+        fs::create_dir(&project_path)?;
+        Ok(project_path)
+    }
+
+
+    
 }
 
 #[cfg(windows)]
@@ -278,7 +297,6 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     } else {
         project_path
     };
-    // checking the existence of the path derived
     match project_path.exists() {
         true => {
             let str = match project_path.to_str() {
@@ -290,6 +308,13 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         }
         false => Err(Error::PathNotExist),
     }
+    let str = match project_path.to_str() {
+        Some(s) => s,
+        None => return Err(Error::UTF8Check),
+    };
+    let str = str.replace(r#"\\?\"#, "");
+    
+    Ok(Path::new(&str).to_path_buf())
 }
 
 #[cfg(test)]
@@ -327,21 +352,17 @@ mod tests {
     // Test other lib internal functions
     #[test]
     fn define_name_valid_test() {
-        assert_eq!(
-            define_name("test-project", Path::new("~/Desktop/project")),
-            Ok("test-project")
+        assert!(
+            define_name("test-project", Path::new("~/Desktop/project")).is_ok()
         );
     }
     #[test]
     fn define_name_emptyname_test() {
-        assert_eq!(
-            define_name("", Path::new("~/Desktop/MyProject")),
-            Ok("MyProject")
-        );
+        assert!(define_name("", Path::new("~/Desktop/MyProject")).is_ok());
     }
     #[test]
-    fn define_emptypath_test() {
-        assert_eq!(path_validation(Path::new("")), Err(Error::PathNotExist))
+    fn emptypath_test() {
+        assert!(path_validation(Path::new("")).is_err())
     }
     #[test]
     fn define_license_valid_test() {
@@ -349,12 +370,11 @@ mod tests {
     }
     #[test]
     fn define_license_invalid_test() {
-        assert!(define_license("POL-3.0").is_err_and(|x| x == Error::NoLicense))
+        assert!(define_license("POL-3.0").is_err());
     }
     #[test]
     fn define_name_invalidpath_test() {
-        assert!(path_validation(Path::new("~/Desktop/Здравствуйте"))
-            .is_err_and(|x| x == Error::PathNotExist));
+        assert!(path_validation(Path::new("~/Desktop/Здравствуйте")).is_err());
     }
 
     #[test]

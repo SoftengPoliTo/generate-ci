@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 ///Error types
-#[derive(Debug, Error, PartialEq)]
+#[derive(Debug, Error)]
 pub enum Error {
     /// Wrong expansion to home directory.
     #[error("Wrong expansion")]
@@ -30,6 +30,12 @@ pub enum Error {
     /// Context not found
     #[error("Context not found")]
     NoContext,
+    /// A more generic I/O error.
+    #[error("I/O error")]
+    Io(#[from] std::io::Error),
+    /// A minijinja error
+    #[error("Minijinja error")]
+    MJ(#[from] minijinja::Error),
 }
 
 /// A specialized `Result` type.
