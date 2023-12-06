@@ -21,7 +21,7 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
 ];
 
 pub struct CargoData<'a> {
-    pub docker_image_description: &'a str
+    pub docker_image_description: &'a str,
 }
 impl<'a> CargoData<'a> {
     pub fn new(docker_image_description: &'a str) -> Self {

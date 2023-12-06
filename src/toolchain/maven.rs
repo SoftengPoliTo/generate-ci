@@ -21,13 +21,11 @@ const MAIN: &str = "main/java";
 const TESTS: &str = "test/java";
 
 pub struct MavenData<'a> {
-    pub group: &'a str
+    pub group: &'a str,
 }
 impl<'a> MavenData<'a> {
     pub fn new(group: &'a str) -> Self {
-        Self {
-            group,
-        }
+        Self { group }
     }
 }
 

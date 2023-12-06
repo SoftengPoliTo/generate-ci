@@ -41,9 +41,7 @@ pub struct MesonData {
 }
 impl MesonData {
     pub fn new(kind: ProjectKind) -> Self {
-        Self {
-            kind
-        }
+        Self { kind }
     }
 }
 

@@ -18,12 +18,11 @@ use filters::*;
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
-
 pub struct CommonData<'a> {
     pub license: &'a str,
     pub branch: &'a str,
     pub name: &'a str,
-    pub project_path: &'a Path ,
+    pub project_path: &'a Path,
 }
 impl<'a> CommonData<'a> {
     pub fn new(license: &'a str, branch: &'a str, name: &'a str, project_path: &'a Path) -> Self {
@@ -84,7 +83,6 @@ impl CiTemplate {
                 Ok(x) => x,
                 _ => return Err(Error::NoDirExists),
             }
-
         }
 
         env.add_filter("comment_license", comment_license);
@@ -240,8 +238,8 @@ pub(crate) fn compute_template(
 
 #[cfg(not(windows))]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
-    use std::fs;
     use expanduser::expanduser;
+    use std::fs;
     let project_path = if project_path.starts_with("~") {
         let project_path = match expanduser(project_path.display().to_string()) {
             Ok(p) => p,
@@ -251,7 +249,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     } else {
         project_path.to_path_buf()
     };
-    
+
     if project_path.try_exists()? {
         let project_path = std::fs::canonicalize(project_path);
         match project_path {
@@ -262,9 +260,6 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         fs::create_dir(&project_path)?;
         Ok(project_path)
     }
-
-
-    
 }
 
 #[cfg(windows)]
@@ -317,7 +312,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         None => return Err(Error::UTF8Check),
     };
     let str = str.replace(r#"\\?\"#, "");
-    
+
     Ok(Path::new(&str).to_path_buf())
 }
 
@@ -356,9 +351,7 @@ mod tests {
     // Test other lib internal functions
     #[test]
     fn define_name_valid_test() {
-        assert!(
-            define_name("test-project", Path::new("~/Desktop/project")).is_ok()
-        );
+        assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
     }
     #[test]
     fn define_name_emptyname_test() {
