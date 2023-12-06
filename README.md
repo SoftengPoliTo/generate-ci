@@ -109,7 +109,7 @@ We confidently use [insta] (https://insta.rs) as our integration tests, which is
 Insta serves the purpose of highlighting any content-level differences between two versions of the same file. This way, you can easily compare and contrast the two versions and make informed decisions based on the differences.
 
 In the tests folder, you can find several .rs files that enable you to set up tests for each template individually. 
-In this directory, two other subdirectories are located. The first is called 'common' and contains an .rs file. This particular file is responsible for using common code to run the tests for each model. This means that we use this file to simplify the testing process and avoid duplicating code on multiple models.
+In this directory, two other subdirectories are located. The first is called 'common' and contains an .rs file. This particular file is responsible for using common code to run the tests for each template. This means that we use this file to simplify the testing process and avoid duplicating code on multiple templates.
 The second subdirectory is located within the 'repositories' folder and is called 'snapshots'. It contains snapshots for all project templates and is used to identify future changes. 
 
 To execute the tests, launch the following command:
