@@ -97,46 +97,42 @@ Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the comma
 
 ## Testing
 
-We use [insta] (https://insta.rs), a library of snapshots tests for Rust, as integration tests.
-To run tests, launch the following command:
+There are two main types of testing: unit testing and integration testing.
+
+### Unit test
+
+We can ensure the proper functioning of each unit of code by incorporating unit tests in the library. The use of unit tests instills trust in the accuracy and dependability of our code, resulting in a superior end product.
+
+### Integration Test
+
+We confidently use [insta] (https://insta.rs) as our integration tests, which is a powerful library of snapshot tests for Rust.
+Insta serves the purpose of highlighting any content-level differences between two versions of the same file. This way, you can easily compare and contrast the two versions and make informed decisions based on the differences.
+
+In the tests folder, you can find several .rs files that enable you to set up tests for each template individually. 
+In this directory, two other subdirectories are located. The first is called 'common' and contains an .rs file. This particular file is responsible for using common code to run the tests for each model. This means that we use this file to simplify the testing process and avoid duplicating code on multiple models.
+The second subdirectory is located within the 'repositories' folder and is called 'snapshots'. It contains snapshots for all project templates and is used to identify future changes. 
+
+To execute the tests, launch the following command:
 
 ``` sh
-cargo insta test 
+cargo insta test --include-hidden
 ```
 
-is executed, snaps are created with the current content of the files being tested, which will be considered as basic snapshots. 
-Once the basic snapshots have been created, you can run the previous command again to perform a content test by producing new snapshots that will then be compared with the basic snapshots.
+When you run the command for the first time, you might notice that the tests return a failure. This is perfectly normal and expected as the snaps haven't been created yet. Including the "--include-hidden" option is crucial when working with templates that have hidden folders, as these folders also need to be captured in the process. This option ensures that all the hidden folders are included while taking a snapshot of the templates.
 
-### Updating insta tests
-
-When the comparison is made between snaps, tests return a **failure** if there are changes from the base snap, or return a **success** if the two snaps coincide. 
-In case of failure, the command 
+You can review the contents of each individual snap using this command
 
 ``` sh
 cargo insta review --include-hidden
 ```
 
-will allow you to review the differences between the two snaps and possibly accept the changes. The `--include-hidden` option is important to add in this context because it allows you to verify the snap of hidden files or folders, present in template creation for example.
-
-With this in mind, it is possible to test a series of snapshots of different contents.
-
-#### Configuration files
-
-It is possible to test the content of a custom configuration `.toml` file. Refer to the section [Configuration](#configuration) to set up a tamplate with personal `config.toml`. For example, it is possible to use:
+When running the review command, it is possible to manually accept, reject, or skip each snap that is generated. 
+However, if you want to automatically accept the generated snaps, you can add the "--accept" option at the end of the command while launching the tests, as follows
 
 ``` sh
-ci-generate -c tests/repositories/config_template/config.toml meson -l=APL-1.0 -b=master tests/repositories/config_template/meson_template_config
+cargo insta test --include-hidden --accept
 ```
-to create a meson template with a previously created configuration file.
-
-#### Templates
-
-It is possible to perform snapshot tests on the templates created. For example:  
-
-``` sh
-ci-generate cargo --docker-image-description=docker_image --license=EUPL-1.2 --name=Project --branch=main tests/repositories/cargo_template
-```
-The command mentioned above allows the creation of a `cargo` template. Through snapshot tests, it is possible to create a basic version of the snap and later verify any changes by rerunning the insta test command. 
+After creating the base snapshots, you can use the test command to generate new snapshots for comparison. Any differences between the new and previous snapshots will be displayed on the screen, allowing you to review and analyze the changes. In case no differences are found, insta will return a success message, indicating that there are no snapshots that require review.
 
 ## License
 
