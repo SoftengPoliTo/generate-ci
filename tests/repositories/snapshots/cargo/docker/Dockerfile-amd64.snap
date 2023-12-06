@@ -1,7 +1,0 @@
----
-source: tests/common/mod.rs
-expression: content
----
-FROM amd64/alpine
-ADD tmp_template /
-ENTRYPOINT ["/tmp_template"]

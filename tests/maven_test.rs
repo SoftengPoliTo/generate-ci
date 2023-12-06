@@ -1,25 +1,19 @@
 mod common;
-use common::*;
+use common::compare_template_output_with_expected_one;
 
-use ci_generate::error::Result;
-use std::{fs, path::Path};
+use ci_generate::{maven::Maven, CreateProject};
+use std::path::Path;
 
 const REPO: &str = "tests/repositories/tmp_template/";
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/maven/";
 
 #[test]
 fn test_maven() {
-    fs::create_dir(REPO).unwrap();
-    create_maven_project().unwrap();
+    Maven::new("group").create_project(
+        "", 
+        Path::new(REPO), 
+        "BSD-3-Clause", 
+        "main"
+    ).unwrap();
     compare_template_output_with_expected_one(Path::new(SNAPSHOT_PATH), Path::new(REPO));
-}
-
-fn create_maven_project() -> Result<()> {
-    ci_generate::CreateProject::create_project(
-        &ci_generate::toolchain::maven::Maven::new("GRO"),
-        "",
-        Path::new(REPO),
-        "BSD-1-Clause",
-        "main",
-    )
 }
