@@ -296,23 +296,12 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     } else {
         project_path
     };
-    match project_path.exists() {
-        true => {
-            let str = match project_path.to_str() {
-                Some(s) => s,
-                None => return Err(Error::UTF8Check),
-            };
-            let str = str.replace(r#"\\?\"#, "");
-            Ok(Path::new(&str).to_path_buf())
-        }
-        false => Err(Error::PathNotExist),
-    }
+
     let str = match project_path.to_str() {
         Some(s) => s,
         None => return Err(Error::UTF8Check),
     };
     let str = str.replace(r#"\\?\"#, "");
-
     Ok(Path::new(&str).to_path_buf())
 }
 

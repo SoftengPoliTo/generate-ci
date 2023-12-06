@@ -9,7 +9,7 @@ pub fn compare_template_output_with_expected_one(snapshot_path: &Path, template_
         .filter_map(|e| e.ok())
     {
         if entry.path().is_file() {
-            compare(snapshot_path, template_path, &entry.path());
+            compare(snapshot_path, template_path, entry.path());
         }
     }
     fs::remove_dir_all(template_path).unwrap();
