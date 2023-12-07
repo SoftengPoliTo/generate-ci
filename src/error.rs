@@ -9,9 +9,6 @@ pub enum Error {
     /// Impossible to canonicalize this path.
     #[error("Canonicalization failure")]
     CanonicalPath,
-    /// Path does not exists .
-    #[error("Non-existent Path")]
-    PathNotExist,
     /// Unable to retrieve the home directory.
     #[error("Home directory failure")]
     HomeDir,

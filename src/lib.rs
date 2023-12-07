@@ -250,15 +250,13 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         project_path.to_path_buf()
     };
 
-    if project_path.try_exists()? {
-        let project_path = std::fs::canonicalize(project_path);
-        match project_path {
-            Ok(x) => Ok(x),
-            _ => Err(Error::CanonicalPath),
-        }
-    } else {
+    if !project_path.try_exists()? {
         fs::create_dir(&project_path)?;
-        Ok(project_path)
+    }
+    let project_path = std::fs::canonicalize(project_path);
+    match project_path {
+        Ok(x) => Ok(x),
+        _ => Err(Error::CanonicalPath),
     }
 }
 
@@ -298,11 +296,13 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     };
 
     let str = match project_path.to_str() {
-        Some(s) => s,
+        Some(s) => {
+            s.replace(r#"\\?\"#, "");
+            Ok(Path::new(&s).to_path_buf())
+        }
         None => return Err(Error::UTF8Check),
     };
-    let str = str.replace(r#"\\?\"#, "");
-    Ok(Path::new(&str).to_path_buf())
+    str
 }
 
 #[cfg(test)]
