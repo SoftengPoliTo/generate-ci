@@ -5,15 +5,16 @@ use ci_generate::{
     cargo::{Cargo, CargoData},
     CommonData, CreateCi,
 };
+use std::env::temp_dir;
 use std::path::Path;
 
-const REPO: &str = "tests/repositories/tmp_template/";
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/cargo/";
 
 #[test]
 fn test_cargo() {
+    let tmp_dir = temp_dir().join("cargo");
     let cargo_data = CargoData::new("description-docker");
-    let common_data = CommonData::new("MIT", "master", "", Path::new(REPO));
+    let common_data = CommonData::new("MIT", "master", "", &tmp_dir);
     Cargo::new(cargo_data.docker_image_description)
         .create_ci(
             common_data.name,
@@ -22,5 +23,5 @@ fn test_cargo() {
             common_data.branch,
         )
         .unwrap();
-    compare_template(Path::new(SNAPSHOT_PATH), Path::new(REPO));
+    compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);
 }

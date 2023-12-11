@@ -2,14 +2,15 @@ mod common;
 use common::compare_template;
 
 use ci_generate::{poetry::Poetry, CommonData, CreateProject};
+use std::env::temp_dir;
 use std::path::Path;
 
-const REPO: &str = "tests/repositories/tmp_template/";
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/poetry/";
 
 #[test]
 fn test_poetry() {
-    let poetry_data = CommonData::new("MIT", "main", "Poetry-project", Path::new(REPO));
+    let tmp_dir = temp_dir().join("poetry");
+    let poetry_data = CommonData::new("MIT", "main", "Poetry-project", &tmp_dir);
     Poetry::new()
         .create_project(
             poetry_data.name,
@@ -19,5 +20,5 @@ fn test_poetry() {
         )
         .unwrap();
 
-    compare_template(Path::new(SNAPSHOT_PATH), Path::new(REPO));
+    compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);
 }

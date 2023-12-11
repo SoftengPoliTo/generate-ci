@@ -5,15 +5,16 @@ use ci_generate::{
     meson::{Meson, MesonData, ProjectKind},
     CommonData, CreateProject,
 };
+use std::env::temp_dir;
 use std::path::Path;
 
-const REPO: &str = "tests/repositories/tmp_template/";
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/meson/";
 
 #[test]
 fn test_meson() {
+    let tmp_dir = temp_dir().join("meson");
     let meson_data = MesonData::new(ProjectKind::Cxx);
-    let common_data = CommonData::new("BSD-1-Clause", "main", "Meson-project", Path::new(REPO));
+    let common_data = CommonData::new("BSD-1-Clause", "main", "Meson-project", &tmp_dir);
     Meson::new(meson_data.kind)
         .create_project(
             common_data.name,
@@ -22,5 +23,5 @@ fn test_meson() {
             common_data.branch,
         )
         .unwrap();
-    compare_template(Path::new(SNAPSHOT_PATH), Path::new(REPO));
+    compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);
 }

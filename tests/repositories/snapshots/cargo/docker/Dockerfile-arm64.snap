@@ -3,5 +3,5 @@ source: tests/common/mod.rs
 expression: content
 ---
 FROM arm64v8/alpine
-ADD tmp_template /
-ENTRYPOINT ["/tmp_template"]
+ADD cargo /
+ENTRYPOINT ["/cargo"]

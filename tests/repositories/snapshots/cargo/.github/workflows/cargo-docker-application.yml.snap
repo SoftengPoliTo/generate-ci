@@ -2,7 +2,7 @@
 source: tests/common/mod.rs
 expression: content
 ---
-name: tmp_template-docker-app
+name: cargo-docker-app
 
 on:
   push:
@@ -60,7 +60,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "tmp_template-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -86,15 +86,15 @@ jobs:
         cross clean
         cross build --release --target x86_64-unknown-linux-musl
         mkdir -p x86_64-unknown-linux-musl
-        cp target/x86_64-unknown-linux-musl/release/tmp_template x86_64-unknown-linux-musl/
+        cp target/x86_64-unknown-linux-musl/release/cargo x86_64-unknown-linux-musl/
 
     - name: Produce manifest
       id: manifest
       run: |
         # Produce manifest
-        manifest -b target/x86_64-unknown-linux-musl/release/tmp_template -l 0.1 -o tmp_template.json
+        manifest -b target/x86_64-unknown-linux-musl/release/cargo -l 0.1 -o cargo.json
         # Save json in a temporary variable
-        MANIFEST_JSON=$(jq -c '.' tmp_template.json)
+        MANIFEST_JSON=$(jq -c '.' cargo.json)
         # Save json in an environment variable
         echo "value=$MANIFEST_JSON" >> $GITHUB_OUTPUT
 
@@ -105,7 +105,7 @@ jobs:
         cross clean
         cross build --release --target aarch64-unknown-linux-musl
         mkdir -p aarch64-unknown-linux-musl
-        cp target/aarch64-unknown-linux-musl/release/tmp_template aarch64-unknown-linux-musl/
+        cp target/aarch64-unknown-linux-musl/release/cargo aarch64-unknown-linux-musl/
 
     - name: Get tag
       id: tag
@@ -133,8 +133,8 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: |
-          ghcr.io//tmp_template-amd64:${{ steps.tag.outputs.value }}
-          ghcr.io//tmp_template-amd64:latest
+          ghcr.io//cargo-amd64:${{ steps.tag.outputs.value }}
+          ghcr.io//cargo-amd64:latest
         labels: |
           org.opencontainers.image.description=description-docker
           software.quality=${{ steps.coverage.outputs.value }}
@@ -148,8 +148,8 @@ jobs:
         platforms: linux/arm64
         push: true
         tags: |
-          ghcr.io//tmp_template-arm64:${{ steps.tag.outputs.value }}
-          ghcr.io//tmp_template-arm64:latest
+          ghcr.io//cargo-arm64:${{ steps.tag.outputs.value }}
+          ghcr.io//cargo-arm64:latest
         labels: |
           org.opencontainers.image.description=description-docker
           software.quality=${{ steps.coverage.outputs.value }}

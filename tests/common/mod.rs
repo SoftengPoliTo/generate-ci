@@ -12,7 +12,6 @@ pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
             compare(snapshot_path, template_path, entry.path());
         }
     }
-    fs::remove_dir_all(template_path).unwrap();
 }
 
 fn compare(snapshot_path: &Path, path: &Path, entry: &Path) {

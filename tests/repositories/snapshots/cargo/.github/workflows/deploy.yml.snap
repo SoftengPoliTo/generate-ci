@@ -23,7 +23,7 @@ jobs:
       with:
         toolchain: stable
 
-    - name: Build tmp_template
+    - name: Build cargo
       run: |
         cargo build --release
 
@@ -39,9 +39,9 @@ jobs:
       shell: bash
       run: |
         ARCHIVE_TARGET="x86_64-pc-windows-msvc"
-        ARCHIVE_NAME="tmp_template-${{ steps.tagName.outputs.tag }}-$ARCHIVE_TARGET"
+        ARCHIVE_NAME="cargo-${{ steps.tagName.outputs.tag }}-$ARCHIVE_TARGET"
         ARCHIVE_FILE="${ARCHIVE_NAME}.zip"
-        7z a ${ARCHIVE_FILE} ./target/release/tmp_template.exe
+        7z a ${ARCHIVE_FILE} ./target/release/cargo.exe
         echo "file=$ARCHIVE_FILE" >> $GITHUB_OUTPUT
         echo "name=$ARCHIVE_NAME.zip" >> $GITHUB_OUTPUT
 
@@ -78,7 +78,7 @@ jobs:
       run: |
         sudo apt-get install musl-tools
 
-    - name: Build tmp_template
+    - name: Build cargo
       run: |
         # TODO: Remember to add RUSTFLAGS=+crt-static for musl target when
         # static linkage will not be the default behaviour
@@ -86,7 +86,7 @@ jobs:
 
     - name: Strip binary
       run: |
-        strip target/${{ matrix.target }}/release/tmp_template
+        strip target/${{ matrix.target }}/release/cargo
 
     - name: Get the version
       id: tagName
@@ -97,9 +97,9 @@ jobs:
     - name: Build package
       id: package
       run: |
-        TAR_FILE=tmp_template-${{ steps.tagName.outputs.tag }}-${{ matrix.target }}
+        TAR_FILE=cargo-${{ steps.tagName.outputs.tag }}-${{ matrix.target }}
         cd target/${{ matrix.target }}/release
-        tar -czvf $GITHUB_WORKSPACE/$TAR_FILE.tar.gz tmp_template
+        tar -czvf $GITHUB_WORKSPACE/$TAR_FILE.tar.gz cargo
         echo "name=$TAR_FILE" >> $GITHUB_OUTPUT
         echo "file=$TAR_FILE.tar.gz" >> $GITHUB_OUTPUT
 
