@@ -31,8 +31,8 @@ mod tests {
     fn comment_license_test() {
         assert!(comment_license(
             &Environment::new().empty_state(),
-            String::from("value"),
-            String::from("comment_char")
+            "value".to_owned(),
+            "comment_char".to_owned()
         )
         .is_ok())
     }
@@ -40,7 +40,7 @@ mod tests {
     #[test]
     fn hypens_to_underscores_test() {
         assert!(
-            hypens_to_underscores(&Environment::new().empty_state(), String::from("value")).is_ok()
+            hypens_to_underscores(&Environment::new().empty_state(), "value".to_owned()).is_ok()
         )
     }
 }

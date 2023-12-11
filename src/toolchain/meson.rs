@@ -28,25 +28,20 @@ static MESON_TEMPLATES: &[(&str, &str)] = &builtin_templates!["meson" =>
 ];
 
 /// Kind of a meson project.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub enum ProjectKind {
     /// C-language project
+    #[default]
     C,
     /// C++-language project
     Cxx,
 }
 
-pub struct MesonData {
-    pub kind: ProjectKind,
-}
-impl MesonData {
-    pub fn new(kind: ProjectKind) -> Self {
-        Self { kind }
-    }
-}
-
+#[derive(Default)]
 /// A meson project data.
-pub struct Meson(ProjectKind);
+pub struct Meson {
+    kind: ProjectKind,
+}
 
 impl CreateProject for Meson {
     fn create_project(
@@ -56,15 +51,9 @@ impl CreateProject for Meson {
         license: &str,
         github_branch: &str,
     ) -> Result<()> {
-        let project_path = match path_validation(project_path) {
-            Ok(x) => x,
-            Err(e) => return Err(e),
-        };
+        let project_path = path_validation(project_path)?;
 
-        let project_name = match define_name(project_name, project_path.as_path()) {
-            Ok(x) => x,
-            Err(e) => return Err(e),
-        };
+        let project_name = define_name(project_name, project_path.as_path())?;
         let license = define_license(license)?;
         let template = self.build(
             project_path.as_path(),
@@ -75,11 +64,18 @@ impl CreateProject for Meson {
         compute_template(template, license, project_path.as_path())
     }
 }
-
 impl Meson {
     /// Creates a new `Meson` instance.
-    pub fn new(kind: ProjectKind) -> Self {
-        Self(kind)
+    pub fn new() -> Self {
+        Self {
+            kind: ProjectKind::C,
+        }
+    }
+
+    /// Sets the language
+    pub fn kind(mut self, kind: ProjectKind) -> Self {
+        self.kind = kind;
+        self
     }
 
     // Build a map Path <-> template
@@ -140,7 +136,7 @@ impl BuildTemplate for Meson {
         HashMap<&'static str, Value>,
     ) {
         let mut context = HashMap::new();
-        let (ext, params) = match self.0 {
+        let (ext, params) = match self.kind {
             ProjectKind::C => ("c", "c_std=c99"),
             ProjectKind::Cxx => ("cpp", "cpp_std=c++11"),
         };
