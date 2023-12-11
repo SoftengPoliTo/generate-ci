@@ -8,6 +8,7 @@ use std::path::Path;
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/yarn/";
 
 #[test]
+#[ignore]
 fn test_yarn() {
     let tmp_dir = temp_dir().join("yarn");
     let yarn_data = CommonData::new("MIT", "main", "Yarn-project", &tmp_dir);

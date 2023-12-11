@@ -20,17 +20,10 @@ static MAVEN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["maven" =>
 const MAIN: &str = "main/java";
 const TESTS: &str = "test/java";
 
-pub struct MavenData<'a> {
-    pub group: &'a str,
-}
-impl<'a> MavenData<'a> {
-    pub fn new(group: &'a str) -> Self {
-        Self { group }
-    }
-}
-
 /// A maven project.
-pub struct Maven<'a>(&'a str);
+pub struct Maven<'a> {
+    group: &'a str,
+}
 
 impl<'a> CreateProject for Maven<'a> {
     fn create_project(
@@ -59,10 +52,21 @@ impl<'a> CreateProject for Maven<'a> {
     }
 }
 
+impl<'a> Default for Maven<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a> Maven<'a> {
     /// Creates a new `Maven` instance.
-    pub fn new(group: &'a str) -> Self {
-        Self(group)
+    pub fn new() -> Self {
+        Self { group: "group" }
+    }
+    /// Sets a group
+    pub fn group(mut self, group: &'a str) -> Self {
+        self.group = group;
+        self
     }
 
     fn project_structure(
@@ -112,10 +116,10 @@ impl<'a> BuildTemplate for Maven<'a> {
 
         context.insert("name", Value::from_serializable(&project_name));
         context.insert("branch", Value::from_serializable(&github_branch));
-        context.insert("group", Value::from_serializable(&self.0));
+        context.insert("group", Value::from_serializable(&self.group));
         context.insert("license_id", Value::from_serializable(&license));
 
-        let (files, dirs) = Maven::project_structure(project_path, self.0, project_name);
+        let (files, dirs) = Maven::project_structure(project_path, self.group, project_name);
 
         (files, dirs, context)
     }

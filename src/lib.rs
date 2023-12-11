@@ -510,7 +510,7 @@ mod tests {
 
     // Tests for BildTemplate trait - Maven
     fn create_maven() -> Maven<'static> {
-        Maven::new("group_name")
+        Maven::new().group("group_name")
     }
 
     #[test]
@@ -559,7 +559,7 @@ mod tests {
 
     // Tests for BildTemplate trait - Cargo
     fn create_cargo() -> Cargo<'static> {
-        Cargo::new("docker_image_description")
+        Cargo::new().docker_image_description("description")
     }
 
     #[test]

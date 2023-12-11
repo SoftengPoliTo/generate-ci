@@ -1,10 +1,7 @@
 mod common;
 use common::compare_template;
 
-use ci_generate::{
-    maven::{Maven, MavenData},
-    CommonData, CreateProject,
-};
+use ci_generate::{maven::Maven, CommonData, CreateProject};
 use std::env::temp_dir;
 use std::path::Path;
 
@@ -13,9 +10,9 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/maven/";
 #[test]
 fn test_maven() {
     let tmp_dir = temp_dir().join("maven");
-    let maven_data = MavenData::new("POL");
+    let maven_data = Maven::new().group("POL");
     let common_data = CommonData::new("BSD-1-Clause", "main", "Maven-project", &tmp_dir);
-    Maven::new(maven_data.group)
+    maven_data
         .create_project(
             common_data.name,
             common_data.project_path,

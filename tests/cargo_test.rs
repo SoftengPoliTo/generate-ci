@@ -1,10 +1,7 @@
 mod common;
 use common::compare_template;
 
-use ci_generate::{
-    cargo::{Cargo, CargoData},
-    CommonData, CreateCi,
-};
+use ci_generate::{cargo::Cargo, CommonData, CreateCi};
 use std::env::temp_dir;
 use std::path::Path;
 
@@ -13,9 +10,9 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/cargo/";
 #[test]
 fn test_cargo() {
     let tmp_dir = temp_dir().join("cargo");
-    let cargo_data = CargoData::new("description-docker");
+    let cargo_data = Cargo::new().docker_image_description("description-docker");
     let common_data = CommonData::new("MIT", "master", "", &tmp_dir);
-    Cargo::new(cargo_data.docker_image_description)
+    cargo_data
         .create_ci(
             common_data.name,
             common_data.project_path,

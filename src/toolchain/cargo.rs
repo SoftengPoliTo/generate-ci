@@ -20,20 +20,11 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
     ("fuzz.target", "fuzz_target_1.rs")
 ];
 
-pub struct CargoData<'a> {
-    pub docker_image_description: &'a str,
-}
-impl<'a> CargoData<'a> {
-    pub fn new(docker_image_description: &'a str) -> Self {
-        Self {
-            docker_image_description,
-        }
-    }
-}
-
 /// A cargo project data.
 #[derive(Default)]
-pub struct Cargo<'a>(&'a str);
+pub struct Cargo<'a> {
+    docker_image_description: &'a str,
+}
 
 impl<'a> CreateCi for Cargo<'a> {
     fn create_ci(
@@ -64,8 +55,15 @@ impl<'a> CreateCi for Cargo<'a> {
 
 impl<'a> Cargo<'a> {
     /// Creates a new `Cargo` instance.
-    pub fn new(docker_image_description: &'a str) -> Self {
-        Self(docker_image_description)
+    pub fn new() -> Self {
+        Self {
+            docker_image_description: "default",
+        }
+    }
+    /// Sets a description
+    pub fn docker_image_description(mut self, docker_image_description: &'a str) -> Self {
+        self.docker_image_description = docker_image_description;
+        self
     }
 
     fn project_structure(
@@ -126,7 +124,7 @@ impl<'a> BuildTemplate for Cargo<'a> {
         context.insert("license_id", Value::from_serializable(&license));
         context.insert(
             "docker_image_description",
-            Value::from_serializable(&self.0),
+            Value::from_serializable(&self.docker_image_description),
         );
 
         let (files, dirs) = Cargo::project_structure(project_path, project_name);
