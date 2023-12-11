@@ -18,10 +18,10 @@ fn test_poetry() {
 
     Poetry::new()
         .create_project(
-            common_data.name,
-            common_data.project_path,
-            common_data.license,
-            common_data.branch,
+            common_data.get_name(),
+            common_data.get_path(),
+            common_data.get_license(),
+            common_data.get_branch(),
         )
         .unwrap();
 
