@@ -46,7 +46,9 @@ impl MesonData {
 }
 
 /// A meson project data.
-pub struct Meson(ProjectKind);
+pub struct Meson {
+    kind: ProjectKind,
+}
 
 impl CreateProject for Meson {
     fn create_project(
@@ -76,10 +78,24 @@ impl CreateProject for Meson {
     }
 }
 
+impl Default for Meson {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Meson {
     /// Creates a new `Meson` instance.
-    pub fn new(kind: ProjectKind) -> Self {
-        Self(kind)
+    pub fn new() -> Self {
+        Self {
+            kind: ProjectKind::C,
+        }
+    }
+
+    /// Sets the language
+    pub fn kind(mut self, kind: ProjectKind) -> Self {
+        self.kind = kind;
+        self
     }
 
     // Build a map Path <-> template
@@ -140,7 +156,7 @@ impl BuildTemplate for Meson {
         HashMap<&'static str, Value>,
     ) {
         let mut context = HashMap::new();
-        let (ext, params) = match self.0 {
+        let (ext, params) = match self.kind {
             ProjectKind::C => ("c", "c_std=c99"),
             ProjectKind::Cxx => ("cpp", "cpp_std=c++11"),
         };

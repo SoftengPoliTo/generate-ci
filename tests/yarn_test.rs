@@ -8,17 +8,20 @@ use std::path::Path;
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/yarn/";
 
 #[test]
-#[ignore]
 fn test_yarn() {
     let tmp_dir = temp_dir().join("yarn");
-    let yarn_data = CommonData::new("MIT", "main", "Yarn-project", &tmp_dir);
+    let common_data = CommonData::new()
+        .license("MIT")
+        .branch("main")
+        .name("Yarn-project")
+        .project_path(&tmp_dir);
 
     Yarn::new()
         .create_ci(
-            yarn_data.name,
-            yarn_data.project_path,
-            yarn_data.license,
-            yarn_data.branch,
+            common_data.name,
+            common_data.project_path,
+            common_data.license,
+            common_data.branch,
         )
         .unwrap();
 

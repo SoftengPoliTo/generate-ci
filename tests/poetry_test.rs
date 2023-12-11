@@ -8,16 +8,20 @@ use std::path::Path;
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/poetry/";
 
 #[test]
-#[ignore]
 fn test_poetry() {
     let tmp_dir = temp_dir().join("poetry");
-    let poetry_data = CommonData::new("MIT", "main", "Poetry-project", &tmp_dir);
+    let common_data = CommonData::new()
+        .license("MIT")
+        .branch("main")
+        .name("Poetry-project")
+        .project_path(&tmp_dir);
+
     Poetry::new()
         .create_project(
-            poetry_data.name,
-            poetry_data.project_path,
-            poetry_data.license,
-            poetry_data.branch,
+            common_data.name,
+            common_data.project_path,
+            common_data.license,
+            common_data.branch,
         )
         .unwrap();
 

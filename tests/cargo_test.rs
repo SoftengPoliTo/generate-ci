@@ -11,7 +11,11 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/cargo/";
 fn test_cargo() {
     let tmp_dir = temp_dir().join("cargo");
     let cargo_data = Cargo::new().docker_image_description("description-docker");
-    let common_data = CommonData::new("MIT", "master", "", &tmp_dir);
+    let common_data = CommonData::new()
+        .license("MIT")
+        .branch("master")
+        .project_path(&tmp_dir);
+
     cargo_data
         .create_ci(
             common_data.name,

@@ -24,14 +24,40 @@ pub struct CommonData<'a> {
     pub name: &'a str,
     pub project_path: &'a Path,
 }
+impl<'a> Default for CommonData<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 impl<'a> CommonData<'a> {
-    pub fn new(license: &'a str, branch: &'a str, name: &'a str, project_path: &'a Path) -> Self {
+    /// Creates a new `Common` instance.
+    pub fn new() -> Self {
         Self {
-            license,
-            branch,
-            name,
-            project_path,
+            license: "MIT",
+            branch: "main",
+            name: "",
+            project_path: Path::new("~"),
         }
+    }
+    /// Sets a new license.
+    pub fn license(mut self, license: &'a str) -> Self {
+        self.license = license;
+        self
+    }
+    /// Sets a new branch.
+    pub fn branch(mut self, branch: &'a str) -> Self {
+        self.branch = branch;
+        self
+    }
+    /// Sets a new project_name.
+    pub fn name(mut self, name: &'a str) -> Self {
+        self.name = name;
+        self
+    }
+    /// Sets a new project path.
+    pub fn project_path(mut self, project_path: &'a Path) -> Self {
+        self.project_path = project_path;
+        self
     }
 }
 
@@ -460,7 +486,7 @@ mod tests {
 
     // Tests for BildTemplate trait - Meson
     fn create_meson() -> Meson {
-        Meson::new(meson::ProjectKind::C)
+        Meson::new().kind(meson::ProjectKind::C)
     }
 
     #[test]

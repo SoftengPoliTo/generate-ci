@@ -251,7 +251,7 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<MesonData>::globals(matches.clone()))
                 .select("meson");
             let data: MesonData = config.extract()?;
-            Ok(Meson::new(data.kind).create_project(
+            Ok(Meson::new().kind(data.kind).create_project(
                 &data.common.name,
                 &data.common.project_path,
                 &data.common.license,

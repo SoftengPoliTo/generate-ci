@@ -11,7 +11,12 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/maven/";
 fn test_maven() {
     let tmp_dir = temp_dir().join("maven");
     let maven_data = Maven::new().group("POL");
-    let common_data = CommonData::new("BSD-1-Clause", "main", "Maven-project", &tmp_dir);
+    let common_data = CommonData::new()
+        .license("BSD-1-Clause")
+        .branch("main")
+        .name("Maven-project")
+        .project_path(&tmp_dir);
+
     maven_data
         .create_project(
             common_data.name,
