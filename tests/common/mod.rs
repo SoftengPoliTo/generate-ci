@@ -12,6 +12,7 @@ pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
     }
 }
 
+
 fn compare(snapshot_path: &Path, path: &Path, entry: &Path) {
     let content = fs::read_to_string(entry).unwrap();
     let name = entry.file_name().and_then(|v| v.to_str());
