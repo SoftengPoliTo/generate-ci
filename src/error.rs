@@ -18,21 +18,21 @@ pub enum Error {
     /// License not found.
     #[error("License not found")]
     NoLicense,
-    /// Non-existent home directory
+    /// Non-existent home directory.
     #[error("Non-existent home directory")]
     NoDirExists,
-    /// Template not found
+    /// Template not found.
     #[error("Template not found")]
     TemplateNotFound,
-    /// Context not found
+    /// Context not found.
     #[error("Context not found")]
     NoContext,
     /// A more generic I/O error.
     #[error("I/O error")]
     Io(#[from] std::io::Error),
-    /// A minijinja error
+    /// A minijinja error.
     #[error("Minijinja error")]
-    MJ(#[from] minijinja::Error),
+    Minijinja(#[from] minijinja::Error),
 }
 
 /// A specialized `Result` type.

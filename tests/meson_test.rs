@@ -1,5 +1,5 @@
 mod common;
-use common::compare_template_output_with_expected_one;
+use common::compare_template;
 
 use ci_generate::{
     meson::{Meson, MesonData, ProjectKind},
@@ -22,5 +22,5 @@ fn test_meson() {
             common_data.branch,
         )
         .unwrap();
-    compare_template_output_with_expected_one(Path::new(SNAPSHOT_PATH), Path::new(REPO));
+    compare_template(Path::new(SNAPSHOT_PATH), Path::new(REPO));
 }

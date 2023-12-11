@@ -2,7 +2,7 @@ use std::{fs, path::Path};
 
 use walkdir::WalkDir;
 
-pub fn compare_template_output_with_expected_one(snapshot_path: &Path, template_path: &Path) {
+pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
     for entry in WalkDir::new(template_path)
         .follow_links(true)
         .into_iter()
