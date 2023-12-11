@@ -39,19 +39,16 @@ impl<'a> TemplateData<'a> {
         self.license = license;
         self
     }
-
     /// Sets a new branch.
     pub fn branch(mut self, branch: &'a str) -> Self {
         self.branch = branch;
         self
     }
-
     /// Sets a new project_name.
     pub fn name(mut self, name: &'a str) -> Self {
         self.name = name;
         self
     }
-
     /// Sets a new project path.
     pub fn project_path(mut self, project_path: &'a Path) -> Self {
         self.project_path = project_path;
