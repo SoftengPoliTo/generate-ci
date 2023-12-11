@@ -1,7 +1,7 @@
 mod common;
 use common::compare_template;
 
-use ci_generate::{poetry::Poetry, CommonData, CreateProject};
+use ci_generate::{poetry::Poetry, CreateProject, TemplateData};
 use std::env::temp_dir;
 use std::path::Path;
 
@@ -10,18 +10,17 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/poetry/";
 #[test]
 fn test_poetry() {
     let tmp_dir = temp_dir().join("poetry");
-    let common_data = CommonData::new()
+    let data = TemplateData::new(&tmp_dir)
         .license("MIT")
         .branch("main")
-        .name("Poetry-project")
-        .project_path(&tmp_dir);
+        .name("Poetry-project");
 
     Poetry::new()
         .create_project(
-            common_data.get_name(),
-            common_data.get_path(),
-            common_data.get_license(),
-            common_data.get_branch(),
+            data.get_name(),
+            data.get_path(),
+            data.get_license(),
+            data.get_branch(),
         )
         .unwrap();
 

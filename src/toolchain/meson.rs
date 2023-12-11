@@ -28,23 +28,16 @@ static MESON_TEMPLATES: &[(&str, &str)] = &builtin_templates!["meson" =>
 ];
 
 /// Kind of a meson project.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub enum ProjectKind {
     /// C-language project
+    #[default]
     C,
     /// C++-language project
     Cxx,
 }
 
-pub struct MesonData {
-    pub kind: ProjectKind,
-}
-impl MesonData {
-    pub fn new(kind: ProjectKind) -> Self {
-        Self { kind }
-    }
-}
-
+#[derive(Default)]
 /// A meson project data.
 pub struct Meson {
     kind: ProjectKind,
@@ -77,13 +70,6 @@ impl CreateProject for Meson {
         compute_template(template, license, project_path.as_path())
     }
 }
-
-impl Default for Meson {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl Meson {
     /// Creates a new `Meson` instance.
     pub fn new() -> Self {

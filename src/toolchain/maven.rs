@@ -20,6 +20,7 @@ static MAVEN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["maven" =>
 const MAIN: &str = "main/java";
 const TESTS: &str = "test/java";
 
+#[derive(Default)]
 /// A maven project.
 pub struct Maven<'a> {
     group: &'a str,
@@ -51,13 +52,6 @@ impl<'a> CreateProject for Maven<'a> {
         compute_template(template, license, project_path.as_path())
     }
 }
-
-impl<'a> Default for Maven<'a> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl<'a> Maven<'a> {
     /// Creates a new `Maven` instance.
     pub fn new() -> Self {

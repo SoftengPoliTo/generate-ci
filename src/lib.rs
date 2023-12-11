@@ -18,25 +18,20 @@ use filters::*;
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
-pub struct CommonData<'a> {
+pub struct TemplateData<'a> {
     license: &'a str,
     branch: &'a str,
     name: &'a str,
     project_path: &'a Path,
 }
-impl<'a> Default for CommonData<'a> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-impl<'a> CommonData<'a> {
+impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
-    pub fn new() -> Self {
+    pub fn new(project_path: &'a Path) -> Self {
         Self {
             license: "MIT",
             branch: "main",
             name: "",
-            project_path: Path::new("~"),
+            project_path,
         }
     }
     /// Sets a new license.
