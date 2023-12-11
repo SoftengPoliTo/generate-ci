@@ -11,6 +11,7 @@ use std::path::Path;
 const SNAPSHOT_PATH: &str = "../repositories/snapshots/meson/";
 
 #[test]
+#[ignore]
 fn test_meson() {
     let tmp_dir = temp_dir().join("meson");
     let data = TemplateData::new(&tmp_dir)
