@@ -79,10 +79,7 @@ impl CiTemplate {
         // Create dirs
         for dir in dirs {
             debug!("Creating {}", dir.display());
-            match create_dir_all(dir) {
-                Ok(x) => x,
-                _ => return Err(Error::NoDirExists),
-            }
+            create_dir_all(dir)?;
         }
 
         env.add_filter("comment_license", comment_license);
@@ -91,14 +88,8 @@ impl CiTemplate {
         // Fill in templates
         for (path, template_name) in files {
             debug!("Creating {}", path.display());
-            let template = match env.get_template(template_name) {
-                Ok(x) => x,
-                _ => return Err(Error::TemplateNotFound),
-            };
-            let filled_template = match template.render(&context) {
-                Ok(x) => x,
-                _ => return Err(Error::NoContext),
-            };
+            let template = env.get_template(template_name)?;
+            let filled_template = template.render(&context)?;
             write(path, filled_template)?;
         }
         Ok(())
