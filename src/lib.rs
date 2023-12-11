@@ -18,20 +18,57 @@ use filters::*;
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
-pub struct CommonData<'a> {
-    pub license: &'a str,
-    pub branch: &'a str,
-    pub name: &'a str,
-    pub project_path: &'a Path,
+pub struct TemplateData<'a> {
+    license: &'a str,
+    branch: &'a str,
+    name: &'a str,
+    project_path: &'a Path,
 }
-impl<'a> CommonData<'a> {
-    pub fn new(license: &'a str, branch: &'a str, name: &'a str, project_path: &'a Path) -> Self {
+impl<'a> TemplateData<'a> {
+    /// Creates a new `Common` instance.
+    pub fn new(project_path: &'a Path) -> Self {
         Self {
-            license,
-            branch,
-            name,
+            license: "MIT",
+            branch: "main",
+            name: "",
             project_path,
         }
+    }
+    /// Sets a new license.
+    pub fn license(mut self, license: &'a str) -> Self {
+        self.license = license;
+        self
+    }
+    /// Gets the license.
+    pub fn get_license(&self) -> &'a str {
+        self.license
+    }
+    /// Sets a new branch.
+    pub fn branch(mut self, branch: &'a str) -> Self {
+        self.branch = branch;
+        self
+    }
+    /// Gets the branch.
+    pub fn get_branch(&self) -> &'a str {
+        self.branch
+    }
+    /// Sets a new project_name.
+    pub fn name(mut self, name: &'a str) -> Self {
+        self.name = name;
+        self
+    }
+    /// Gets the project name.
+    pub fn get_name(&self) -> &'a str {
+        self.name
+    }
+    /// Sets a new project path.
+    pub fn project_path(mut self, project_path: &'a Path) -> Self {
+        self.project_path = project_path;
+        self
+    }
+    /// Gets the project path.
+    pub fn get_path(&self) -> &'a Path {
+        self.project_path
     }
 }
 
@@ -460,7 +497,7 @@ mod tests {
 
     // Tests for BildTemplate trait - Meson
     fn create_meson() -> Meson {
-        Meson::new(meson::ProjectKind::C)
+        Meson::new().kind(meson::ProjectKind::C)
     }
 
     #[test]
@@ -510,7 +547,7 @@ mod tests {
 
     // Tests for BildTemplate trait - Maven
     fn create_maven() -> Maven<'static> {
-        Maven::new("group_name")
+        Maven::new().group("group_name")
     }
 
     #[test]
@@ -559,7 +596,7 @@ mod tests {
 
     // Tests for BildTemplate trait - Cargo
     fn create_cargo() -> Cargo<'static> {
-        Cargo::new("docker_image_description")
+        Cargo::new().docker_image_description("description")
     }
 
     #[test]

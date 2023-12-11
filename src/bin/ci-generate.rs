@@ -225,19 +225,21 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CargoData>::globals(matches.clone()))
                 .select("cargo");
             let data: CargoData = config.extract()?;
-            Ok(Cargo::new(&data.docker_image_description).create_ci(
-                &data.common.name,
-                &data.common.project_path,
-                &data.common.license,
-                &data.common.branch,
-            )?)
+            Ok(Cargo::new()
+                .docker_image_description(&data.docker_image_description)
+                .create_ci(
+                    &data.common.name,
+                    &data.common.project_path,
+                    &data.common.license,
+                    &data.common.branch,
+                )?)
         }
         ("maven", matches) => {
             let config = config
                 .merge(ClapSerialized::<MavenData>::globals(matches.clone()))
                 .select("maven");
             let data: MavenData = config.extract()?;
-            Ok(Maven::new(&data.group).create_project(
+            Ok(Maven::new().group(&data.group).create_project(
                 &data.common.name,
                 &data.common.project_path,
                 &data.common.license,
@@ -249,7 +251,7 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<MesonData>::globals(matches.clone()))
                 .select("meson");
             let data: MesonData = config.extract()?;
-            Ok(Meson::new(data.kind).create_project(
+            Ok(Meson::new().kind(data.kind).create_project(
                 &data.common.name,
                 &data.common.project_path,
                 &data.common.license,
