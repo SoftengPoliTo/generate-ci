@@ -26,15 +26,8 @@ impl CreateCi for Yarn {
         license: &str,
         github_branch: &str,
     ) -> Result<()> {
-        let project_path = match path_validation(project_path) {
-            Ok(x) => x,
-            Err(e) => return Err(e),
-        };
-
-        let project_name = match define_name(project_name, project_path.as_path()) {
-            Ok(x) => x,
-            Err(e) => return Err(e),
-        };
+        let project_path = path_validation(project_path)?;
+        let project_name = define_name(project_name, project_path.as_path())?;
         let license = define_license(license)?;
         let template = Yarn.build(
             project_path.as_path(),
