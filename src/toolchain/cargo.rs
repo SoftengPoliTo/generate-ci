@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 use minijinja::value::Value;
 
+use crate::TemplateData;
 use crate::{
     builtin_templates, compute_template, define_license, define_name, error::Result,
     path_validation, BuildTemplate, CreateCi,
@@ -29,19 +30,20 @@ pub struct Cargo<'a> {
 impl<'a> CreateCi for Cargo<'a> {
     fn create_ci(
         &self,
-        project_name: &str,
+        data: TemplateData,
+        /*project_name: &str,
         project_path: &Path,
         license: &str,
-        github_branch: &str,
+        github_branch: &str,*/
     ) -> Result<()> {
-        let project_path = path_validation(project_path)?;
-        let project_name = define_name(project_name, project_path.as_path())?;
-        let license = define_license(license)?;
+        let project_path = path_validation(data.get_path())?;
+        let project_name = define_name(data.get_name(), project_path.as_path())?;
+        let license = define_license(data.get_license())?;
         let template = self.build(
             project_path.as_path(),
             project_name,
             license.id(),
-            github_branch,
+            data.get_branch(),
         );
         compute_template(template, license, project_path.as_path())
     }

@@ -18,10 +18,11 @@ fn test_maven() {
     Maven::new()
         .group("POL")
         .create_project(
-            data.get_name(),
+            data
+            /*data.get_name(),
             data.get_path(),
             data.get_license(),
-            data.get_branch(),
+            data.get_branch(),*/
         )
         .unwrap();
     compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);

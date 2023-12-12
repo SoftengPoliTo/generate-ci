@@ -77,10 +77,11 @@ pub trait CreateCi {
     /// Creates a new CI configuration for a project.
     fn create_ci(
         &self,
-        project_name: &str,
+        data: TemplateData,
+        /*project_name: &str,
         project_path: &Path,
         license: &str,
-        github_branch: &str,
+        github_branch: &str,*/
     ) -> Result<()>;
 }
 
@@ -89,10 +90,11 @@ pub trait CreateProject {
     /// Creates a new project.
     fn create_project(
         &self,
-        project_name: &str,
+        data: TemplateData
+        /*project_name: &str,
         project_path: &Path,
         license: &str,
-        github_branch: &str,
+        github_branch: &str,*/
     ) -> Result<()>;
 }
 

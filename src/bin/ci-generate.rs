@@ -9,7 +9,7 @@ use figment::{Figment, Profile};
 use figment::{Metadata, Provider};
 use serde::{Deserialize, Serialize};
 
-use ci_generate::{CreateCi, CreateProject};
+use ci_generate::{CreateCi, CreateProject, TemplateData};
 
 use ci_generate::cargo::Cargo;
 use ci_generate::maven::Maven;
@@ -52,6 +52,7 @@ struct CommonData {
     #[clap(value_hint = clap::ValueHint::DirPath)]
     project_path: PathBuf,
 }
+
 
 static DEFAULT_CONF: &str = r#"
     [default]
@@ -225,13 +226,14 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CargoData>::globals(matches.clone()))
                 .select("cargo");
             let data: CargoData = config.extract()?;
+            let template = TemplateData::new(&data.common.project_path)
+            .branch(&data.common.branch)
+            .license(&data.common.license)
+            .name(&data.common.name);
             Ok(Cargo::new()
                 .docker_image_description(&data.docker_image_description)
                 .create_ci(
-                    &data.common.name,
-                    &data.common.project_path,
-                    &data.common.license,
-                    &data.common.branch,
+                    template
                 )?)
         }
         ("maven", matches) => {
@@ -239,11 +241,12 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<MavenData>::globals(matches.clone()))
                 .select("maven");
             let data: MavenData = config.extract()?;
+            let template = TemplateData::new(&data.common.project_path)
+            .branch(&data.common.branch)
+            .license(&data.common.license)
+            .name(&data.common.name);
             Ok(Maven::new().group(&data.group).create_project(
-                &data.common.name,
-                &data.common.project_path,
-                &data.common.license,
-                &data.common.branch,
+                template
             )?)
         }
         ("meson", matches) => {
@@ -251,11 +254,12 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<MesonData>::globals(matches.clone()))
                 .select("meson");
             let data: MesonData = config.extract()?;
+            let template = TemplateData::new(&data.common.project_path)
+            .branch(&data.common.branch)
+            .license(&data.common.license)
+            .name(&data.common.name);
             Ok(Meson::new().kind(data.kind).create_project(
-                &data.common.name,
-                &data.common.project_path,
-                &data.common.license,
-                &data.common.branch,
+                template
             )?)
         }
         ("poetry", matches) => {
@@ -263,11 +267,12 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("poetry");
             let data: CommonData = config.extract()?;
+            let template = TemplateData::new(&data.project_path)
+            .branch(&data.branch)
+            .license(&data.license)
+            .name(&data.name);
             Ok(Poetry::new().create_project(
-                &data.name,
-                &data.project_path,
-                &data.license,
-                &data.branch,
+                template
             )?)
         }
         ("yarn", matches) => {
@@ -275,11 +280,12 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("yarn");
             let data: CommonData = config.extract()?;
+            let template = TemplateData::new(&data.project_path)
+            .branch(&data.branch)
+            .license(&data.license)
+            .name(&data.name);
             Ok(Yarn::new().create_ci(
-                &data.name,
-                &data.project_path,
-                &data.license,
-                &data.branch,
+                template
             )?)
         }
         _ => unreachable!("unexpected command"),
