@@ -28,13 +28,7 @@ pub struct Maven<'a> {
 }
 
 impl<'a> CreateProject for Maven<'a> {
-    fn create_project(
-        &self,
-        data: TemplateData, /*project_name: &str,
-                            project_path: &Path,
-                            license: &str,
-                            github_branch: &str,*/
-    ) -> Result<()> {
+    fn create_project(&self, data: TemplateData) -> Result<()> {
         let project_path = path_validation(data.get_path())?;
         let project_name = define_name(data.get_name(), project_path.as_path())?;
         let license = define_license(data.get_license())?;

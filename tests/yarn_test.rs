@@ -15,14 +15,7 @@ fn test_yarn() {
         .branch("main")
         .name("Yarn-project");
 
-    Yarn::new()
-        .create_ci(
-            data, /*data.get_name(),
-                 data.get_path(),
-                 data.get_license(),
-                 data.get_branch(),*/
-        )
-        .unwrap();
+    Yarn::new().create_ci(data).unwrap();
 
     compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);
 }

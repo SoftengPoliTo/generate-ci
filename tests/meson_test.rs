@@ -20,12 +20,7 @@ fn test_meson() {
 
     Meson::new()
         .kind(ProjectKind::Cxx)
-        .create_project(
-            data, /*data.get_name(),
-                 data.get_path(),
-                 data.get_license(),
-                 data.get_branch(),*/
-        )
+        .create_project(data)
         .unwrap();
     compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);
 }

@@ -15,14 +15,7 @@ fn test_poetry() {
         .branch("main")
         .name("Poetry-project");
 
-    Poetry::new()
-        .create_project(
-            data, /*data.get_name(),
-                 data.get_path(),
-                 data.get_license(),
-                 data.get_branch(),*/
-        )
-        .unwrap();
+    Poetry::new().create_project(data).unwrap();
 
     compare_template(Path::new(SNAPSHOT_PATH), &tmp_dir);
 }
