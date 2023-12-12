@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 use minijinja::value::Value;
 
+use crate::TemplateData;
 use crate::{
     builtin_templates, compute_template, define_license, define_name, error::Result,
     path_validation, BuildTemplate, CreateProject, TemplateData,

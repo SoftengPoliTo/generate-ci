@@ -53,6 +53,7 @@ struct CommonData {
     project_path: PathBuf,
 }
 
+
 static DEFAULT_CONF: &str = r#"
     [default]
     license = "MIT"
