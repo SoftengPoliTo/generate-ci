@@ -39,36 +39,23 @@ impl<'a> TemplateData<'a> {
         self.license = license;
         self
     }
-    /// Gets the license.
-    pub fn get_license(&self) -> &'a str {
-        self.license
-    }
+
     /// Sets a new branch.
     pub fn branch(mut self, branch: &'a str) -> Self {
         self.branch = branch;
         self
     }
-    /// Gets the branch.
-    pub fn get_branch(&self) -> &'a str {
-        self.branch
-    }
+
     /// Sets a new project_name.
     pub fn name(mut self, name: &'a str) -> Self {
         self.name = name;
         self
     }
-    /// Gets the project name.
-    pub fn get_name(&self) -> &'a str {
-        self.name
-    }
+
     /// Sets a new project path.
     pub fn project_path(mut self, project_path: &'a Path) -> Self {
         self.project_path = project_path;
         self
-    }
-    /// Gets the project path.
-    pub fn get_path(&self) -> &'a Path {
-        self.project_path
     }
 }
 
