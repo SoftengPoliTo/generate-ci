@@ -1,0 +1,14 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+package POL.Maven-project.example;
+
+import org.junit.Test;
+
+public class Example {
+    @Test
+    public void testExample() {
+    }
+}
+

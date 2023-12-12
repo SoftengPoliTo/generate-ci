@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
 use minijinja::value::Value;
 
+use crate::TemplateData;
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, BuildTemplate, CreateCi,
+    builtin_templates, compute_template, define_license, define_name, error::Result,
+    path_validation, BuildTemplate, CreateCi,
 };
 
 static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
@@ -22,27 +23,36 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
 
 /// A cargo project data.
 #[derive(Default)]
-pub struct Cargo<'a>(&'a str);
+pub struct Cargo<'a> {
+    docker_image_description: &'a str,
+}
 
 impl<'a> CreateCi for Cargo<'a> {
-    fn create_ci(
-        &self,
-        project_name: &str,
-        project_path: &Path,
-        license: &str,
-        github_branch: &str,
-    ) -> Result<()> {
-        let project_name = define_name(project_name, project_path)?;
-        let license = define_license(license)?;
-        let template = self.build(project_path, project_name, license.id(), github_branch);
-        compute_template(template, license, project_path)
+    fn create_ci(&self, data: TemplateData) -> Result<()> {
+        let project_path = path_validation(data.project_path)?;
+        let project_name = define_name(data.name, project_path.as_path())?;
+        let license = define_license(data.license)?;
+        let template = self.build(
+            project_path.as_path(),
+            project_name,
+            license.id(),
+            data.branch,
+        );
+        compute_template(template, license, project_path.as_path())
     }
 }
 
 impl<'a> Cargo<'a> {
     /// Creates a new `Cargo` instance.
-    pub fn new(docker_image_description: &'a str) -> Self {
-        Self(docker_image_description)
+    pub fn new() -> Self {
+        Self {
+            docker_image_description: "default",
+        }
+    }
+    /// Sets a description
+    pub fn docker_image_description(mut self, docker_image_description: &'a str) -> Self {
+        self.docker_image_description = docker_image_description;
+        self
     }
 
     fn project_structure(
@@ -103,7 +113,7 @@ impl<'a> BuildTemplate for Cargo<'a> {
         context.insert("license_id", Value::from_serializable(&license));
         context.insert(
             "docker_image_description",
-            Value::from_serializable(&self.0),
+            Value::from_serializable(&self.docker_image_description),
         );
 
         let (files, dirs) = Cargo::project_structure(project_path, project_name);

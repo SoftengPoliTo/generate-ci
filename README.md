@@ -1,7 +1,6 @@
 # ci-generate
 
 [![Actions Status][actions badge]][actions]
-[![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 [![dependency status][status badge]][status]
 
@@ -96,18 +95,55 @@ $ ci-generate meson -l LGPL-2.1
 
 Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the command line.
 
+## Testing
+
+There are two main types of testing: unit testing and integration testing.
+
+### Unit test
+
+We can ensure the proper functioning of each unit of code by incorporating unit tests in the library. The use of unit tests instills trust in the accuracy and dependability of our code, resulting in a superior end product.
+
+### Integration Test
+
+We confidently use [insta] (https://insta.rs) as our integration tests, which is a powerful library of snapshot tests for Rust.
+Insta serves the purpose of highlighting any content-level differences between two versions of the same file. This way, you can easily compare and contrast the two versions and make informed decisions based on the differences.
+
+In the tests folder, you can find several .rs files that enable you to set up tests for each template individually. 
+In this directory, two other subdirectories are located. The first is called 'common' and contains an .rs file. This particular file is responsible for using common code to run the tests for each model. This means that we use this file to simplify the testing process and avoid duplicating code on multiple models.
+The second subdirectory is located within the 'repositories' folder and is called 'snapshots'. It contains snapshots for all project templates and is used to identify future changes. 
+
+To execute the tests, launch the following command:
+
+``` sh
+cargo insta test --include-hidden
+```
+
+When you run the command for the first time, you might notice that the tests return a failure. This is perfectly normal and expected as the snaps haven't been created yet. Including the "--include-hidden" option is crucial when working with templates that have hidden folders, as these folders also need to be captured in the process. This option ensures that all the hidden folders are included while taking a snapshot of the templates.
+
+You can review the contents of each individual snap using this command
+
+``` sh
+cargo insta review --include-hidden
+```
+
+When running the review command, it is possible to manually accept, reject, or skip each snap that is generated. 
+However, if you want to automatically accept the generated snaps, you can add the "--accept" option at the end of the command while launching the tests, as follows
+
+``` sh
+cargo insta test --include-hidden --accept
+```
+After creating the base snapshots, you can use the test command to generate new snapshots for comparison. Any differences between the new and previous snapshots will be displayed on the screen, allowing you to review and analyze the changes. In case no differences are found, insta will return a success message, indicating that there are no snapshots that require review.
+
 ## License
 
 Released under the [MIT License](LICENSES/MIT.txt).
 
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/ci-generate/actions
-[codecov]: https://codecov.io/gh/SoftengPoliTo/ci-generate
 [license]: LICENSES/MIT.txt
 [status]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate
 
 <!-- Badges -->
 [actions badge]: https://github.com/SoftengPoliTo/ci-generate/workflows/ci-generate/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/ci-generate/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [status badge]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate/status.svg

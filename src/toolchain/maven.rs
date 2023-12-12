@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
 use minijinja::value::Value;
 
+use crate::TemplateData;
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, BuildTemplate, CreateProject,
+    builtin_templates, compute_template, define_license, define_name, error::Result,
+    path_validation, BuildTemplate, CreateProject,
 };
 
 static MAVEN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["maven" =>
@@ -20,33 +21,35 @@ static MAVEN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["maven" =>
 const MAIN: &str = "main/java";
 const TESTS: &str = "test/java";
 
+#[derive(Default)]
 /// A maven project.
-pub struct Maven<'a>(&'a str);
-
-impl<'a> CreateProject for Maven<'a> {
-    fn create_project(
-        &self,
-        project_name: &str,
-        project_path: &Path,
-        license: &str,
-        github_branch: &str,
-    ) -> Result<()> {
-        let project_name = define_name(project_name, project_path)?;
-        let license = define_license(license)?;
-        let (project_path, project_name) = if let Some(parent) = project_path.parent() {
-            (parent.join(project_name), project_name)
-        } else {
-            (Path::new(project_name).to_path_buf(), project_name)
-        };
-        let template = self.build(&project_path, project_name, license.id(), github_branch);
-        compute_template(template, license, &project_path)
-    }
+pub struct Maven<'a> {
+    group: &'a str,
 }
 
+impl<'a> CreateProject for Maven<'a> {
+    fn create_project(&self, data: TemplateData) -> Result<()> {
+        let project_path = path_validation(data.project_path)?;
+        let project_name = define_name(data.name, project_path.as_path())?;
+        let license = define_license(data.license)?;
+        let template = self.build(
+            project_path.as_path(),
+            project_name,
+            license.id(),
+            data.branch,
+        );
+        compute_template(template, license, project_path.as_path())
+    }
+}
 impl<'a> Maven<'a> {
     /// Creates a new `Maven` instance.
-    pub fn new(group: &'a str) -> Self {
-        Self(group)
+    pub fn new() -> Self {
+        Self { group: "group" }
+    }
+    /// Sets a group
+    pub fn group(mut self, group: &'a str) -> Self {
+        self.group = group;
+        self
     }
 
     fn project_structure(
@@ -96,10 +99,10 @@ impl<'a> BuildTemplate for Maven<'a> {
 
         context.insert("name", Value::from_serializable(&project_name));
         context.insert("branch", Value::from_serializable(&github_branch));
-        context.insert("group", Value::from_serializable(&self.0));
+        context.insert("group", Value::from_serializable(&self.group));
         context.insert("license_id", Value::from_serializable(&license));
 
-        let (files, dirs) = Maven::project_structure(project_path, self.0, project_name);
+        let (files, dirs) = Maven::project_structure(project_path, self.group, project_name);
 
         (files, dirs, context)
     }
