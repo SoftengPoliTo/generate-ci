@@ -90,11 +90,10 @@ pub trait CreateProject {
     /// Creates a new project.
     fn create_project(
         &self,
-        data: TemplateData
-        /*project_name: &str,
-        project_path: &Path,
-        license: &str,
-        github_branch: &str,*/
+        data: TemplateData, /*project_name: &str,
+                            project_path: &Path,
+                            license: &str,
+                            github_branch: &str,*/
     ) -> Result<()>;
 }
 

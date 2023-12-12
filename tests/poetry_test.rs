@@ -17,11 +17,10 @@ fn test_poetry() {
 
     Poetry::new()
         .create_project(
-            data
-            /*data.get_name(),
-            data.get_path(),
-            data.get_license(),
-            data.get_branch(),*/
+            data, /*data.get_name(),
+                 data.get_path(),
+                 data.get_license(),
+                 data.get_branch(),*/
         )
         .unwrap();
 

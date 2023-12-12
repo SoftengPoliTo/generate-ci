@@ -17,11 +17,10 @@ fn test_yarn() {
 
     Yarn::new()
         .create_ci(
-            data
-            /*data.get_name(),
-            data.get_path(),
-            data.get_license(),
-            data.get_branch(),*/
+            data, /*data.get_name(),
+                 data.get_path(),
+                 data.get_license(),
+                 data.get_branch(),*/
         )
         .unwrap();
 

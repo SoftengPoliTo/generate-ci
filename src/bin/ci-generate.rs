@@ -53,7 +53,6 @@ struct CommonData {
     project_path: PathBuf,
 }
 
-
 static DEFAULT_CONF: &str = r#"
     [default]
     license = "MIT"
@@ -227,14 +226,12 @@ fn main() -> anyhow::Result<()> {
                 .select("cargo");
             let data: CargoData = config.extract()?;
             let template = TemplateData::new(&data.common.project_path)
-            .branch(&data.common.branch)
-            .license(&data.common.license)
-            .name(&data.common.name);
+                .branch(&data.common.branch)
+                .license(&data.common.license)
+                .name(&data.common.name);
             Ok(Cargo::new()
                 .docker_image_description(&data.docker_image_description)
-                .create_ci(
-                    template
-                )?)
+                .create_ci(template)?)
         }
         ("maven", matches) => {
             let config = config
@@ -242,12 +239,10 @@ fn main() -> anyhow::Result<()> {
                 .select("maven");
             let data: MavenData = config.extract()?;
             let template = TemplateData::new(&data.common.project_path)
-            .branch(&data.common.branch)
-            .license(&data.common.license)
-            .name(&data.common.name);
-            Ok(Maven::new().group(&data.group).create_project(
-                template
-            )?)
+                .branch(&data.common.branch)
+                .license(&data.common.license)
+                .name(&data.common.name);
+            Ok(Maven::new().group(&data.group).create_project(template)?)
         }
         ("meson", matches) => {
             let config = config
@@ -255,12 +250,10 @@ fn main() -> anyhow::Result<()> {
                 .select("meson");
             let data: MesonData = config.extract()?;
             let template = TemplateData::new(&data.common.project_path)
-            .branch(&data.common.branch)
-            .license(&data.common.license)
-            .name(&data.common.name);
-            Ok(Meson::new().kind(data.kind).create_project(
-                template
-            )?)
+                .branch(&data.common.branch)
+                .license(&data.common.license)
+                .name(&data.common.name);
+            Ok(Meson::new().kind(data.kind).create_project(template)?)
         }
         ("poetry", matches) => {
             let config = config
@@ -268,12 +261,10 @@ fn main() -> anyhow::Result<()> {
                 .select("poetry");
             let data: CommonData = config.extract()?;
             let template = TemplateData::new(&data.project_path)
-            .branch(&data.branch)
-            .license(&data.license)
-            .name(&data.name);
-            Ok(Poetry::new().create_project(
-                template
-            )?)
+                .branch(&data.branch)
+                .license(&data.license)
+                .name(&data.name);
+            Ok(Poetry::new().create_project(template)?)
         }
         ("yarn", matches) => {
             let config = config
@@ -281,12 +272,10 @@ fn main() -> anyhow::Result<()> {
                 .select("yarn");
             let data: CommonData = config.extract()?;
             let template = TemplateData::new(&data.project_path)
-            .branch(&data.branch)
-            .license(&data.license)
-            .name(&data.name);
-            Ok(Yarn::new().create_ci(
-                template
-            )?)
+                .branch(&data.branch)
+                .license(&data.license)
+                .name(&data.name);
+            Ok(Yarn::new().create_ci(template)?)
         }
         _ => unreachable!("unexpected command"),
     }
