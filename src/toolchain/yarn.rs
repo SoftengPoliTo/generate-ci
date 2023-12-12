@@ -6,7 +6,7 @@ use minijinja::value::Value;
 use crate::TemplateData;
 use crate::{
     builtin_templates, compute_template, define_license, define_name, error::Result,
-    path_validation, BuildTemplate, CreateCi, 
+    path_validation, BuildTemplate, CreateCi,
 };
 
 static YARN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["yarn" =>
