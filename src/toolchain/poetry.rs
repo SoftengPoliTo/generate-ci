@@ -3,10 +3,9 @@ use std::path::{Path, PathBuf};
 
 use minijinja::value::Value;
 
-use crate::TemplateData;
 use crate::{
     builtin_templates, compute_template, define_license, define_name, error::Result,
-    path_validation, BuildTemplate, CreateProject,
+    path_validation, BuildTemplate, CreateProject, TemplateData,
 };
 
 static POETRY_TEMPLATES: &[(&str, &str)] = &builtin_templates!["poetry" =>
@@ -25,14 +24,14 @@ pub struct Poetry;
 
 impl CreateProject for Poetry {
     fn create_project(&self, data: TemplateData) -> Result<()> {
-        let project_path = path_validation(data.get_path())?;
-        let project_name = define_name(data.get_name(), project_path.as_path())?;
-        let license = define_license(data.get_license())?;
+        let project_path = path_validation(data.project_path)?;
+        let project_name = define_name(data.name, project_path.as_path())?;
+        let license = define_license(data.license)?;
         let template = self.build(
             project_path.as_path(),
             project_name,
             license.id(),
-            data.get_branch(),
+            data.branch,
         );
         compute_template(template, license, project_path.as_path())
     }

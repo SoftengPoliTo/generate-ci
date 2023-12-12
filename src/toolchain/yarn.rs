@@ -21,14 +21,14 @@ pub struct Yarn;
 
 impl CreateCi for Yarn {
     fn create_ci(&self, data: TemplateData) -> Result<()> {
-        let project_path = path_validation(data.get_path())?;
-        let project_name = define_name(data.get_name(), project_path.as_path())?;
-        let license = define_license(data.get_license())?;
+        let project_path = path_validation(data.project_path)?;
+        let project_name = define_name(data.name, project_path.as_path())?;
+        let license = define_license(data.license)?;
         let template = Yarn.build(
             project_path.as_path(),
             project_name,
             license.id(),
-            data.get_branch(),
+            data.branch,
         );
         compute_template(template, license, project_path.as_path())
     }

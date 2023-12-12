@@ -3,7 +3,7 @@ source: tests/common/mod.rs
 expression: content
 ---
 [package]
-name = "cargo-fuzz"
+name = "MIT-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -14,7 +14,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
-[dependencies.cargo]
+[dependencies.MIT]
 path = ".."
 
 # Prevent this from interfering with workspaces

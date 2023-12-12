@@ -3,5 +3,5 @@ source: tests/common/mod.rs
 expression: content
 ---
 FROM amd64/alpine
-ADD cargo /
-ENTRYPOINT ["/cargo"]
+ADD MIT /
+ENTRYPOINT ["/MIT"]
