@@ -1,0 +1,23 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+# Poetry-project
+
+[![Actions Status][actions badge]][actions]
+[![CodeCov][codecov badge]][codecov]
+[![LICENSE][license badge]][license]
+
+Poetry-project's description
+
+# Acknowledgements
+
+<!-- Links -->
+[actions]: https://github.com/<your-account>/Poetry-project/actions
+[codecov]: https://codecov.io/gh/<your-account>/Poetry-project
+[license]: LICENSES/MIT.txt
+
+<!-- Badges -->
+[actions badge]: https://github.com/<your-account>/Poetry-project/workflows/Poetry-project/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/Poetry-project/branch/master/graph/badge.svg
+[license badge]: https://img.shields.io/badge/license-MIT-blue.svg
