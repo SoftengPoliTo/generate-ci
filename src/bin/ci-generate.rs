@@ -9,7 +9,7 @@ use figment::{Figment, Profile};
 use figment::{Metadata, Provider};
 use serde::{Deserialize, Serialize};
 
-use ci_generate::{CreateCi, CreateProject};
+use ci_generate::{CreateCi, CreateProject, TemplateData};
 
 use ci_generate::cargo::Cargo;
 use ci_generate::maven::Maven;
@@ -224,63 +224,58 @@ fn main() -> anyhow::Result<()> {
             let config = config
                 .merge(ClapSerialized::<CargoData>::globals(matches.clone()))
                 .select("cargo");
-            let data: CargoData = config.extract()?;
+            let cargo: CargoData = config.extract()?;
+            let data = TemplateData::new(&cargo.common.project_path)
+                .branch(&cargo.common.branch)
+                .license(&cargo.common.license)
+                .name(&cargo.common.name);
             Ok(Cargo::new()
-                .docker_image_description(&data.docker_image_description)
-                .create_ci(
-                    &data.common.name,
-                    &data.common.project_path,
-                    &data.common.license,
-                    &data.common.branch,
-                )?)
+                .docker_image_description(&cargo.docker_image_description)
+                .create_ci(data)?)
         }
         ("maven", matches) => {
             let config = config
                 .merge(ClapSerialized::<MavenData>::globals(matches.clone()))
                 .select("maven");
-            let data: MavenData = config.extract()?;
-            Ok(Maven::new().group(&data.group).create_project(
-                &data.common.name,
-                &data.common.project_path,
-                &data.common.license,
-                &data.common.branch,
-            )?)
+            let maven: MavenData = config.extract()?;
+            let data = TemplateData::new(&maven.common.project_path)
+                .branch(&maven.common.branch)
+                .license(&maven.common.license)
+                .name(&maven.common.name);
+            Ok(Maven::new().group(&maven.group).create_project(data)?)
         }
         ("meson", matches) => {
             let config = config
                 .merge(ClapSerialized::<MesonData>::globals(matches.clone()))
                 .select("meson");
-            let data: MesonData = config.extract()?;
-            Ok(Meson::new().kind(data.kind).create_project(
-                &data.common.name,
-                &data.common.project_path,
-                &data.common.license,
-                &data.common.branch,
-            )?)
+            let meson: MesonData = config.extract()?;
+            let data = TemplateData::new(&meson.common.project_path)
+                .branch(&meson.common.branch)
+                .license(&meson.common.license)
+                .name(&meson.common.name);
+            Ok(Meson::new().kind(meson.kind).create_project(data)?)
         }
         ("poetry", matches) => {
             let config = config
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("poetry");
-            let data: CommonData = config.extract()?;
-            Ok(Poetry::new().create_project(
-                &data.name,
-                &data.project_path,
-                &data.license,
-                &data.branch,
-            )?)
+            let poetry: CommonData = config.extract()?;
+            let data = TemplateData::new(&poetry.project_path)
+                .branch(&poetry.branch)
+                .license(&poetry.license)
+                .name(&poetry.name);
+            Ok(Poetry::new().create_project(data)?)
         }
         ("yarn", matches) => {
             let config = config
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("yarn");
-            let data: CommonData = config.extract()?;
-            Ok(Yarn::new().create_ci(
-                &data.name,
-                &data.project_path,
-                &data.license,
-                &data.branch,
-            )?)
+            let yarn: CommonData = config.extract()?;
+            let data = TemplateData::new(&yarn.project_path)
+                .branch(&yarn.branch)
+                .license(&yarn.license)
+                .name(&yarn.name);
+            Ok(Yarn::new().create_ci(data)?)
         }
         _ => unreachable!("unexpected command"),
     }
