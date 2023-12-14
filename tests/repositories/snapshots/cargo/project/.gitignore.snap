@@ -1,0 +1,6 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+/target
+

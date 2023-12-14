@@ -1,12 +1,11 @@
+use minijinja::value::Value;
 use std::collections::HashMap;
+use std::fs;
 use std::path::{Path, PathBuf};
 
-use minijinja::value::Value;
-
-use crate::TemplateData;
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, error::Result,
-    path_validation, BuildTemplate, CreateCi,
+    builtin_templates, command::run_command, compute_template, define_license, define_name,
+    error::Result, path_validation, BuildTemplate, CreateCi, TemplateData,
 };
 
 static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
@@ -25,6 +24,8 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
 #[derive(Default)]
 pub struct Cargo<'a> {
     docker_image_description: &'a str,
+    ci: bool,
+    lib: bool,
 }
 
 impl<'a> CreateCi for Cargo<'a> {
@@ -47,12 +48,35 @@ impl<'a> Cargo<'a> {
     pub fn new() -> Self {
         Self {
             docker_image_description: "default",
+            lib: false,
+            ci: false,
         }
     }
     /// Sets a description
     pub fn docker_image_description(mut self, docker_image_description: &'a str) -> Self {
         self.docker_image_description = docker_image_description;
         self
+    }
+    /// Sets a library project
+    pub fn create_lib(mut self) -> Self {
+        self.lib = true;
+        self
+    }
+    /// Sets just ci files
+    pub fn only_ci(mut self) -> Self {
+        self.ci = true;
+        self
+    }
+
+    fn project_creation(&self, path: &Path) -> Result<()> {
+        if !self.ci {
+            if self.lib {
+                run_command(path, &["new", "--lib"])?;
+            } else {
+                run_command(path, &["new"])?;
+            }
+        }
+        Ok(())
     }
 
     fn project_structure(
@@ -115,6 +139,9 @@ impl<'a> BuildTemplate for Cargo<'a> {
             "docker_image_description",
             Value::from_serializable(&self.docker_image_description),
         );
+
+        let _r = fs::remove_dir_all(project_path);
+        let _res = Cargo::project_creation(self, &project_path.join("project"));
 
         let (files, dirs) = Cargo::project_structure(project_path, project_name);
 
