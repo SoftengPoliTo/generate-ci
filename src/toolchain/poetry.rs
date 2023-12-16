@@ -33,7 +33,7 @@ impl CreateProject for Poetry {
             license.id(),
             data.branch,
         );
-        compute_template(template, license, project_path.as_path())
+        compute_template(template?, license, project_path.as_path())
     }
 }
 
@@ -83,11 +83,11 @@ impl BuildTemplate for Poetry {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> (
+    ) -> Result<(
         HashMap<PathBuf, &'static str>,
         Vec<PathBuf>,
         HashMap<&'static str, Value>,
-    ) {
+    )> {
         let mut context = HashMap::new();
 
         context.insert("name", Value::from_serializable(&project_name));
@@ -96,7 +96,7 @@ impl BuildTemplate for Poetry {
 
         let (files, dirs) = Poetry::project_structure(project_path, project_name);
 
-        (files, dirs, context)
+        Ok((files, dirs, context))
     }
 
     fn get_templates() -> &'static [(&'static str, &'static str)] {

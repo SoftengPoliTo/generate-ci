@@ -39,7 +39,7 @@ impl<'a> CreateCi for Cargo<'a> {
             license.id(),
             data.branch,
         );
-        compute_template(template, license, project_path.as_path())
+        compute_template(template?, license, project_path.as_path())
     }
 }
 
@@ -125,11 +125,11 @@ impl<'a> BuildTemplate for Cargo<'a> {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> (
+    ) -> Result<(
         HashMap<PathBuf, &'static str>,
         Vec<PathBuf>,
         HashMap<&'static str, Value>,
-    ) {
+    )> {
         let mut context = HashMap::new();
 
         context.insert("name", Value::from_serializable(&project_name));
@@ -140,12 +140,12 @@ impl<'a> BuildTemplate for Cargo<'a> {
             Value::from_serializable(&self.docker_image_description),
         );
 
-        let _r = fs::remove_dir_all(project_path);
-        let _res = Cargo::project_creation(self, &project_path.join("project"));
+        fs::remove_dir_all(project_path)?;
+        Cargo::project_creation(self, &project_path.join("project"))?;
 
         let (files, dirs) = Cargo::project_structure(project_path, project_name);
 
-        (files, dirs, context)
+        Ok((files, dirs, context))
     }
 
     fn get_templates() -> &'static [(&'static str, &'static str)] {

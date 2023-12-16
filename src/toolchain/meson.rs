@@ -55,7 +55,7 @@ impl CreateProject for Meson {
             license.id(),
             data.branch,
         );
-        compute_template(template, license, project_path.as_path())
+        compute_template(template?, license, project_path.as_path())
     }
 }
 impl Meson {
@@ -124,11 +124,11 @@ impl BuildTemplate for Meson {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> (
+    ) -> Result<(
         HashMap<PathBuf, &'static str>,
         Vec<PathBuf>,
         HashMap<&'static str, Value>,
-    ) {
+    )> {
         let mut context = HashMap::new();
         let (ext, params) = match self.kind {
             ProjectKind::C => ("c", "c_std=c99"),
@@ -143,7 +143,7 @@ impl BuildTemplate for Meson {
 
         let (files, dirs) = Meson::project_structure(project_path, project_name, ext);
 
-        (files, dirs, context)
+        Ok((files, dirs, context))
     }
 
     fn get_templates() -> &'static [(&'static str, &'static str)] {

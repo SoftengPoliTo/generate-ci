@@ -38,7 +38,7 @@ impl<'a> CreateProject for Maven<'a> {
             license.id(),
             data.branch,
         );
-        compute_template(template, license, project_path.as_path())
+        compute_template(template?, license, project_path.as_path())
     }
 }
 impl<'a> Maven<'a> {
@@ -90,11 +90,11 @@ impl<'a> BuildTemplate for Maven<'a> {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> (
+    ) -> Result<(
         HashMap<PathBuf, &'static str>,
         Vec<PathBuf>,
         HashMap<&'static str, Value>,
-    ) {
+    )> {
         let mut context = HashMap::new();
 
         context.insert("name", Value::from_serializable(&project_name));
@@ -104,7 +104,7 @@ impl<'a> BuildTemplate for Maven<'a> {
 
         let (files, dirs) = Maven::project_structure(project_path, self.group, project_name);
 
-        (files, dirs, context)
+        Ok((files, dirs, context))
     }
 
     fn get_templates() -> &'static [(&'static str, &'static str)] {

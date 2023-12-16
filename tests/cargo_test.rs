@@ -6,8 +6,8 @@ use std::env::temp_dir;
 use std::path::Path;
 
 const SNAPSHOT_PATH_B: &str = "../repositories/snapshots/cargo/";
-//const SNAPSHOT_PATH_L: &str = "../repositories/snapshots/cargo_library/";
-//const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/cargo_ci/";
+const SNAPSHOT_PATH_L: &str = "../repositories/snapshots/cargo_library/";
+const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/cargo_ci/";
 
 #[test]
 fn test_cargo_binary() {
@@ -20,7 +20,7 @@ fn test_cargo_binary() {
         .unwrap();
     compare_template(Path::new(SNAPSHOT_PATH_B), &tmp_dir);
 }
-/*
+
 #[test]
 fn test_cargo_library() {
     let tmp_dir = temp_dir().join("cargo_library");
@@ -45,4 +45,3 @@ fn test_cargo_ci() {
         .unwrap();
     compare_template(Path::new(SNAPSHOT_PATH_C), &tmp_dir);
 }
-*/
