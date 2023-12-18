@@ -1,10 +1,9 @@
+use ci_generate::cargo::SKIPPED_FOLDERS;
 use std::{fs, path::Path};
-
 use walkdir::WalkDir;
 
-const SKIPPED_FOLDERS: &[&str] = &[".git"];
-
 pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
+    // https://docs.rs/walkdir/latest/walkdir/struct.IntoIter.html#method.skip_current_dir
     let mut it = WalkDir::new(template_path).into_iter();
     loop {
         let entry = match it.next() {
@@ -12,7 +11,7 @@ pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
             Some(entry) => entry.unwrap(),
         };
         let file_name = entry.file_name().to_string_lossy().to_string();
-        let skip_entry = SKIPPED_FOLDERS.contains(&&file_name.as_str());
+        let skip_entry = SKIPPED_FOLDERS.contains(&file_name.as_str());
 
         if skip_entry && entry.file_type().is_dir() {
             it.skip_current_dir();

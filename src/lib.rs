@@ -54,12 +54,6 @@ impl<'a> TemplateData<'a> {
         self.name = name;
         self
     }
-
-    /// Sets a new project path.
-    pub fn project_path(mut self, project_path: &'a Path) -> Self {
-        self.project_path = project_path;
-        self
-    }
 }
 
 /// Used to create a CI configuration for a project.
@@ -165,6 +159,12 @@ impl CiTemplate {
     }
 }
 
+struct ProjectOutput {
+    files: HashMap<PathBuf, &'static str>,
+    dirs: Vec<PathBuf>,
+    context: HashMap<&'static str, Value>,
+}
+
 /// Build a template
 trait BuildTemplate {
     fn define(
@@ -173,11 +173,7 @@ trait BuildTemplate {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> Result<(
-        HashMap<PathBuf, &'static str>,
-        Vec<PathBuf>,
-        HashMap<&'static str, Value>,
-    )>;
+    ) -> Result<ProjectOutput>;
 
     fn get_templates() -> &'static [(&'static str, &'static str)];
 
@@ -188,14 +184,13 @@ trait BuildTemplate {
         license: &str,
         github_branch: &str,
     ) -> Result<CiTemplate> {
-        let (files, dirs, context) =
-            self.define(project_path, project_name, license, github_branch)?;
+        let t = self.define(project_path, project_name, license, github_branch)?;
         let env = build_environment(Self::get_templates());
 
         Ok(CiTemplate {
-            context,
-            files,
-            dirs,
+            context: t.context,
+            files: t.files,
+            dirs: t.dirs,
             env,
         })
     }
@@ -238,7 +233,6 @@ pub(crate) fn compute_template(
 ) -> Result<()> {
     template.add_reuse(license, project_path)?;
     template.add_license(license, project_path)?;
-
     template.render()
 }
 

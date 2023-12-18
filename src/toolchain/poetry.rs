@@ -5,7 +5,7 @@ use minijinja::value::Value;
 
 use crate::{
     builtin_templates, compute_template, define_license, define_name, error::Result,
-    path_validation, BuildTemplate, CreateProject, TemplateData,
+    path_validation, BuildTemplate, CreateProject, ProjectOutput, TemplateData,
 };
 
 static POETRY_TEMPLATES: &[(&str, &str)] = &builtin_templates!["poetry" =>
@@ -83,11 +83,7 @@ impl BuildTemplate for Poetry {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> Result<(
-        HashMap<PathBuf, &'static str>,
-        Vec<PathBuf>,
-        HashMap<&'static str, Value>,
-    )> {
+    ) -> Result<ProjectOutput> {
         let mut context = HashMap::new();
 
         context.insert("name", Value::from_serializable(&project_name));
@@ -96,7 +92,11 @@ impl BuildTemplate for Poetry {
 
         let (files, dirs) = Poetry::project_structure(project_path, project_name);
 
-        Ok((files, dirs, context))
+        Ok(ProjectOutput {
+            context,
+            files,
+            dirs,
+        })
     }
 
     fn get_templates() -> &'static [(&'static str, &'static str)] {
