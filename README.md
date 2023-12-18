@@ -108,20 +108,32 @@ Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the comma
 
 ## Testing
 
-There are two main types of testing: unit testing and integration testing.
+There are two main types of testing: unit and integration tests.
 
 ### Unit test
 
-We can ensure the proper functioning of each unit of code by incorporating unit tests in the library. The use of unit tests instills trust in the accuracy and dependability of our code, resulting in a superior end product.
+We can ensure the proper functioning of each unit of code by incorporating
+unit tests in the library. The use of unit tests instills trust in the accuracy
+and dependability of single code units.
 
 ### Integration Test
 
-We confidently use [insta] (https://insta.rs) as our integration tests, which is a powerful library of snapshot tests for Rust.
-Insta serves the purpose of highlighting any content-level differences between two versions of the same file. This way, you can easily compare and contrast the two versions and make informed decisions based on the differences.
+We use [insta] (https://insta.rs) for our integration tests: a snapshot tests
+library for Rust.
+Insta serves the purpose of highlighting any content-level differences
+among two versions of the same file. In this way, you can easily compare and
+contrast the two versions, making informed decisions based on the differences.
 
-In the tests folder, you can find several .rs files that enable you to set up tests for each template individually. 
-In this directory, two other subdirectories are located. The first is called 'common' and contains an .rs file. This particular file is responsible for using common code to run the tests for each model. This means that we use this file to simplify the testing process and avoid duplicating code on multiple models.
-The second subdirectory is located within the 'repositories' folder and is called 'snapshots'. It contains snapshots for all project templates and is used to identify future changes. 
+Inside the tests directory, you can find several `.rs` files that allow you to
+set up tests for each template.
+In this directory, there are two other subdirectories.
+The first one is called `common` and contains just a single `.rs` file.
+This particular file contains the common code which each model uses to run its own
+tests. The main goal of this file consists of simplifying the testing process
+and avoiding duplicated code among multiple models.
+The second subdirectory instead is located within the `repositories` directory
+and it is called `snapshots`. It contains all project templates snapshots and
+it is used to detect and show future changes.
 
 To execute the tests, launch the following command:
 
@@ -129,21 +141,28 @@ To execute the tests, launch the following command:
 cargo insta test --include-hidden
 ```
 
-When you run the command for the first time, you might notice that the tests return a failure. This is perfectly normal and expected as the snaps haven't been created yet. Including the "--include-hidden" option is crucial when working with templates that have hidden folders, as these folders also need to be captured in the process. This option ensures that all the hidden folders are included while taking a snapshot of the templates.
+When you run the command for the first time, you might notice that the tests return a failure. This is perfectly normal and expected as the snaps haven't been created yet. Including the `--include-hidden` option is crucial when working with templates that have hidden folders, as these folders also need to be captured in the process. This option ensures that all the hidden folders are included while taking a snapshot of the templates.
 
-You can review the contents of each individual snap using this command
+You can review the content of each individual snapshot through this command
 
 ``` sh
 cargo insta review --include-hidden
 ```
 
-When running the review command, it is possible to manually accept, reject, or skip each snap that is generated. 
-However, if you want to automatically accept the generated snaps, you can add the "--accept" option at the end of the command while launching the tests, as follows
+When running the `review` command, it is possible to manually accept, reject, 
+or skip each generated snapshot.
+However, if you want to automatically accept generated snapshots, you can add the `--accept`
+option at the end of the command as follows
 
 ``` sh
 cargo insta test --include-hidden --accept
 ```
-After creating the base snapshots, you can use the test command to generate new snapshots for comparison. Any differences between the new and previous snapshots will be displayed on the screen, allowing you to review and analyze the changes. In case no differences are found, insta will return a success message, indicating that there are no snapshots that require review.
+
+Once base snapshots are created, you can use the `test` command to generate
+new snapshots to be compared with. Any differences between new and base
+snapshots are displayed on the screen, allowing you to review and analyze
+the changes. In case no differences are found, insta will return a success message,
+indicating that there are no snapshots to be reviewed.
 
 ## License
 
