@@ -1,6 +1,7 @@
 use std::{fs, path::Path};
 use walkdir::WalkDir;
 
+#[allow(dead_code)]
 pub(crate) fn compare_template(snapshot_path: &Path, template_path: &Path) {
     for entry in WalkDir::new(template_path).into_iter() {
         entry.map_or((), |e| {
@@ -11,6 +12,7 @@ pub(crate) fn compare_template(snapshot_path: &Path, template_path: &Path) {
     }
 }
 
+#[allow(dead_code)]
 pub(crate) fn compare_template_skip(
     snapshot_path: &Path,
     template_path: &Path,
