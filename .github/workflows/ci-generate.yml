@@ -364,6 +364,7 @@ jobs:
 
     - name: Install valgrind
       run: |
+        sudo apt-get update
         sudo apt-get install valgrind
 
     - name: Install cargo-valgrind
