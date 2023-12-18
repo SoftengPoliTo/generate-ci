@@ -4,6 +4,8 @@ pub use toolchain::*;
 pub mod error;
 use error::{Error, Result};
 
+mod command;
+
 mod filters;
 
 use minijinja::value::Value;
@@ -49,12 +51,6 @@ impl<'a> TemplateData<'a> {
     /// Sets a new project_name.
     pub fn name(mut self, name: &'a str) -> Self {
         self.name = name;
-        self
-    }
-
-    /// Sets a new project path.
-    pub fn project_path(mut self, project_path: &'a Path) -> Self {
-        self.project_path = project_path;
         self
     }
 }
@@ -162,6 +158,12 @@ impl CiTemplate {
     }
 }
 
+struct ProjectOutput {
+    files: HashMap<PathBuf, &'static str>,
+    dirs: Vec<PathBuf>,
+    context: HashMap<&'static str, Value>,
+}
+
 /// Build a template
 trait BuildTemplate {
     fn define(
@@ -170,11 +172,7 @@ trait BuildTemplate {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> (
-        HashMap<PathBuf, &'static str>,
-        Vec<PathBuf>,
-        HashMap<&'static str, Value>,
-    );
+    ) -> Result<ProjectOutput>;
 
     fn get_templates() -> &'static [(&'static str, &'static str)];
 
@@ -184,17 +182,16 @@ trait BuildTemplate {
         project_name: &str,
         license: &str,
         github_branch: &str,
-    ) -> CiTemplate {
-        let (files, dirs, context) =
-            self.define(project_path, project_name, license, github_branch);
+    ) -> Result<CiTemplate> {
+        let t = self.define(project_path, project_name, license, github_branch)?;
         let env = build_environment(Self::get_templates());
 
-        CiTemplate {
-            context,
-            files,
-            dirs,
+        Ok(CiTemplate {
+            context: t.context,
+            files: t.files,
+            dirs: t.dirs,
             env,
-        }
+        })
     }
 }
 
@@ -208,7 +205,7 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 
     environment
 }
-
+// Retrieve the project name
 pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
     if project_name.is_empty() {
         let name = match project_path.file_name().and_then(|x| x.to_str()) {
@@ -220,14 +217,14 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
         Ok(project_name)
     }
 }
-
+// Retrieve the license
 pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
     let license = license
         .parse::<&dyn license::License>()
         .map_err(|_| Error::NoLicense)?;
     Ok(license)
 }
-
+// Compute template
 pub(crate) fn compute_template(
     mut template: CiTemplate,
     license: &dyn license::License,
@@ -235,10 +232,10 @@ pub(crate) fn compute_template(
 ) -> Result<()> {
     template.add_reuse(license, project_path)?;
     template.add_license(license, project_path)?;
-
     template.render()
 }
 
+// Performs a path validation for unix/macOs
 #[cfg(not(windows))]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use expanduser::expanduser;
@@ -262,7 +259,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         _ => Err(Error::CanonicalPath),
     }
 }
-
+// Performs a path validation for Windows
 #[cfg(windows)]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use homedir::get_my_home;
@@ -311,34 +308,6 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{cargo::Cargo, maven::Maven, meson::Meson, poetry::Poetry, yarn::Yarn};
-
-    // Test on CiTemplate functions
-    fn creator_citemplate() -> CiTemplate {
-        CiTemplate {
-            context: HashMap::new(),
-            files: HashMap::new(),
-            dirs: Vec::new(),
-            env: Environment::new(),
-        }
-    }
-
-    #[test]
-    fn citemplate_add_license_test() {
-        assert!(creator_citemplate()
-            .add_license("Apache-2.0".parse().unwrap(), Path::new("~/project"))
-            .is_ok());
-    }
-    #[test]
-    fn citemplate_add_reuse_test() {
-        assert!(creator_citemplate()
-            .add_reuse("Apache-2.0".parse().unwrap(), Path::new("~/project"))
-            .is_ok());
-    }
-    #[test]
-    fn citemplate_render_test() {
-        assert!(creator_citemplate().render().is_ok());
-    }
 
     // Test other lib internal functions
     #[test]
@@ -362,260 +331,24 @@ mod tests {
         assert!(define_license("POL-3.0").is_err());
     }
     #[test]
-    fn define_name_invalidpath_test() {
-        assert!(path_validation(Path::new("~/Desktop/Здравствуйте")).is_err());
+    fn path_validation_1() {
+        assert!(
+            path_validation(Path::new("~//Desktop/GitHub/ci-generate/../../ci-generate")).is_err()
+        );
+    }
+    #[test]
+    fn path_validation_2() {
+        assert!(path_validation(Path::new("tests/common/mod.rs")).is_ok());
     }
 
+    #[cfg(windows)]
     #[test]
-    fn build_environment_test() {
-        assert!(build_environment(&[("index.html", "Hello {{ name }} !")])
-            .add_template("index.html", "Hello {{ name }} !")
-            .is_ok());
+    fn path_validation_1() {
+        assert!(path_validation(Path::new("~\\C:\\Users\\..\\..\\Documents")).is_err());
     }
-
-    // Tests for trait BildTemplate - Yarn
-    fn create_yarn() -> Yarn {
-        Yarn::new()
-    }
-
+    #[cfg(windows)]
     #[test]
-    fn build_contain_files_test_yarn() {
-        assert!(create_yarn()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .files
-            .contains_key(Path::new("~/Desktop/project/README.md")));
-    }
-    #[test]
-    fn build_dirs_test_yarn() {
-        assert_eq!(
-            create_yarn()
-                .build(
-                    Path::new("~/Desktop/project"),
-                    "my_prog",
-                    "Apache-2.0",
-                    "master"
-                )
-                .dirs,
-            vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/.github/workflows")
-            ]
-        )
-    }
-    #[test]
-    fn build_fullcontext_test_yarn() {
-        assert!(!create_yarn()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .context
-            .is_empty())
-    }
-
-    // Tests for BildTemplate trait - Poetry
-    fn create_poetry() -> Poetry {
-        Poetry::new()
-    }
-
-    #[test]
-    fn build_contain_files_test_poetry() {
-        assert!(create_poetry()
-            .build(
-                Path::new("/Home/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .files
-            .contains_key(Path::new("/Home/Desktop/project/README.md")))
-    }
-    #[test]
-    fn build_dirs_test_poetry() {
-        assert_eq!(
-            create_poetry()
-                .build(
-                    Path::new("~/Desktop/project"),
-                    "my_prog",
-                    "Apache-2.0",
-                    "master"
-                )
-                .dirs,
-            vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/my_prog"),
-                Path::new("~/Desktop/project/my_prog/data"),
-                Path::new("~/Desktop/project/my_prog/tests"),
-                Path::new("~/Desktop/project/.github/workflows")
-            ]
-        )
-    }
-    #[test]
-    fn build_fullcontext_test_poetry() {
-        assert!(!create_poetry()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .context
-            .is_empty())
-    }
-
-    // Tests for BildTemplate trait - Meson
-    fn create_meson() -> Meson {
-        Meson::new().kind(meson::ProjectKind::C)
-    }
-
-    #[test]
-    fn build_contain_files_test_meson() {
-        assert!(create_meson()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
-    }
-    #[test]
-    fn build_dirs_test_meson() {
-        assert_eq!(
-            create_meson()
-                .build(
-                    Path::new("~/Desktop/project"),
-                    "my_prog",
-                    "Apache-2.0",
-                    "master"
-                )
-                .dirs,
-            vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/cli"),
-                Path::new("~/Desktop/project/lib"),
-                Path::new("~/Desktop/project/tests"),
-                Path::new("~/Desktop/project/.github/workflows")
-            ]
-        )
-    }
-    #[test]
-    fn build_fullcontext_test_meson() {
-        assert!(!create_meson()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .context
-            .is_empty())
-    }
-
-    // Tests for BildTemplate trait - Maven
-    fn create_maven() -> Maven<'static> {
-        Maven::new().group("group_name")
-    }
-
-    #[test]
-    fn build_contain_files_test_maven() {
-        assert!(create_maven()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
-    }
-    #[test]
-    fn build_content_dirs_test_maven() {
-        assert_eq!(
-            create_maven()
-                .build(
-                    Path::new("~/Desktop/project"),
-                    "my_prog",
-                    "Apache-2.0",
-                    "master"
-                )
-                .dirs,
-            vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/src/main/java/group_name/my_prog"),
-                Path::new("~/Desktop/project/src/test/java/group_name/my_prog/example"),
-                Path::new("~/Desktop/project/.github/workflows")
-            ]
-        )
-    }
-    #[test]
-    fn build_fullcontext_test_maven() {
-        assert!(!create_maven()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .context
-            .is_empty())
-    }
-
-    // Tests for BildTemplate trait - Cargo
-    fn create_cargo() -> Cargo<'static> {
-        Cargo::new().docker_image_description("description")
-    }
-
-    #[test]
-    fn build_contain_files_test_cargo() {
-        assert!(create_cargo()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .files
-            .contains_key(Path::new("~/Desktop/project/README.md")))
-    }
-    #[test]
-    fn build_content_dirs_test_cargo() {
-        assert_eq!(
-            create_cargo()
-                .build(
-                    Path::new("~/Desktop/project"),
-                    "my_prog",
-                    "Apache-2.0",
-                    "master"
-                )
-                .dirs,
-            vec![
-                Path::new("~/Desktop/project"),
-                Path::new("~/Desktop/project/.github/workflows"),
-                Path::new("~/Desktop/project/docker"),
-                Path::new("~/Desktop/project/fuzz"),
-                Path::new("~/Desktop/project/fuzz/fuzz_targets")
-            ]
-        )
-    }
-    #[test]
-    fn build_fullcontext_test_cargo() {
-        assert!(!create_maven()
-            .build(
-                Path::new("~/Desktop/project"),
-                "my_prog",
-                "Apache-2.0",
-                "master"
-            )
-            .context
-            .is_empty())
+    fn path_validation_2() {
+        assert!(path_validation(Path::new("~\\")).is_ok());
     }
 }

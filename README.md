@@ -38,8 +38,14 @@ Each command has an optional argument to define a license and an optional argume
 ### cargo
 
 ```
-$ ci-generate cargo [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate cargo --docker-image-description DESCRIPTION [ --lib --ci] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
 ```
+
+The argument `--docker-image-description` is a mandatory field that accepts any string type. 
+When `--lib` and `--ci` options are not provided, by default, the binary will be created similar to the `cargo new` command output. 
+If the `--lib` option is enabled, the tool generates a library project. 
+When the `--ci` option is enabled, the tool produces only the CI files. 
+If both the `--lib` and `--ci` options are enabled, then the CI files will be prioritized, and only CI files will be generated.
 
 ### maven
 
@@ -81,6 +87,10 @@ license = "BSD-3-Clause"
 
 [meson]
 kind = "c++"
+
+[cargo]
+lib = false
+ci = false
 ```
 
 Will override the default `license` and `meson.kind` configuration items and it would be equivalent to call:

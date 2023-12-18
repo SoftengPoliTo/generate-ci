@@ -1,0 +1,11 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+#include "Meson_project.h"
+
+int main()
+{
+
+}
+

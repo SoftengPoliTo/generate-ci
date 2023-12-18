@@ -1,0 +1,8 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+fn main() {
+    println!("Hello, world!");
+}
+

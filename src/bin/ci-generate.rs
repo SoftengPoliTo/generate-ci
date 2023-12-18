@@ -61,6 +61,10 @@ static DEFAULT_CONF: &str = r#"
 
     [meson]
     kind = "c"
+
+    [cargo]
+    lib = false
+    ci = false
 "#;
 
 struct ClapSerialized<T> {
@@ -124,6 +128,12 @@ struct CargoData {
     /// Docker image description.
     #[clap(long)]
     docker_image_description: String,
+    /// Used for creating a library project
+    #[clap(long, global = false)]
+    lib: bool,
+    /// Used for creating just cargo ci files
+    #[clap(long, global = false)]
+    ci: bool,
     #[clap(flatten)]
     #[serde(flatten)]
     common: CommonData,
@@ -229,9 +239,21 @@ fn main() -> anyhow::Result<()> {
                 .branch(&cargo.common.branch)
                 .license(&cargo.common.license)
                 .name(&cargo.common.name);
-            Ok(Cargo::new()
-                .docker_image_description(&cargo.docker_image_description)
-                .create_ci(data)?)
+            if cargo.ci {
+                Ok(Cargo::new()
+                    .docker_image_description(&cargo.docker_image_description)
+                    .only_ci()
+                    .create_ci(data)?)
+            } else if !cargo.ci && cargo.lib {
+                Ok(Cargo::new()
+                    .docker_image_description(&cargo.docker_image_description)
+                    .create_lib()
+                    .create_ci(data)?)
+            } else {
+                Ok(Cargo::new()
+                    .docker_image_description(&cargo.docker_image_description)
+                    .create_ci(data)?)
+            }
         }
         ("maven", matches) => {
             let config = config
