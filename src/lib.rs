@@ -206,7 +206,7 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 
     environment
 }
-/// Retrieve the project name
+// Retrieve the project name
 pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
     if project_name.is_empty() {
         let name = match project_path.file_name().and_then(|x| x.to_str()) {
@@ -218,14 +218,14 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
         Ok(project_name)
     }
 }
-/// Retrieve the license
+// Retrieve the license
 pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
     let license = license
         .parse::<&dyn license::License>()
         .map_err(|_| Error::NoLicense)?;
     Ok(license)
 }
-/// Compute template
+// Compute template
 pub(crate) fn compute_template(
     mut template: CiTemplate,
     license: &dyn license::License,
@@ -236,7 +236,7 @@ pub(crate) fn compute_template(
     template.render()
 }
 
-/// Performs a path validation for unix/macOs
+// Performs a path validation for unix/macOs
 #[cfg(not(windows))]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use expanduser::expanduser;
@@ -260,7 +260,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         _ => Err(Error::CanonicalPath),
     }
 }
-/// Performs a path validation for Windows
+// Performs a path validation for Windows
 #[cfg(windows)]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use homedir::get_my_home;
@@ -342,17 +342,13 @@ mod tests {
     fn path_validation_2() {
         assert!(path_validation(Path::new("tests/common/mod.rs")).is_ok());
     }
-}
 
-#[cfg(windows)]
-#[cfg(test)]
-mod tests {
-    use super::*;
-
+    #[cfg(windows)]
     #[test]
     fn path_validation_1() {
         assert!(path_validation(Path::new("~\\C:\\Users\\..\\..\\Documents")).is_err());
     }
+    #[cfg(windows)]
     #[test]
     fn path_validation_2() {
         assert!(path_validation(Path::new("~\\")).is_ok());

@@ -1,10 +1,11 @@
 mod common;
-use common::compare_template;
+use common::compare_template_skip;
 
 use ci_generate::{cargo::Cargo, CreateCi, TemplateData};
 use std::env::temp_dir;
 use std::path::Path;
 
+const SKIPPED_FOLDERS: &[&str] = &[".git"];
 const SNAPSHOT_PATH_B: &str = "../repositories/snapshots/cargo/";
 const SNAPSHOT_PATH_L: &str = "../repositories/snapshots/cargo_library/";
 const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/cargo_ci/";
@@ -18,7 +19,7 @@ fn test_cargo_binary() {
         .docker_image_description("description-docker")
         .create_ci(data)
         .unwrap();
-    compare_template(Path::new(SNAPSHOT_PATH_B), &tmp_dir);
+    compare_template_skip(Path::new(SNAPSHOT_PATH_B), &tmp_dir, SKIPPED_FOLDERS);
 }
 
 #[test]
@@ -31,7 +32,7 @@ fn test_cargo_library() {
         .create_lib()
         .create_ci(data)
         .unwrap();
-    compare_template(Path::new(SNAPSHOT_PATH_L), &tmp_dir);
+    compare_template_skip(Path::new(SNAPSHOT_PATH_L), &tmp_dir, SKIPPED_FOLDERS);
 }
 #[test]
 fn test_cargo_ci() {
@@ -43,5 +44,5 @@ fn test_cargo_ci() {
         .only_ci()
         .create_ci(data)
         .unwrap();
-    compare_template(Path::new(SNAPSHOT_PATH_C), &tmp_dir);
+    compare_template_skip(Path::new(SNAPSHOT_PATH_C), &tmp_dir, SKIPPED_FOLDERS);
 }

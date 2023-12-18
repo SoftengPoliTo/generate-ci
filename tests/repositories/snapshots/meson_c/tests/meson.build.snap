@@ -1,0 +1,18 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+# Create a new executable object to test the library
+exe = executable(
+  'test-Meson-project', # Executable name
+  'Meson_project.c', # Tests source file
+  include_directories: incs, # Directories to be included when building the executable
+  dependencies: Meson_project_dep # Libraries to be linked at the executable
+)
+
+# Create a test that run all tests contained in the executable produced above
+test(
+  'test_name', # Test name
+  exe # Executable object
+)
+

@@ -8,8 +8,6 @@ use crate::{
     error::Result, path_validation, BuildTemplate, CreateCi, ProjectOutput, TemplateData,
 };
 
-pub const SKIPPED_FOLDERS: &[&str] = &[".git"];
-
 static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
     ("md.README", "README.md"),
     ("ci.github", "github.yml"),
