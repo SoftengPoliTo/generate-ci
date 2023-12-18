@@ -2,7 +2,7 @@
 source: tests/common/mod.rs
 expression: content
 ---
-name: cargo_onlyCi
+name: cargo_only_ci
 
 on:
   push:
@@ -200,7 +200,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -277,7 +277,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -355,7 +355,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -442,7 +442,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -505,7 +505,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -568,7 +568,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 

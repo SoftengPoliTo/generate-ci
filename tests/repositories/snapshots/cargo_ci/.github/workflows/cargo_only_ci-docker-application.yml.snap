@@ -2,7 +2,7 @@
 source: tests/common/mod.rs
 expression: content
 ---
-name: cargo_onlyCi-docker-app
+name: cargo_only_ci-docker-app
 
 on:
   push:
@@ -60,7 +60,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_onlyCi-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo_only_ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -86,15 +86,15 @@ jobs:
         cross clean
         cross build --release --target x86_64-unknown-linux-musl
         mkdir -p x86_64-unknown-linux-musl
-        cp target/x86_64-unknown-linux-musl/release/cargo_onlyCi x86_64-unknown-linux-musl/
+        cp target/x86_64-unknown-linux-musl/release/cargo_only_ci x86_64-unknown-linux-musl/
 
     - name: Produce manifest
       id: manifest
       run: |
         # Produce manifest
-        manifest -b target/x86_64-unknown-linux-musl/release/cargo_onlyCi -l 0.1 -o cargo_onlyCi.json
+        manifest -b target/x86_64-unknown-linux-musl/release/cargo_only_ci -l 0.1 -o cargo_only_ci.json
         # Save json in a temporary variable
-        MANIFEST_JSON=$(jq -c '.' cargo_onlyCi.json)
+        MANIFEST_JSON=$(jq -c '.' cargo_only_ci.json)
         # Save json in an environment variable
         echo "value=$MANIFEST_JSON" >> $GITHUB_OUTPUT
 
@@ -105,7 +105,7 @@ jobs:
         cross clean
         cross build --release --target aarch64-unknown-linux-musl
         mkdir -p aarch64-unknown-linux-musl
-        cp target/aarch64-unknown-linux-musl/release/cargo_onlyCi aarch64-unknown-linux-musl/
+        cp target/aarch64-unknown-linux-musl/release/cargo_only_ci aarch64-unknown-linux-musl/
 
     - name: Get tag
       id: tag
@@ -133,8 +133,8 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: |
-          ghcr.io//cargo_onlyCi-amd64:${{ steps.tag.outputs.value }}
-          ghcr.io//cargo_onlyCi-amd64:latest
+          ghcr.io//cargo_only_ci-amd64:${{ steps.tag.outputs.value }}
+          ghcr.io//cargo_only_ci-amd64:latest
         labels: |
           org.opencontainers.image.description=description-docker
           software.quality=${{ steps.coverage.outputs.value }}
@@ -148,8 +148,8 @@ jobs:
         platforms: linux/arm64
         push: true
         tags: |
-          ghcr.io//cargo_onlyCi-arm64:${{ steps.tag.outputs.value }}
-          ghcr.io//cargo_onlyCi-arm64:latest
+          ghcr.io//cargo_only_ci-arm64:${{ steps.tag.outputs.value }}
+          ghcr.io//cargo_only_ci-arm64:latest
         labels: |
           org.opencontainers.image.description=description-docker
           software.quality=${{ steps.coverage.outputs.value }}

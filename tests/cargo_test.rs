@@ -36,7 +36,7 @@ fn test_cargo_library() {
 }
 #[test]
 fn test_cargo_ci() {
-    let tmp_dir = temp_dir().join("cargo_onlyCi");
+    let tmp_dir = temp_dir().join("cargo_only_ci");
     let data = TemplateData::new(&tmp_dir).license("MIT").branch("main");
 
     Cargo::new()

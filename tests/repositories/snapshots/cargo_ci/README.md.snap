@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# cargo_onlyCi
+# cargo_only_ci
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-cargo_onlyCi's description
+cargo_only_ci's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/cargo_onlyCi/actions
-[codecov]: https://codecov.io/gh/<your-account>/cargo_onlyCi
+[actions]: https://github.com/<your-account>/cargo_only_ci/actions
+[codecov]: https://codecov.io/gh/<your-account>/cargo_only_ci
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/cargo_onlyCi/workflows/cargo_onlyCi/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/cargo_onlyCi/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/cargo_only_ci/workflows/cargo_only_ci/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/cargo_only_ci/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

@@ -3,5 +3,5 @@ source: tests/common/mod.rs
 expression: content
 ---
 FROM arm64v8/alpine
-ADD cargo_onlyCi /
-ENTRYPOINT ["/cargo_onlyCi"]
+ADD cargo_only_ci /
+ENTRYPOINT ["/cargo_only_ci"]
