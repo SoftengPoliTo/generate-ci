@@ -1,7 +1,7 @@
 use std::{fs, path::Path};
 use walkdir::WalkDir;
 
-pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
+pub(crate) fn compare_template(snapshot_path: &Path, template_path: &Path) {
     for entry in WalkDir::new(template_path).into_iter() {
         entry.map_or((), |e| {
             if e.path().is_file() {
@@ -11,7 +11,11 @@ pub fn compare_template(snapshot_path: &Path, template_path: &Path) {
     }
 }
 
-pub fn compare_template_skip(snapshot_path: &Path, template_path: &Path, skipped_folders: &[&str]) {
+pub(crate) fn compare_template_skip(
+    snapshot_path: &Path,
+    template_path: &Path,
+    skipped_folders: &[&str],
+) {
     // https://docs.rs/walkdir/latest/walkdir/struct.IntoIter.html#method.skip_current_dir
     let mut it = WalkDir::new(template_path).into_iter();
     loop {

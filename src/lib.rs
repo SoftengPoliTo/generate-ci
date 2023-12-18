@@ -4,8 +4,7 @@ pub use toolchain::*;
 pub mod error;
 use error::{Error, Result};
 
-pub mod command;
-pub use command::run_command;
+mod command;
 
 mod filters;
 
@@ -306,7 +305,6 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     str
 }
 
-#[cfg(not(windows))]
 #[cfg(test)]
 mod tests {
     use super::*;

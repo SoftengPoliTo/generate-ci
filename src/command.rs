@@ -6,7 +6,7 @@ use std::{
 use crate::error::Result;
 
 /// Runs cargo command
-pub fn run_command(path: &Path, args: &[&str]) -> Result<ExitStatus> {
+pub(crate) fn run_command(path: &Path, args: &[&str]) -> Result<ExitStatus> {
     let mut command = Command::new("cargo").args(args).arg(path).spawn()?;
 
     command.wait().map_err(|e| e.into())
