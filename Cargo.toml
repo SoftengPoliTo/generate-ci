@@ -26,6 +26,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 [dev-dependencies]
 insta = "1.34.0"
 walkdir = "2.4.0"
+proptest = "1.4.0"
 
 [target.'cfg(not(windows))'.dependencies]
 expanduser = "1.2.2"

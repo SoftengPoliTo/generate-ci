@@ -207,14 +207,14 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 }
 // Retrieve the project name
 pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
-    if project_name.is_empty() {
+    if !project_name.is_empty() && project_name.is_ascii() {
+        Ok(project_name)
+    } else {
         let name = match project_path.file_name().and_then(|x| x.to_str()) {
             Some(x) => Ok(x),
             None => Err(Error::UTF8Check),
         };
         name
-    } else {
-        Ok(project_name)
     }
 }
 // Retrieve the license
@@ -308,20 +308,25 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use proptest::prelude::*;
 
-    // Test other lib internal functions
-    #[test]
-    fn define_name_valid_test() {
-        assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
+    // Test for input strings to define_name()
+    proptest! {
+        #[test]
+        fn test_diff_alphabet(s in "[\\p{Greek}][\\p{Cyrillic}]*{0,}"){
+            prop_assert!(define_name(&s, Path::new("~/Desktop")).is_ok());
+        }
+        #[test]
+        fn test_valid_word(s in "[[:word:]]*{0,}"){
+            prop_assert!(define_name(&s, Path::new("~/Desktop")).is_ok());
+        }
+        #[test]
+        fn test_emoji(s in "[\\p{Emoji}]*{0,}"){
+            prop_assert!(define_name(&s, Path::new("~/Desktop")).is_ok());
+        }
     }
-    #[test]
-    fn define_name_emptyname_test() {
-        assert!(define_name("", Path::new("~/Desktop/MyProject")).is_ok());
-    }
-    #[test]
-    fn emptypath_test() {
-        assert!(path_validation(Path::new("")).is_err())
-    }
+
+    // Test for input strings to define_license()
     #[test]
     fn define_license_valid_test() {
         assert!(define_license("AFL-3.0").is_ok())
@@ -330,25 +335,41 @@ mod tests {
     fn define_license_invalid_test() {
         assert!(define_license("POL-3.0").is_err());
     }
+
+    // Test for path validation for unix
     #[test]
-    fn path_validation_1() {
+    fn path_validation_0() {
+        assert!(path_validation(Path::new("")).is_err())
+    }
+    #[test]
+    fn path_validation_empty() {
+        assert!(path_validation(Path::new("")).is_err());
+    }
+    #[test]
+    fn path_validation_invalid() {
         assert!(
             path_validation(Path::new("~//Desktop/GitHub/ci-generate/../../ci-generate")).is_err()
         );
     }
     #[test]
-    fn path_validation_2() {
+    fn path_validation_valid() {
         assert!(path_validation(Path::new("tests/common/mod.rs")).is_ok());
     }
 
+    // Test for path validation for windows
     #[cfg(windows)]
     #[test]
-    fn path_validation_1() {
+    fn path_validation_empty() {
+        assert!(path_validation(Path::new("")).is_err());
+    }
+    #[cfg(windows)]
+    #[test]
+    fn path_validation_invalid() {
         assert!(path_validation(Path::new("~\\C:\\Users\\..\\..\\Documents")).is_err());
     }
     #[cfg(windows)]
     #[test]
-    fn path_validation_2() {
+    fn path_validation_valid() {
         assert!(path_validation(Path::new("~\\")).is_ok());
     }
 }

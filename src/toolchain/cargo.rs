@@ -15,9 +15,7 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
     ("ci.github.docker", "github-docker-application.yml"),
     ("docker.amd64", "Dockerfile-amd64"),
     ("docker.arm64", "Dockerfile-arm64"),
-    ("fuzz.gitignore", ".gitignore-fuzz"),
-    ("fuzz.cargo", "cargo-fuzz.toml"),
-    ("fuzz.target", "fuzz_target_1.rs")
+    ("rs.proptest", "proptest.rs")
 ];
 
 /// A cargo project data.
@@ -75,6 +73,10 @@ impl<'a> Cargo<'a> {
             } else {
                 run_command(path, &["new"])?;
             }
+            run_command(
+                &path.join("Cargo.toml"),
+                &["add", "--dev", "proptest", "--manifest-path"],
+            )?;
         }
         Ok(())
     }
@@ -82,12 +84,11 @@ impl<'a> Cargo<'a> {
     fn project_structure(
         project_path: &Path,
         name: &str,
+        ci: bool,
     ) -> (HashMap<PathBuf, &'static str>, Vec<PathBuf>) {
         let root = project_path.to_path_buf();
         let github = project_path.join(".github/workflows");
         let docker = project_path.join("docker");
-        let fuzz = project_path.join("fuzz");
-        let fuzz_targets = fuzz.join("fuzz_targets");
 
         let mut template_files = HashMap::new();
 
@@ -106,15 +107,14 @@ impl<'a> Cargo<'a> {
         template_files.insert(docker.join("Dockerfile-amd64"), "docker.amd64");
         template_files.insert(docker.join("Dockerfile-arm64"), "docker.arm64");
 
-        // Fuzz
-        template_files.insert(fuzz.join(".gitignore"), "fuzz.gitignore");
-        template_files.insert(fuzz.join("Cargo.toml"), "fuzz.cargo");
-        template_files.insert(fuzz_targets.join("fuzz_target_1.rs"), "fuzz.target");
-
-        (
-            template_files,
-            vec![root, github, docker, fuzz, fuzz_targets],
-        )
+        if !ci {
+            // Proptest
+            let tests = project_path.join("project").join("tests");
+            template_files.insert(tests.join("proptest.rs"), "rs.proptest");
+            (template_files, vec![root, github, docker, tests])
+        } else {
+            (template_files, vec![root, github, docker])
+        }
     }
 }
 
@@ -139,7 +139,7 @@ impl<'a> BuildTemplate for Cargo<'a> {
         fs::remove_dir_all(project_path)?;
         Cargo::project_creation(self, &project_path.join("project"))?;
 
-        let (files, dirs) = Cargo::project_structure(project_path, project_name);
+        let (files, dirs) = Cargo::project_structure(project_path, project_name, self.ci);
 
         Ok(ProjectOutput {
             files,
