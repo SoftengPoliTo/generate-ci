@@ -24,7 +24,7 @@ fn parse_date(s: &str) -> Option<(u32, u32, u32)> {
 use proptest::prelude::*;
 proptest! {
     #[test]
-    fn doesnt_crash(s in "\\PC*") {
+    fn parse_date_test(s in "\\PC*") {
         parse_date(&s);
     }
 }
