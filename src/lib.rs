@@ -10,6 +10,7 @@ mod filters;
 
 use minijinja::value::Value;
 use minijinja::Environment;
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fs::{create_dir_all, write};
 use std::path::{Path, PathBuf};
@@ -20,37 +21,38 @@ use filters::*;
 static REUSE_TEMPLATE: &str =
     include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/", "dep5"));
 
+#[derive(Debug)]
 pub struct TemplateData<'a> {
-    license: &'a str,
-    branch: &'a str,
-    name: &'a str,
+    license: Cow<'a, str>,
+    branch: Cow<'a, str>,
+    name: Cow<'a, str>,
     project_path: &'a Path,
 }
 impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
     pub fn new(project_path: &'a Path) -> Self {
         Self {
-            license: "MIT",
-            branch: "main",
-            name: "",
+            license: "MIT".into(),
+            branch: "main".into(),
+            name: "".into(),
             project_path,
         }
     }
     /// Sets a new license.
-    pub fn license(mut self, license: &'a str) -> Self {
-        self.license = license;
+    pub fn license(mut self, license: impl Into<Cow<'a, str>>) -> Self {
+        self.license = license.into();
         self
     }
 
     /// Sets a new branch.
-    pub fn branch(mut self, branch: &'a str) -> Self {
-        self.branch = branch;
+    pub fn branch(mut self, branch: impl Into<Cow<'a, str>>) -> Self {
+        self.branch = branch.into();
         self
     }
 
     /// Sets a new project_name.
-    pub fn name(mut self, name: &'a str) -> Self {
-        self.name = name;
+    pub fn name(mut self, name: impl Into<Cow<'a, str>>) -> Self {
+        self.name = name.into();
         self
     }
 }
@@ -207,23 +209,28 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 }
 // Retrieve the project name
 pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
-    if project_name.is_empty() {
-        let name = match project_path.file_name().and_then(|x| x.to_str()) {
-            Some(x) => Ok(x),
-            None => Err(Error::UTF8Check),
-        };
-        name
+    Ok(if !project_name.is_empty() && project_name.is_ascii() {
+        project_name
     } else {
-        Ok(project_name)
-    }
+        project_path
+            .file_name()
+            .and_then(|x| x.to_str())
+            .filter(|name_str| !name_str.is_empty() && name_str.is_ascii())
+            .ok_or(Error::UTF8Check)?
+    })
 }
+
 // Retrieve the license
 pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
-    let license = license
-        .parse::<&dyn license::License>()
-        .map_err(|_| Error::NoLicense)?;
-    Ok(license)
+    license.parse::<&dyn license::License>().map_err(|_| {
+        if license.is_empty() {
+            Error::NoLicense
+        } else {
+            Error::InvalidLicense
+        }
+    })
 }
+
 // Compute template
 pub(crate) fn compute_template(
     mut template: CiTemplate,
@@ -238,27 +245,27 @@ pub(crate) fn compute_template(
 // Performs a path validation for unix/macOs
 #[cfg(not(windows))]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
-    use expanduser::expanduser;
-    use std::fs;
-    let project_path = if project_path.starts_with("~") {
-        let project_path = match expanduser(project_path.display().to_string()) {
-            Ok(p) => p,
-            Err(_) => return Err(Error::WrongExpandUser),
-        };
-        project_path
-    } else {
-        project_path.to_path_buf()
-    };
+    use shellexpand::tilde;
 
-    if !project_path.try_exists()? {
-        fs::create_dir(&project_path)?;
-    }
-    let project_path = std::fs::canonicalize(project_path);
-    match project_path {
-        Ok(x) => Ok(x),
-        _ => Err(Error::CanonicalPath),
-    }
+    let expanded_path_str = tilde(project_path.to_string_lossy().as_ref()).to_string();
+    let project_path: PathBuf = expanded_path_str
+        .parse()
+        .map_err(|_| Error::WrongExpandUser)?;
+
+    let result_path = project_path
+        .parent()
+        .ok_or(Error::NoParent)
+        .and_then(|parent_path| parent_path.canonicalize().map_err(|_| Error::CanonicalPath))
+        .and_then(|canonical_parent_path| {
+            project_path
+                .file_name()
+                .map_or(Err(Error::NoFileName), |f| {
+                    Ok(canonical_parent_path.join(f.to_string_lossy().as_ref()))
+                })
+        })?;
+    Ok(result_path)
 }
+
 // Performs a path validation for Windows
 #[cfg(windows)]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
@@ -308,47 +315,123 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use proptest::prelude::*;
+    use proptest_derive::Arbitrary;
+    use std::env;
 
-    // Test other lib internal functions
-    #[test]
-    fn define_name_valid_test() {
-        assert!(define_name("test-project", Path::new("~/Desktop/project")).is_ok());
+    static VALID_LICENSES: [&str; 3] = ["MIT", "Apache-2.0", "GPL-3.0"];
+
+    #[derive(Debug, Arbitrary)]
+    struct LicenseTest {
+        license_str: String,
     }
-    #[test]
-    fn define_name_emptyname_test() {
-        assert!(define_name("", Path::new("~/Desktop/MyProject")).is_ok());
+
+    proptest! {
+        #[test]
+        fn define_license_proptest(data: LicenseTest) {
+
+            match define_license(&data.license_str) {
+                Err(Error::NoLicense) => prop_assert!(data.license_str.is_empty()),
+                Err(Error::InvalidLicense) => prop_assert!(!VALID_LICENSES.contains(&data.license_str.as_str())),
+                Ok(_) => prop_assert!(VALID_LICENSES.contains(&data.license_str.as_str())),
+                //This branch is made general to consider all other error cases in the error.rs library,
+                //but which in the context of this API will never be called.
+                _ => {},
+            }
+        }
     }
-    #[test]
-    fn emptypath_test() {
-        assert!(path_validation(Path::new("")).is_err())
+
+    fn path_strategy() -> impl Strategy<Value = PathBuf> {
+        "\\PC*".prop_map(PathBuf::from)
     }
-    #[test]
-    fn define_license_valid_test() {
-        assert!(define_license("AFL-3.0").is_ok())
+
+    proptest! {
+        #[test]
+        fn define_name_proptest(project_name in "\\PC*", project_path in path_strategy()) {
+            let project_path_str_option = project_path.file_name().and_then(|x| x.to_str());
+
+            match define_name(&project_name, &project_path) {
+                Ok(name) => {
+                    if !project_name.is_empty() && project_name.is_ascii() {
+                        prop_assert_eq!(name, &project_name)
+                    } else {
+                        prop_assert_eq!(Some(name), project_path_str_option)
+                    }
+                }
+                Err(Error::UTF8Check) => {
+                    prop_assert!(project_path_str_option.map_or(true, |s| s.is_empty() || !s.is_ascii() || s.contains('/')))
+                }
+                // This branch is made general to consider all other error cases in the error.rs library,
+                // but which in the context of this API will never be called.
+                _ => {},
+            }
+        }
     }
+
     #[test]
-    fn define_license_invalid_test() {
-        assert!(define_license("POL-3.0").is_err());
+    fn test_valid_path() {
+        let repo_path = env::var("CARGO_MANIFEST_DIR")
+            .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
+        let project_path = format!("{}/src/lib.rs", repo_path);
+
+        assert!(path_validation(Path::new(&project_path)).is_ok());
     }
+
     #[test]
-    fn path_validation_1() {
-        assert!(
-            path_validation(Path::new("~//Desktop/GitHub/ci-generate/../../ci-generate")).is_err()
-        );
+    fn test_parent_path_error() {
+        let repo_path = env::var("CARGO_MANIFEST_DIR")
+            .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
+        let project_path = format!("{}/src/../bin/..", repo_path);
+
+        assert!(matches!(
+            path_validation(Path::new(&project_path)),
+            Err(Error::CanonicalPath)
+        ));
     }
+
     #[test]
-    fn path_validation_2() {
-        assert!(path_validation(Path::new("tests/common/mod.rs")).is_ok());
+    fn no_parent_error() {
+        assert!(matches!(
+            path_validation(Path::new("")),
+            Err(Error::NoParent)
+        ));
+    }
+
+    #[test]
+    fn no_filename_error() {
+        let repo_path = env::var("CARGO_MANIFEST_DIR")
+            .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
+        let project_path = format!("{}/../", repo_path);
+
+        assert!(matches!(
+            path_validation(Path::new(&project_path)),
+            Err(Error::NoFileName)
+        ));
+    }
+
+    // Test for path validation for windows
+    #[cfg(windows)]
+    #[test]
+    fn test_valid_path_windows() {
+        let valid_path = Path::new("C:\\user\\docs\\Letter.txt");
+        assert!(path_validation_windows(&valid_path).is_ok());
     }
 
     #[cfg(windows)]
     #[test]
-    fn path_validation_1() {
-        assert!(path_validation(Path::new("~\\C:\\Users\\..\\..\\Documents")).is_err());
+    fn test_invalid_home_directory() {
+        let project_path = Path::new("~\\subfolder");
+        assert!(matches!(path_validation(project_path), Err(Error::HomeDir)));
     }
+
     #[cfg(windows)]
     #[test]
-    fn path_validation_2() {
-        assert!(path_validation(Path::new("~\\")).is_ok());
+    fn test_invalid_utf8_path() {
+        let invalid_utf8 = &[0xC3, 0x28];
+        let project_path = Path::new(invalid_utf8);
+        assert!(matches!(
+            path_validation(project_path),
+            Err(Error::UTF8Check)
+        ));
     }
 }
