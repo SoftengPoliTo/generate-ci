@@ -9,12 +9,6 @@ pub enum Error {
     /// Impossible to canonicalize this path.
     #[error("Canonicalization failure")]
     CanonicalPath,
-    /// Impossible to find a name.
-    #[error("File/Folder name failure")]
-    NoFileName,
-    /// Unable to find parent folder.
-    #[error("Parent folder failure")]
-    NoParent,
     /// Unable to retrieve the home directory.
     #[error("Home directory failure")]
     HomeDir,
