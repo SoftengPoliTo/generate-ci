@@ -253,7 +253,8 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         .map_err(|_| Error::WrongExpandUser)?;
 
     let result_path = project_path
-        .canonicalize().map_err(|_| Error::CanonicalPath)?;
+        .canonicalize()
+        .map_err(|_| Error::CanonicalPath)?;
     Ok(result_path)
 }
 
@@ -393,7 +394,6 @@ mod tests {
             Err(Error::CanonicalPath)
         ));
     }
-
 
     // Test for path validation for windows
     #[cfg(windows)]
