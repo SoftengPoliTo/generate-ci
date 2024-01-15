@@ -126,7 +126,7 @@ impl<T: Serialize> Provider for ClapSerialized<T> {
 #[derive(Parser, Debug, Serialize, Deserialize)]
 struct CargoData {
     /// Docker image description.
-    #[clap(long, default_value = "")]
+    #[clap(long)]
     docker_image_description: Option<String>,
     /// Used for creating a library project
     #[clap(long, global = false)]
