@@ -126,8 +126,8 @@ impl<T: Serialize> Provider for ClapSerialized<T> {
 #[derive(Parser, Debug, Serialize, Deserialize)]
 struct CargoData {
     /// Docker image description.
-    #[clap(long)]
-    docker_image_description: String,
+    #[clap(long, default_value = "")]
+    docker_image_description: Option<String>,
     /// Used for creating a library project
     #[clap(long, global = false)]
     lib: bool,
@@ -235,23 +235,27 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CargoData>::globals(matches.clone()))
                 .select("cargo");
             let cargo: CargoData = config.extract()?;
+            let docker_image_description = cargo.docker_image_description.map_or_else(
+                || format!("{} description", &cargo.common.name),
+                |desc| desc,
+            );
             let data = TemplateData::new(&cargo.common.project_path)
                 .branch(&cargo.common.branch)
                 .license(&cargo.common.license)
                 .name(&cargo.common.name);
             if cargo.ci {
                 Ok(Cargo::new()
-                    .docker_image_description(&cargo.docker_image_description)
+                    .docker_image_description(&docker_image_description)
                     .only_ci()
                     .create_ci(data)?)
             } else if !cargo.ci && cargo.lib {
                 Ok(Cargo::new()
-                    .docker_image_description(&cargo.docker_image_description)
+                    .docker_image_description(&docker_image_description)
                     .create_lib()
                     .create_ci(data)?)
             } else {
                 Ok(Cargo::new()
-                    .docker_image_description(&cargo.docker_image_description)
+                    .docker_image_description(&docker_image_description)
                     .create_ci(data)?)
             }
         }

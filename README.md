@@ -38,10 +38,10 @@ Each command has an optional argument to define a license and an optional argume
 ### cargo
 
 ```
-$ ci-generate cargo --docker-image-description DESCRIPTION [ --lib --ci] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate cargo [--docker-image-description DESCRIPTION] [ --lib --ci] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
 ```
 
-The argument `--docker-image-description` is a mandatory field that accepts any string type. 
+The argument `--docker-image-description` is an optional field that accepts any string type. 
 When `--lib` and `--ci` options are not provided, by default, the binary will be created similar to the `cargo new` command output. 
 If the `--lib` option is enabled, the tool generates a library project. 
 When the `--ci` option is enabled, the tool produces only the CI files. 
@@ -165,7 +165,7 @@ the changes. In case no differences are found, insta will return a success messa
 indicating that there are no snapshots to be reviewed.
 
 ## How works path_validation function
-The `path_validation` function is designed with the intent to perform validation and manipulation of the project path provided as input, accepting the parameter specified as `&Path` and returning a result of type `Result<PathBuf>`. Initially, the process of expanding the project path is undertaken through the use of the `shellexpand` library, thus allowing management of possible abbreviations or environment variables present in the provided path. Before the actual path-cleaning phase, which is obtained through the canonicalization function, the procedure implements an intermediate phase, characterized by the extraction of the last folder from the project path. This operation is aimed at carrying out a check on the existence of the parent path, therefore allowing the user to specify existing paths up to the parent folder and delegate to the system the creation of the directory intended to accommodate the different templates. If the parent path exists, the procedure proceeds with `canonicalization`, followed by merging the previously extracted folder to the resulting post-canonicalization path.
+The `path_validation` function is designed with the intent to perform validation and manipulation of the project path provided as input, accepting the parameter specified as `&Path` and returning a result of type `Result<PathBuf>`. Initially, the process of expanding the project path is undertaken through the use of the `shellexpand` library, thus allowing management of possible abbreviations or environment variables present in the provided path. The actual path-cleaning phase is obtained through the canonicalization function. The canonical path represents the absolute path to a file or directory after all path normalisations and resolutions have been applied. For example, it deletes points representing the current path (.) or the parent path (..) and resolves any symbolic links. It is important to emphasise that the final directory of the path passed to the function must exist, otherwise the canonicalisation will return an `error`.
 
 This implementation not only ensures the validity of the provided project path but also ensures its consistency.
 

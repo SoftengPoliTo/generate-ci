@@ -253,16 +253,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         .map_err(|_| Error::WrongExpandUser)?;
 
     let result_path = project_path
-        .parent()
-        .ok_or(Error::NoParent)
-        .and_then(|parent_path| parent_path.canonicalize().map_err(|_| Error::CanonicalPath))
-        .and_then(|canonical_parent_path| {
-            project_path
-                .file_name()
-                .map_or(Err(Error::NoFileName), |f| {
-                    Ok(canonical_parent_path.join(f.to_string_lossy().as_ref()))
-                })
-        })?;
+        .canonicalize().map_err(|_| Error::CanonicalPath)?;
     Ok(result_path)
 }
 
@@ -369,7 +360,7 @@ mod tests {
     }
 
     #[test]
-    fn test_valid_path() {
+    fn test_valid_path_file() {
         let repo_path = env::var("CARGO_MANIFEST_DIR")
             .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
         let project_path = format!("{}/src/lib.rs", repo_path);
@@ -378,7 +369,21 @@ mod tests {
     }
 
     #[test]
-    fn test_parent_path_error() {
+    fn test_valid_path_folder() {
+        let repo_path = env::var("CARGO_MANIFEST_DIR")
+            .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
+        let project_path = format!("{}/src", repo_path);
+
+        assert!(path_validation(Path::new(&project_path)).is_ok());
+    }
+
+    #[test]
+    fn test_current_path() {
+        assert!(path_validation(Path::new(".")).is_ok());
+    }
+
+    #[test]
+    fn test_path_error() {
         let repo_path = env::var("CARGO_MANIFEST_DIR")
             .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
         let project_path = format!("{}/src/../bin/..", repo_path);
@@ -389,25 +394,6 @@ mod tests {
         ));
     }
 
-    #[test]
-    fn no_parent_error() {
-        assert!(matches!(
-            path_validation(Path::new("")),
-            Err(Error::NoParent)
-        ));
-    }
-
-    #[test]
-    fn no_filename_error() {
-        let repo_path = env::var("CARGO_MANIFEST_DIR")
-            .expect("Unable to retrieve the environment variable CARGO_MANIFEST_DIR!");
-        let project_path = format!("{}/../", repo_path);
-
-        assert!(matches!(
-            path_validation(Path::new(&project_path)),
-            Err(Error::NoFileName)
-        ));
-    }
 
     // Test for path validation for windows
     #[cfg(windows)]
