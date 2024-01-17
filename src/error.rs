@@ -6,9 +6,6 @@ pub enum Error {
     /// Wrong expansion to home directory.
     #[error("Wrong expansion")]
     WrongExpandUser,
-    /// Impossible to canonicalize this path.
-    #[error("Canonicalization failure")]
-    CanonicalPath,
     /// Unable to retrieve the home directory.
     #[error("Home directory failure")]
     HomeDir,

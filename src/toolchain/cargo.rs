@@ -72,9 +72,9 @@ impl<'a> Cargo<'a> {
     fn project_creation(&self, path: &Path) -> Result<()> {
         if !self.ci {
             if self.lib {
-                run_command(path, &["new", "--lib"])?;
+                run_command(path, &["init", "--lib"])?;
             } else {
-                run_command(path, &["new"])?;
+                run_command(path, &["init"])?;
             }
             run_command(
                 &path.join("Cargo.toml"),
@@ -112,7 +112,7 @@ impl<'a> Cargo<'a> {
 
         if !ci {
             // Proptest
-            let tests = project_path.join("project").join("tests");
+            let tests = project_path.join("tests");
             template_files.insert(tests.join("proptest.rs"), "rs.proptest");
             (template_files, vec![root, github, docker, tests])
         } else {
@@ -139,7 +139,7 @@ impl<'a> BuildTemplate for Cargo<'a> {
             Value::from_serializable(&self.docker_image_description),
         );
 
-        Cargo::project_creation(self, &project_path.join("project"))?;
+        Cargo::project_creation(self, project_path)?;
 
         let (files, dirs) = Cargo::project_structure(project_path, project_name, self.ci);
 

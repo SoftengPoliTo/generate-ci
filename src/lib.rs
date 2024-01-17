@@ -252,9 +252,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         .parse()
         .map_err(|_| Error::WrongExpandUser)?;
 
-    let result_path = project_path
-        .canonicalize()
-        .map_err(|_| Error::CanonicalPath)?;
+    let result_path = project_path.canonicalize()?;
     Ok(result_path)
 }
 
@@ -391,7 +389,7 @@ mod tests {
 
         assert!(matches!(
             path_validation(Path::new(&project_path)),
-            Err(Error::CanonicalPath)
+            Err(Error::Io(_))
         ));
     }
 

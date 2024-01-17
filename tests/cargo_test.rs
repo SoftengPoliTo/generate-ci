@@ -6,7 +6,7 @@ use std::env::temp_dir;
 use std::fs::create_dir_all;
 use std::path::Path;
 
-const SKIPPED_FOLDERS: &[&str] = &[".git"];
+const SKIPPED_FOLDERS: &[&str] = &[".git", "Cargo.lock"];
 const SNAPSHOT_PATH_B: &str = "../repositories/snapshots/cargo/";
 const SNAPSHOT_PATH_L: &str = "../repositories/snapshots/cargo_library/";
 const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/cargo_ci/";
