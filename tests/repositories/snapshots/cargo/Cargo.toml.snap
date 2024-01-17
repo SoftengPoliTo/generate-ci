@@ -3,7 +3,7 @@ source: tests/common/mod.rs
 expression: content
 ---
 [package]
-name = "project"
+name = "cargo"
 version = "0.1.0"
 edition = "2021"
 
