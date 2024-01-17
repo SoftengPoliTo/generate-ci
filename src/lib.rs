@@ -260,7 +260,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
 #[cfg(windows)]
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use homedir::get_my_home;
-    // Creation of the $HOME directory
+    
     let home = get_my_home();
     let mut home = match home {
         Ok(x) => match x {
@@ -269,7 +269,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         },
         _ => return Err(Error::HomeDir),
     };
-    // Path validation
+    
     let mut project_path = if project_path.starts_with(r#"~\"#) {
         let str = match project_path.to_str() {
             Some(s) => s,
@@ -281,16 +281,8 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     } else {
         project_path.to_path_buf()
     };
-    // extenduser in case of relative path
-    project_path = if project_path.is_relative() {
-        let absolute_path = match std::fs::canonicalize(project_path) {
-            Ok(ap) => ap,
-            Err(_) => return Err(Error::Io(_)),
-        };
-        absolute_path
-    } else {
-        project_path
-    };
+    
+    project_path.canonicalize();
 
     let str = match project_path.to_str() {
         Some(s) => {
