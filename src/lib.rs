@@ -285,7 +285,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     project_path = if project_path.is_relative() {
         let absolute_path = match std::fs::canonicalize(project_path) {
             Ok(ap) => ap,
-            Err(_) => return Err(Error::CanonicalPath),
+            Err(_) => return Err(Error::Io(_)),
         };
         absolute_path
     } else {
