@@ -248,12 +248,36 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     use shellexpand::tilde;
 
     let expanded_path_str = tilde(project_path.to_string_lossy().as_ref()).to_string();
-    let project_path: PathBuf = expanded_path_str
+    let mut project_path: PathBuf = expanded_path_str
         .parse()
         .map_err(|_| Error::WrongExpandUser)?;
 
-    let result_path = project_path.canonicalize()?;
-    Ok(result_path)
+    if !project_path.exists() {
+        // Try to canonicalize the parent directory
+        if let Some(parent) = project_path.parent() {
+            let canonical_parent = parent.canonicalize()?;
+
+            // Build a new path by joining the canonical parent and the original file name
+            if let Some(file_name) = project_path.file_name() {
+                project_path = canonical_parent.join(file_name);
+            } else {
+                return Err(Error::Io(std::io::Error::from(
+                    std::io::ErrorKind::InvalidInput,
+                )));
+            }
+            // Create the missing directory if it doesn't exist
+            create_dir_all(&project_path).map_err(Error::Io)?;
+            Ok(project_path)
+        } else {
+            // Path has no parent, return an appropriate error
+            Err(Error::Io(std::io::Error::from(
+                std::io::ErrorKind::NotFound,
+            )))
+        }
+    } else {
+        project_path.canonicalize()?;
+        Ok(project_path)
+    }
 }
 
 // Performs a path validation for Windows
