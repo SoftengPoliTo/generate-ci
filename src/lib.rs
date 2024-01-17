@@ -282,7 +282,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         project_path.to_path_buf()
     };
 
-    project_path.canonicalize();
+    project_path.canonicalize()?;
 
     let str = match project_path.to_str() {
         Some(s) => {
