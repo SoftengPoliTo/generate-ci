@@ -1,5 +1,8 @@
 use std::collections::HashMap;
+use std::fmt;
+use std::io::{Error, ErrorKind};
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 
 use minijinja::value::Value;
 use serde::{Deserialize, Serialize};
@@ -35,6 +38,31 @@ pub enum ProjectKind {
     C,
     /// C++-language project
     Cxx,
+}
+
+impl FromStr for ProjectKind {
+    type Err = Error;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        match s {
+            "c" => Ok(Self::C),
+            "c++" => Ok(Self::Cxx),
+            _ => Err(Error::new(
+                ErrorKind::Other,
+                format!("{s} is not a valid meson project kind."),
+            )),
+        }
+    }
+}
+
+impl fmt::Display for ProjectKind {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let s = match self {
+            Self::C => "c",
+            Self::Cxx => "c++",
+        };
+        s.fmt(f)
+    }
 }
 
 #[derive(Default)]

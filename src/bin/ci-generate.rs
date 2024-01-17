@@ -142,7 +142,8 @@ struct CargoData {
 #[derive(Parser, Debug, Serialize, Deserialize)]
 struct MesonData {
     /// Kind of a new meson project
-    #[clap(long, short, value_parser = project_kind, default_value = "c")]
+    #[serde(rename = "lowercase")]
+    #[clap(long, short, default_value_t = ProjectKind::C)]
     kind: ProjectKind,
     #[clap(flatten)]
     #[serde(flatten)]
@@ -156,16 +157,6 @@ struct MavenData {
     #[clap(flatten)]
     #[serde(flatten)]
     common: CommonData,
-}
-
-fn project_kind(
-    s: &str,
-) -> Result<ProjectKind, Box<dyn std::error::Error + Send + Sync + 'static>> {
-    match s {
-        "c" => Ok(ProjectKind::C),
-        "c++" => Ok(ProjectKind::Cxx),
-        _ => Err(format!("{s} is not a valid meson project kind.").into()),
-    }
 }
 
 #[derive(Parser, Debug)]
