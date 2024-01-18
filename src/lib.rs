@@ -265,12 +265,19 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         project_path.to_path_buf()
     };
 
+    println!("{:?}", project_path);
+
     // Canonicalize project path parent and create a more correct path
-    let project_path = if let Some(parent) = project_path.parent() {
-        let canonical_parent = parent.canonicalize()?;
-        canonical_parent.join(project_path.file_name().ok_or(Error::NoDirectory)?)
-    } else {
-        project_path
+    let project_path = match project_path.parent() {
+        Some(parent) => {
+            if parent.ends_with("") {
+                project_path
+            } else {
+                let canonical_parent = parent.canonicalize()?;
+                canonical_parent.join(project_path.file_name().ok_or(Error::NoDirectory)?)
+            }
+        }
+        None => project_path,
     };
 
     // Create missing directories
