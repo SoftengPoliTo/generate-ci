@@ -214,8 +214,7 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
     } else {
         project_path
             .file_name()
-            .map(|s| s.to_str())
-            .flatten()
+            .and_then(|s| s.to_str())
             .ok_or(Error::UTF8Check)?
     })
 }

@@ -186,7 +186,7 @@ fn local_config() -> anyhow::Result<PathBuf> {
     let config_dir = std::env::var("XDG_CONFIG_HOME")
         .map(PathBuf::from)
         .or_else(|_| {
-            dirs::home_dir()
+            home::home_dir()
                 .map(|home| home.join(".config"))
                 .ok_or_else(|| anyhow!("Cannot find the home directory"))
         })?;
