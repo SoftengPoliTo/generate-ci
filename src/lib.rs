@@ -249,6 +249,12 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         return Err(Error::NoDirectory);
     }
 
+    // If only the "." value is passed, returns the path and allow the
+    // creation of templates
+    if project_path.ends_with(".") {
+        return Ok(project_path.to_path_buf());
+    }
+
     // Get a different home prefix according to different operating systems
     let prefix = if cfg!(windows) { r#"~\"# } else { "~" };
 
