@@ -9,6 +9,9 @@ pub enum Error {
     /// Unable to retrieve the home directory.
     #[error("Home directory failure")]
     HomeDir,
+    /// Directory not found.
+    #[error("Directory not found")]
+    NoDirectory,
     /// A general utf-8 conversion error.
     #[error("Utf-8 error")]
     UTF8Check,
