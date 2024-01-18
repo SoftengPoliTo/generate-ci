@@ -269,7 +269,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     let project_path = match project_path.parent() {
         Some(parent) => {
             if parent.ends_with("") {
-                project_path
+                project_path.canonicalize()?
             } else {
                 let canonical_parent = parent.canonicalize()?;
                 canonical_parent.join(project_path.file_name().ok_or(Error::NoDirectory)?)
@@ -384,6 +384,7 @@ mod tests {
     fn test_invalid_utf8_path() {
         let invalid_utf8 = String::from_utf8_lossy(&[0xC3, 0x28]).into_owned();
         let project_path = Path::new(&invalid_utf8);
-        assert!(matches!(path_validation(project_path), Err(Error::Io(_))));
+        path_validation(project_path).unwrap();
+        //assert!(matches!(path_validation(project_path), Err(Error::Io(_))));
     }
 }
