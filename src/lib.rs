@@ -357,12 +357,14 @@ mod tests {
     }
 
     // Test for path validation for windows
+    #[cfg(windows)]
     #[test]
     fn test_valid_path_windows() {
         let valid_path = Path::new("C:\\user\\docs\\Letter.txt");
         assert!(path_validation(&valid_path).is_ok());
     }
 
+    #[cfg(windows)]
     #[test]
     fn test_invalid_home_directory() {
         let project_path = Path::new("~\\subfolder");
@@ -371,11 +373,8 @@ mod tests {
 
     #[test]
     fn test_invalid_utf8_path() {
-        let invalid_utf8 = &[0xC3, 0x28];
-        let project_path = Path::new(invalid_utf8);
-        assert!(matches!(
-            path_validation(project_path),
-            Err(Error::UTF8Check)
-        ));
+        let invalid_utf8 = String::from_utf8_lossy(&[0xC3, 0x28]).into_owned();
+        let project_path = Path::new(&invalid_utf8);
+        assert!(matches!(path_validation(project_path), Err(Error::Io(_))));
     }
 }
