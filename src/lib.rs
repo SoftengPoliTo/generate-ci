@@ -265,8 +265,6 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         project_path.to_path_buf()
     };
 
-    println!("{:?}", project_path);
-
     // Canonicalize project path parent and create a more correct path
     let project_path = match project_path.parent() {
         Some(parent) => {
