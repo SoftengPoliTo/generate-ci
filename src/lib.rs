@@ -248,8 +248,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         return Err(Error::NoDirectory);
     }
 
-    // If only the "." value is passed, returns the path and allow the
-    // creation of templates
+    // If only the "." value is passed, returns the current path
     if project_path.ends_with(".") {
         return std::env::current_dir().map_err(|e| e.into());
     }

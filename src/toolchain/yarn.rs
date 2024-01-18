@@ -29,7 +29,7 @@ impl CreateCi for Yarn {
             license.id(),
             &data.branch,
         );
-        compute_template(template?, license, project_path.as_path())
+        compute_template(template?, license, &project_path)
     }
 }
 

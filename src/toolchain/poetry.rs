@@ -27,13 +27,8 @@ impl CreateProject for Poetry {
         let project_path = path_validation(data.project_path)?;
         let project_name = define_name(&data.name, &project_path)?;
         let license = define_license(&data.license)?;
-        let template = self.build(
-            project_path.as_path(),
-            project_name,
-            license.id(),
-            &data.branch,
-        );
-        compute_template(template?, license, project_path.as_path())
+        let template = self.build(&project_path, project_name, license.id(), &data.branch);
+        compute_template(template?, license, &project_path)
     }
 }
 
