@@ -3,12 +3,12 @@ use thiserror::Error;
 ///Error types
 #[derive(Debug, Error)]
 pub enum Error {
-    /// Wrong expansion to home directory.
-    #[error("Wrong expansion")]
-    WrongExpandUser,
     /// Unable to retrieve the home directory.
     #[error("Home directory failure")]
     HomeDir,
+    /// Unable to remove a prefix from a path.
+    #[error("Unable to remove path prefix")]
+    StripPrefix(#[from] std::path::StripPrefixError),
     /// Directory not found.
     #[error("Directory not found")]
     NoDirectory,
