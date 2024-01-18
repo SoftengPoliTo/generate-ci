@@ -214,8 +214,8 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
     } else {
         project_path
             .file_name()
-            .and_then(|x| x.to_str())
-            .filter(|name_str| !name_str.is_empty() && name_str.is_ascii())
+            .map(|s| s.to_str())
+            .flatten()
             .ok_or(Error::UTF8Check)?
     })
 }
@@ -252,7 +252,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     // If only the "." value is passed, returns the path and allow the
     // creation of templates
     if project_path.ends_with(".") {
-        return Ok(project_path.to_path_buf());
+        return std::env::current_dir().map_err(|e| e.into());
     }
 
     // Get a different home prefix according to different operating systems
