@@ -214,9 +214,8 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
     } else {
         project_path
             .file_name()
-            .and_then(|x| x.to_str())
-            .filter(|name_str| !name_str.is_empty() && name_str.is_ascii())
-            .ok_or(Error::UTF8Check)?
+            .and_then(|s| s.to_str())
+            .ok_or(Error::Utf8Check)?
     })
 }
 
@@ -242,102 +241,51 @@ pub(crate) fn compute_template(
     template.render()
 }
 
-#[cfg(not(windows))]
-fn relative_case(path: PathBuf) -> Result<PathBuf> {
-    let final_dir = path.file_name();
-    match final_dir {
-        Some(dir) => {
-            let mut remaining_path = path.clone();
-            remaining_path.pop();
-            if remaining_path.eq(Path::new("")) {
-                remaining_path.push(".");
-            }
-            let canonical_path = remaining_path.canonicalize()?;
-            let result_path = canonical_path.join(dir);
-            std::fs::create_dir_all(&result_path)?;
-            Ok(result_path)
-        }
-        None => {
-            let canonical_path = path.canonicalize()?;
-            Ok(canonical_path)
-        }
-    }
-}
-
-// Performs a path validation for unix/macOs
-#[cfg(not(windows))]
+// Performs path validation
 pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
-    let mut project_path: PathBuf = if project_path.to_string_lossy().starts_with('~') {
-        let home_dir = home::home_dir().ok_or(Error::HomeDir)?;
-        home_dir.join(
-            project_path
-                .strip_prefix("~")
-                .map_or_else(|_| Err(Error::WrongExpandUser), Ok)?,
-        )
+    // Do not accept a file, only a directory
+    if project_path.is_file() {
+        return Err(Error::NoDirectory);
+    }
+
+    // Check whether the path contains valid UTF-8 characters
+    if project_path.to_str().map_or(true, |s| s.contains('�')) {
+        return Err(Error::Utf8Check);
+    }
+
+    // If only the "." value is passed, returns the current path
+    if project_path.ends_with(".") {
+        return std::env::current_dir().map_err(|e| e.into());
+    }
+
+    // Get a different home prefix according to different operating systems
+    let prefix = if cfg!(windows) { r#"~\"# } else { "~" };
+
+    // Get home directory
+    let project_path = if project_path.starts_with(prefix) {
+        home::home_dir()
+            .ok_or(Error::HomeDir)?
+            .join(project_path.strip_prefix(prefix)?)
     } else {
         project_path.to_path_buf()
     };
 
-    if !project_path.is_file() {
-        if project_path.is_relative() {
-            relative_case(project_path)
-        } else if let Some(parent) = project_path.parent() {
-            let canonical_parent = parent.canonicalize()?;
-            if let Some(file_name) = project_path.file_name() {
-                project_path = canonical_parent.join(file_name);
+    // Canonicalize project path parent and create a more correct path
+    let project_path = match project_path.parent() {
+        Some(parent) => {
+            if parent.ends_with("") {
+                project_path
             } else {
-                return Err(Error::Io(std::io::Error::from(
-                    std::io::ErrorKind::InvalidInput,
-                )));
+                let canonical_parent = parent.canonicalize()?;
+                canonical_parent.join(project_path.file_name().ok_or(Error::NoDirectory)?)
             }
-            create_dir_all(&project_path)?;
-            Ok(project_path)
-        } else {
-            Err(Error::Io(std::io::Error::from(
-                std::io::ErrorKind::NotFound,
-            )))
         }
-    } else {
-        Err(Error::NoDirectory)
-    }
-}
-
-// Performs a path validation for Windows
-#[cfg(windows)]
-pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
-    use homedir::get_my_home;
-
-    let home = get_my_home();
-    let mut home = match home {
-        Ok(x) => match x {
-            Some(h) => h,
-            None => return Err(Error::HomeDir),
-        },
-        _ => return Err(Error::HomeDir),
+        None => project_path,
     };
 
-    let mut project_path = if project_path.starts_with(r#"~\"#) {
-        let str = match project_path.to_str() {
-            Some(s) => s,
-            None => return Err(Error::WrongExpandUser),
-        };
-        let str = str.replace("~\\", "");
-        home.push(Path::new(&str));
-        home
-    } else {
-        project_path.to_path_buf()
-    };
-
-    project_path.canonicalize()?;
-
-    let str = match project_path.to_str() {
-        Some(s) => {
-            s.replace(r#"\\?\"#, "");
-            Ok(Path::new(&s).to_path_buf())
-        }
-        None => return Err(Error::UTF8Check),
-    };
-    str
+    // Create missing directories
+    create_dir_all(&project_path)?;
+    Ok(project_path)
 }
 
 #[cfg(test)]
@@ -386,7 +334,7 @@ mod tests {
                         prop_assert_eq!(Some(name), project_path_str_option)
                     }
                 }
-                Err(Error::UTF8Check) => {
+                Err(Error::Utf8Check) => {
                     prop_assert!(project_path_str_option.map_or(true, |s| s.is_empty() || !s.is_ascii() || s.contains('/')))
                 }
                 // This branch is made general to consider all other error cases in the error.rs library,
@@ -427,7 +375,7 @@ mod tests {
     #[test]
     fn test_valid_path_windows() {
         let valid_path = Path::new("C:\\user\\docs\\Letter.txt");
-        assert!(path_validation_windows(&valid_path).is_ok());
+        assert!(path_validation(&valid_path).is_ok());
     }
 
     #[cfg(windows)]
@@ -437,14 +385,13 @@ mod tests {
         assert!(matches!(path_validation(project_path), Err(Error::HomeDir)));
     }
 
-    #[cfg(windows)]
     #[test]
     fn test_invalid_utf8_path() {
-        let invalid_utf8 = &[0xC3, 0x28];
-        let project_path = Path::new(invalid_utf8);
+        let invalid_utf8 = String::from_utf8_lossy(&[0xC3, 0x28]).into_owned();
+        let project_path = Path::new(&invalid_utf8);
         assert!(matches!(
             path_validation(project_path),
-            Err(Error::UTF8Check)
+            Err(Error::Utf8Check)
         ));
     }
 }
