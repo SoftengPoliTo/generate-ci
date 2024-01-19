@@ -215,7 +215,7 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
         project_path
             .file_name()
             .and_then(|s| s.to_str())
-            .ok_or(Error::UTF8Check)?
+            .ok_or(Error::Utf8Check)?
     })
 }
 
@@ -248,6 +248,11 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         return Err(Error::NoDirectory);
     }
 
+    // Check whether the path contains valid UTF-8 characters
+    if project_path.to_str().map_or(true, |s| s.contains('�')) {
+        return Err(Error::Utf8Check);
+    }
+
     // If only the "." value is passed, returns the current path
     if project_path.ends_with(".") {
         return std::env::current_dir().map_err(|e| e.into());
@@ -269,7 +274,7 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
     let project_path = match project_path.parent() {
         Some(parent) => {
             if parent.ends_with("") {
-                project_path.canonicalize()?
+                project_path
             } else {
                 let canonical_parent = parent.canonicalize()?;
                 canonical_parent.join(project_path.file_name().ok_or(Error::NoDirectory)?)
@@ -329,7 +334,7 @@ mod tests {
                         prop_assert_eq!(Some(name), project_path_str_option)
                     }
                 }
-                Err(Error::UTF8Check) => {
+                Err(Error::Utf8Check) => {
                     prop_assert!(project_path_str_option.map_or(true, |s| s.is_empty() || !s.is_ascii() || s.contains('/')))
                 }
                 // This branch is made general to consider all other error cases in the error.rs library,
@@ -384,7 +389,9 @@ mod tests {
     fn test_invalid_utf8_path() {
         let invalid_utf8 = String::from_utf8_lossy(&[0xC3, 0x28]).into_owned();
         let project_path = Path::new(&invalid_utf8);
-        path_validation(project_path).unwrap();
-        //assert!(matches!(path_validation(project_path), Err(Error::Io(_))));
+        assert!(matches!(
+            path_validation(project_path),
+            Err(Error::Utf8Check)
+        ));
     }
 }

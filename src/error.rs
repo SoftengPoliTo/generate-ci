@@ -14,7 +14,7 @@ pub enum Error {
     NoDirectory,
     /// A general utf-8 conversion error.
     #[error("Utf-8 error")]
-    UTF8Check,
+    Utf8Check,
     /// License not found.
     #[error("License not found")]
     NoLicense,
