@@ -303,8 +303,7 @@ mod tests {
         fn define_license_proptest(data: LicenseTest) {
 
             match define_license(&data.license_str) {
-                Err(Error::NoLicense) => prop_assert!(data.license_str.is_empty()),
-                Err(Error::InvalidLicense) => prop_assert!(!VALID_LICENSES.contains(&data.license_str.as_str())),
+                Err(Error::InvalidLicense(_)) => prop_assert!(!VALID_LICENSES.contains(&data.license_str.as_str())),
                 Ok(_) => prop_assert!(VALID_LICENSES.contains(&data.license_str.as_str())),
                 //This branch is made general to consider all other error cases in the error.rs library,
                 //but which in the context of this API will never be called.
