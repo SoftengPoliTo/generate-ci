@@ -221,13 +221,9 @@ pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> 
 
 // Retrieve the license
 pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
-    license.parse::<&dyn license::License>().map_err(|_| {
-        if license.is_empty() {
-            Error::NoLicense
-        } else {
-            Error::InvalidLicense
-        }
-    })
+    license
+        .parse::<&dyn license::License>()
+        .map_err(|e| e.into())
 }
 
 // Compute template

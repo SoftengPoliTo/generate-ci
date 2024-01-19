@@ -15,18 +15,21 @@ pub enum Error {
     /// A general utf-8 conversion error.
     #[error("Utf-8 error")]
     Utf8Check,
-    /// License not found.
-    #[error("License not found")]
-    NoLicense,
     /// Invalid license
     #[error("Invalid license")]
-    InvalidLicense,
+    InvalidLicense(license::ParseError),
     /// A more generic I/O error.
     #[error("I/O error")]
     Io(#[from] std::io::Error),
     /// A minijinja error.
     #[error("Minijinja error")]
     Minijinja(#[from] minijinja::Error),
+}
+
+impl From<license::ParseError> for Error {
+    fn from(e: license::ParseError) -> Error {
+        Error::InvalidLicense(e)
+    }
 }
 
 /// A specialized `Result` type.
