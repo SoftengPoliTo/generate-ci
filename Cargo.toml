@@ -14,6 +14,7 @@ homepage = "https://github.com/SoftengPoliTo/ci-generate"
 anyhow = "1"
 clap = { version = "^4.4", features = ["derive"] }
 figment = { version = "^0.10", features = ["toml"] }
+home = "0.5.9"
 license = "^3.2"
 minijinja = "^1.0"
 serde = { version = "1", features = ["derive"] }
@@ -21,13 +22,12 @@ textwrap = "0.16"
 thiserror = "1.0.50"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-home = "0.5.9"
 
 [dev-dependencies]
 insta = "1.34.0"
-walkdir = "2.4.0"
 proptest = "1.4.0"
 proptest-derive = "0.4.0"
+walkdir = "2.4.0"
 
 [profile.release]
 codegen-units = 1
