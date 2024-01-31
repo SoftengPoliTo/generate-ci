@@ -9,7 +9,7 @@ expression: content
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>POL</groupId>
-    <artifactId>Maven-project</artifactId>
+    <artifactId>maven-java</artifactId>
     <version>0.1.0</version>
 
     <name>Foo</name>

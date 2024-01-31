@@ -2,12 +2,12 @@
 source: tests/common/mod.rs
 expression: content
 ---
-name: cargo_library
+name: cargo-rust-binary
 
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - 'src/**'
       - 'crates/**'
@@ -17,7 +17,7 @@ on:
       - 'Cargo.lock'
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - 'src/**'
       - 'crates/**'
@@ -200,7 +200,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_library-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-rust-binary-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -277,7 +277,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_library-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-rust-binary-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -355,7 +355,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_library-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-rust-binary-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -442,7 +442,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_library-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-rust-binary-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -505,7 +505,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_library-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-rust-binary-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -568,7 +568,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "cargo_library-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "cargo-rust-binary-%p-%m.profraw"
       run: |
         cargo test --verbose
 

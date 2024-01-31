@@ -1,0 +1,11 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+#include "meson_cpp.h"
+
+int main()
+{
+    return 0;
+}
+

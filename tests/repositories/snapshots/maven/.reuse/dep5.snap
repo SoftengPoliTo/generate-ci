@@ -3,7 +3,7 @@ source: tests/common/mod.rs
 expression: content
 ---
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Maven-project
+Upstream-Name: maven-java
 Upstream-Contact: Name Surname <mail@example.com>
 Source: https://your/project/link
 

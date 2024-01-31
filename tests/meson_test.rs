@@ -1,12 +1,14 @@
 mod common;
-use common::compare_template;
+
+use std::env::temp_dir;
+use std::path::Path;
 
 use ci_generate::{
     meson::{Meson, ProjectKind},
     CreateProject, TemplateData,
 };
-use std::env::temp_dir;
-use std::path::Path;
+
+use common::compare_template;
 
 const SNAPSHOT_PATH_CPP: &str = "../repositories/snapshots/meson_cpp/";
 const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/meson_c/";
@@ -15,10 +17,9 @@ const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/meson_c/";
 fn test_meson_cpp() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("meson_cpp");
-    let data = TemplateData::new(&path)
+    let data = TemplateData::new(&path, "meson-cpp")
         .license("BSD-1-Clause")
-        .branch("main")
-        .name("Meson-project");
+        .branch("main");
 
     Meson::new()
         .kind(ProjectKind::Cxx)
@@ -31,10 +32,9 @@ fn test_meson_cpp() {
 fn test_meson_c() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("meson_c");
-    let data = TemplateData::new(&path)
+    let data = TemplateData::new(&path, "meson-c")
         .license("BSD-1-Clause")
-        .branch("main")
-        .name("Meson-project");
+        .branch("main");
 
     Meson::new()
         .kind(ProjectKind::C)

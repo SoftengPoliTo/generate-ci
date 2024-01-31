@@ -3,7 +3,7 @@ source: tests/common/mod.rs
 expression: content
 ---
 [tool.poetry]
-name = "Poetry-project"
+name = "poetry-python"
 version = "0.0"
 description = "Description of your tool"
 authors = ["Name Surname <name.surname@email.org>"]
@@ -15,9 +15,9 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3 :: Only",
 ]
-include = ["README.md", "LICENSE.md", "Poetry-project/data/*"]
+include = ["README.md", "LICENSE.md", "poetry-python/data/*"]
 packages = [
-    { include = "Poetry-project" },
+    { include = "poetry-python" },
 ]
 
 [tool.poetry.dependencies]

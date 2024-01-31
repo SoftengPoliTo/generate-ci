@@ -1,9 +1,11 @@
 mod common;
-use common::compare_template_skip;
 
-use ci_generate::{cargo::Cargo, CreateCi, TemplateData};
 use std::env::temp_dir;
 use std::path::Path;
+
+use ci_generate::{cargo::Cargo, CreateCi, TemplateData};
+
+use common::compare_template_skip;
 
 const SKIPPED_FOLDERS: &[&str] = &[".git", "Cargo.lock"];
 const SNAPSHOT_PATH_B: &str = "../repositories/snapshots/cargo/";
@@ -14,7 +16,9 @@ const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/cargo_ci/";
 fn test_cargo_binary() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo");
-    let data = TemplateData::new(&path).license("MIT").branch("master");
+    let data = TemplateData::new(&path, "cargo-rust-binary")
+        .license("MIT")
+        .branch("master");
 
     Cargo::new()
         .docker_image_description("description-docker")
@@ -27,7 +31,9 @@ fn test_cargo_binary() {
 fn test_cargo_library() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo_library");
-    let data = TemplateData::new(&path).license("MIT").branch("main");
+    let data = TemplateData::new(&path, "cargo-rust-library")
+        .license("MIT")
+        .branch("main");
 
     Cargo::new()
         .docker_image_description("description-docker")
@@ -40,7 +46,9 @@ fn test_cargo_library() {
 fn test_cargo_ci() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo_ci");
-    let data = TemplateData::new(&path).license("MIT").branch("main");
+    let data = TemplateData::new(&path, "cargo-rust-ci")
+        .license("MIT")
+        .branch("main");
 
     Cargo::new()
         .docker_image_description("description-docker")

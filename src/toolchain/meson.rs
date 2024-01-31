@@ -5,9 +5,10 @@ use minijinja::value::Value;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    builtin_templates, compute_template, define_license, define_name, error::Result,
-    path_validation, BuildTemplate, CreateProject, ProjectOutput, TemplateData,
+    builtin_templates, error::Result, BuildTemplate, CreateProject, ProjectOutput, TemplateData,
 };
+
+use super::create_toolchain;
 
 const MESON_FILE: &str = "meson.build";
 
@@ -45,11 +46,7 @@ pub struct Meson {
 
 impl CreateProject for Meson {
     fn create_project(&self, data: TemplateData) -> Result<()> {
-        let project_path = path_validation(data.project_path)?;
-        let project_name = define_name(&data.name, &project_path)?;
-        let license = define_license(&data.license)?;
-        let template = self.build(&project_path, project_name, license.id(), &data.branch);
-        compute_template(template?, license, &project_path)
+        create_toolchain(self, data)
     }
 }
 impl Meson {

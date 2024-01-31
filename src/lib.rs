@@ -23,19 +23,19 @@ static REUSE_TEMPLATE: &str =
 
 #[derive(Debug)]
 pub struct TemplateData<'a> {
+    project_path: &'a Path,
+    name: &'a str,
     license: Cow<'a, str>,
     branch: Cow<'a, str>,
-    name: Cow<'a, str>,
-    project_path: &'a Path,
 }
 impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
-    pub fn new(project_path: &'a Path) -> Self {
+    pub fn new(project_path: &'a Path, name: &'a str) -> Self {
         Self {
+            project_path,
+            name,
             license: "MIT".into(),
             branch: "main".into(),
-            name: "".into(),
-            project_path,
         }
     }
     /// Sets a new license.
@@ -47,12 +47,6 @@ impl<'a> TemplateData<'a> {
     /// Sets a new branch.
     pub fn branch(mut self, branch: impl Into<Cow<'a, str>>) -> Self {
         self.branch = branch.into();
-        self
-    }
-
-    /// Sets a new project_name.
-    pub fn name(mut self, name: impl Into<Cow<'a, str>>) -> Self {
-        self.name = name.into();
         self
     }
 }
@@ -207,17 +201,6 @@ fn build_environment(templates: &'static [(&'static str, &'static str)]) -> Envi
 
     environment
 }
-// Retrieve the project name
-pub(crate) fn define_name<'a>(project_name: &'a str, project_path: &'a Path) -> Result<&'a str> {
-    Ok(if !project_name.is_empty() && project_name.is_ascii() {
-        project_name
-    } else {
-        project_path
-            .file_name()
-            .and_then(|s| s.to_str())
-            .ok_or(Error::Utf8Check)?
-    })
-}
 
 // Retrieve the license
 pub(crate) fn define_license(license: &str) -> Result<&dyn license::License> {
@@ -244,14 +227,14 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         return Err(Error::NoDirectory);
     }
 
+    // If only the "." value is passed, returns the current path
+    if project_path.as_os_str() == "." {
+        return std::env::current_dir().map_err(|e| e.into());
+    }
+
     // Check whether the path contains valid UTF-8 characters
     if project_path.to_str().map_or(true, |s| s.contains('�')) {
         return Err(Error::Utf8Check);
-    }
-
-    // If only the "." value is passed, returns the current path
-    if project_path.ends_with(".") {
-        return std::env::current_dir().map_err(|e| e.into());
     }
 
     // Get a different home prefix according to different operating systems
@@ -266,21 +249,9 @@ pub fn path_validation(project_path: &Path) -> Result<PathBuf> {
         project_path.to_path_buf()
     };
 
-    // Canonicalize project path parent and create a more correct path
-    let project_path = match project_path.parent() {
-        Some(parent) => {
-            if parent.ends_with("") {
-                project_path
-            } else {
-                let canonical_parent = parent.canonicalize()?;
-                canonical_parent.join(project_path.file_name().ok_or(Error::NoDirectory)?)
-            }
-        }
-        None => project_path,
-    };
-
-    // Create missing directories
+    // Create directories recursively when they do not exist
     create_dir_all(&project_path)?;
+
     Ok(project_path)
 }
 
@@ -303,37 +274,9 @@ mod tests {
         fn define_license_proptest(data: LicenseTest) {
 
             match define_license(&data.license_str) {
-                Err(Error::InvalidLicense(_)) => prop_assert!(!VALID_LICENSES.contains(&data.license_str.as_str())),
                 Ok(_) => prop_assert!(VALID_LICENSES.contains(&data.license_str.as_str())),
-                //This branch is made general to consider all other error cases in the error.rs library,
-                //but which in the context of this API will never be called.
-                _ => {},
-            }
-        }
-    }
-
-    fn path_strategy() -> impl Strategy<Value = PathBuf> {
-        "\\PC*".prop_map(PathBuf::from)
-    }
-
-    proptest! {
-        #[test]
-        fn define_name_proptest(project_name in "\\PC*", project_path in path_strategy()) {
-            let project_path_str_option = project_path.file_name().and_then(|x| x.to_str());
-
-            match define_name(&project_name, &project_path) {
-                Ok(name) => {
-                    if !project_name.is_empty() && project_name.is_ascii() {
-                        prop_assert_eq!(name, &project_name)
-                    } else {
-                        prop_assert_eq!(Some(name), project_path_str_option)
-                    }
-                }
-                Err(Error::Utf8Check) => {
-                    prop_assert!(project_path_str_option.map_or(true, |s| s.is_empty() || !s.is_ascii() || s.contains('/')))
-                }
-                // This branch is made general to consider all other error cases in the error.rs library,
-                // but which in the context of this API will never be called.
+                Err(Error::InvalidLicense(_)) => prop_assert!(!VALID_LICENSES.contains(&data.license_str.as_str())),
+                // All other use-cases are not considered
                 _ => {},
             }
         }
