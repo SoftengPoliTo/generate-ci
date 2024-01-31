@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# cargo
+# cargo-rust-binary
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-cargo's description
+cargo-rust-binary's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/cargo/actions
-[codecov]: https://codecov.io/gh/<your-account>/cargo
+[actions]: https://github.com/<your-account>/cargo-rust-binary/actions
+[codecov]: https://codecov.io/gh/<your-account>/cargo-rust-binary
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/cargo/workflows/cargo/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/cargo/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/cargo-rust-binary/workflows/cargo-rust-binary/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/cargo-rust-binary/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

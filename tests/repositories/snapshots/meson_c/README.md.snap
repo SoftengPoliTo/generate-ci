@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# Meson-project
+# meson-c
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-Meson-project's description
+meson-c's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/Meson-project/actions
-[codecov]: https://codecov.io/gh/<your-account>/Meson-project
+[actions]: https://github.com/<your-account>/meson-c/actions
+[codecov]: https://codecov.io/gh/<your-account>/meson-c
 [license]: LICENSES/BSD-1-Clause.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/Meson-project/workflows/Meson-project/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/Meson-project/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/meson-c/workflows/meson-c/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/meson-c/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-BSD-1-Clause-blue.svg

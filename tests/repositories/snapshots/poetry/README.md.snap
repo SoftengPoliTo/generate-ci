@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# Poetry-project
+# poetry-python
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-Poetry-project's description
+poetry-python's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/Poetry-project/actions
-[codecov]: https://codecov.io/gh/<your-account>/Poetry-project
+[actions]: https://github.com/<your-account>/poetry-python/actions
+[codecov]: https://codecov.io/gh/<your-account>/poetry-python
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/Poetry-project/workflows/Poetry-project/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/Poetry-project/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/poetry-python/workflows/poetry-python/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/poetry-python/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

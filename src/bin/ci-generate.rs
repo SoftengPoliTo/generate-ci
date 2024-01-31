@@ -45,8 +45,8 @@ struct CommonData {
     /// GitHub branch name to be used in the project
     #[clap(long, short = 'b', default_value = "main")]
     branch: String,
-    /// Override the project name
-    #[clap(long, default_value = "")]
+    /// Project name
+    #[clap(long)]
     name: String,
     /// Path to the new project
     #[clap(value_hint = clap::ValueHint::DirPath)]
@@ -57,7 +57,6 @@ static DEFAULT_CONF: &str = r#"
     [default]
     license = "MIT"
     branch = "main"
-    name = ""
 
     [meson]
     kind = "c"
@@ -239,10 +238,9 @@ fn main() -> anyhow::Result<()> {
                 || format!("{} description", &cargo.common.name),
                 |desc| desc,
             );
-            let data = TemplateData::new(&cargo.common.project_path)
+            let data = TemplateData::new(&cargo.common.project_path, &cargo.common.name)
                 .branch(&cargo.common.branch)
-                .license(&cargo.common.license)
-                .name(&cargo.common.name);
+                .license(&cargo.common.license);
             if cargo.ci {
                 Ok(Cargo::new()
                     .docker_image_description(&docker_image_description)
@@ -264,10 +262,9 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<MavenData>::globals(matches.clone()))
                 .select("maven");
             let maven: MavenData = config.extract()?;
-            let data = TemplateData::new(&maven.common.project_path)
+            let data = TemplateData::new(&maven.common.project_path, &maven.common.name)
                 .branch(&maven.common.branch)
-                .license(&maven.common.license)
-                .name(&maven.common.name);
+                .license(&maven.common.license);
             Ok(Maven::new().group(&maven.group).create_project(data)?)
         }
         ("meson", matches) => {
@@ -275,10 +272,9 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<MesonData>::globals(matches.clone()))
                 .select("meson");
             let meson: MesonData = config.extract()?;
-            let data = TemplateData::new(&meson.common.project_path)
+            let data = TemplateData::new(&meson.common.project_path, &meson.common.name)
                 .branch(&meson.common.branch)
-                .license(&meson.common.license)
-                .name(&meson.common.name);
+                .license(&meson.common.license);
             Ok(Meson::new().kind(meson.kind).create_project(data)?)
         }
         ("poetry", matches) => {
@@ -286,10 +282,9 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("poetry");
             let poetry: CommonData = config.extract()?;
-            let data = TemplateData::new(&poetry.project_path)
+            let data = TemplateData::new(&poetry.project_path, &poetry.name)
                 .branch(&poetry.branch)
-                .license(&poetry.license)
-                .name(&poetry.name);
+                .license(&poetry.license);
             Ok(Poetry::new().create_project(data)?)
         }
         ("yarn", matches) => {
@@ -297,10 +292,9 @@ fn main() -> anyhow::Result<()> {
                 .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
                 .select("yarn");
             let yarn: CommonData = config.extract()?;
-            let data = TemplateData::new(&yarn.project_path)
+            let data = TemplateData::new(&yarn.project_path, &yarn.name)
                 .branch(&yarn.branch)
-                .license(&yarn.license)
-                .name(&yarn.name);
+                .license(&yarn.license);
             Ok(Yarn::new().create_ci(data)?)
         }
         _ => unreachable!("unexpected command"),

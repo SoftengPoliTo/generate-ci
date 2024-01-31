@@ -4,10 +4,10 @@ expression: content
 ---
 # Create a new executable object to test the library
 exe = executable(
-  'test-Meson-project', # Executable name
-  'Meson_project.c', # Tests source file
+  'test-meson-c', # Executable name
+  'meson_c.c', # Tests source file
   include_directories: incs, # Directories to be included when building the executable
-  dependencies: Meson_project_dep # Libraries to be linked at the executable
+  dependencies: meson_c_dep # Libraries to be linked at the executable
 )
 
 # Create a test that run all tests contained in the executable produced above

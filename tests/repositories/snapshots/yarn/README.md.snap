@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# Yarn-project
+# yarn-javascript
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-Yarn-project's description
+yarn-javascript's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/Yarn-project/actions
-[codecov]: https://codecov.io/gh/<your-account>/Yarn-project
+[actions]: https://github.com/<your-account>/yarn-javascript/actions
+[codecov]: https://codecov.io/gh/<your-account>/yarn-javascript
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/Yarn-project/workflows/Yarn-project/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/Yarn-project/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/yarn-javascript/workflows/yarn-javascript/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/yarn-javascript/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

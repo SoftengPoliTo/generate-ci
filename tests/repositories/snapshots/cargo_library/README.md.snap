@@ -2,22 +2,22 @@
 source: tests/common/mod.rs
 expression: content
 ---
-# cargo_library
+# cargo-rust-library
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-cargo_library's description
+cargo-rust-library's description
 
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/cargo_library/actions
-[codecov]: https://codecov.io/gh/<your-account>/cargo_library
+[actions]: https://github.com/<your-account>/cargo-rust-library/actions
+[codecov]: https://codecov.io/gh/<your-account>/cargo-rust-library
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/cargo_library/workflows/cargo_library/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/cargo_library/branch/master/graph/badge.svg
+[actions badge]: https://github.com/<your-account>/cargo-rust-library/workflows/cargo-rust-library/badge.svg
+[codecov badge]: https://codecov.io/gh/<your-account>/cargo-rust-library/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
