@@ -10,7 +10,6 @@ mod filters;
 
 use minijinja::value::Value;
 use minijinja::Environment;
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fs::{create_dir_all, write};
 use std::path::{Path, PathBuf};
@@ -25,8 +24,8 @@ static REUSE_TEMPLATE: &str =
 pub struct TemplateData<'a> {
     project_path: &'a Path,
     name: &'a str,
-    license: Cow<'a, str>,
-    branch: Cow<'a, str>,
+    license: &'a str,
+    branch: &'a str,
 }
 impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
@@ -34,19 +33,19 @@ impl<'a> TemplateData<'a> {
         Self {
             project_path,
             name,
-            license: "MIT".into(),
-            branch: "main".into(),
+            license: "MIT",
+            branch: "main",
         }
     }
     /// Sets a new license.
-    pub fn license(mut self, license: impl Into<Cow<'a, str>>) -> Self {
-        self.license = license.into();
+    pub fn license(mut self, license: &'a str) -> Self {
+        self.license = license;
         self
     }
 
     /// Sets a new branch.
-    pub fn branch(mut self, branch: impl Into<Cow<'a, str>>) -> Self {
-        self.branch = branch.into();
+    pub fn branch(mut self, branch: &'a str) -> Self {
+        self.branch = branch;
         self
     }
 }
