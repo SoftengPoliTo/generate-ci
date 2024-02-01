@@ -29,6 +29,13 @@ proptest = "1.4.0"
 proptest-derive = "0.4.0"
 walkdir = "2.4.0"
 
+[features]
+cargo = []
+maven = []
+meson = []
+poetry = []
+yarn = []
+
 [profile.release]
 codegen-units = 1
 debug-assertions = false
