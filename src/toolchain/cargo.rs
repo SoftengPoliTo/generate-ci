@@ -37,7 +37,7 @@ impl<'a> Cargo<'a> {
     /// Creates a new `Cargo` instance.
     pub fn new() -> Self {
         Self {
-            docker_image_description: "default".into(),
+            docker_image_description: "default",
             lib: false,
             ci: false,
         }

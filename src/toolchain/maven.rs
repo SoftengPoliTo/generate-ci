@@ -90,7 +90,7 @@ impl<'a> BuildTemplate for Maven<'a> {
         context.insert("group", Value::from_serializable(&self.group));
         context.insert("license_id", Value::from_serializable(&license));
 
-        let (files, dirs) = Maven::project_structure(project_path, &self.group, project_name);
+        let (files, dirs) = Maven::project_structure(project_path, self.group, project_name);
 
         Ok(ProjectOutput {
             files,
