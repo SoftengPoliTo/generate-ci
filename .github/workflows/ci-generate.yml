@@ -177,7 +177,7 @@ jobs:
     - name: Get coverage data for codecov
       run: |
         grcov . --binary-path ./target/debug/ -s . -t lcov --branch \
-              --ignore-not-existing --ignore "/*" --ignore "../*" -o lcov.info
+              --ignore-not-existing --ignore "/*" --ignore "../*" --ignore "src/cli/*" -o lcov.info
 
     - name: Codecov upload
       uses: codecov/codecov-action@v3
