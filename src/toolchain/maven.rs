@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
@@ -25,7 +24,7 @@ const TESTS: &str = "test/java";
 #[derive(Default)]
 /// A maven project.
 pub struct Maven<'a> {
-    group: Cow<'a, str>,
+    group: &'a str,
 }
 
 impl<'a> CreateProject for Maven<'a> {
@@ -36,13 +35,12 @@ impl<'a> CreateProject for Maven<'a> {
 impl<'a> Maven<'a> {
     /// Creates a new `Maven` instance.
     pub fn new() -> Self {
-        Self {
-            group: "group".into(),
-        }
+        Self { group: "group" }
     }
+
     /// Sets a group
-    pub fn group(mut self, group: impl Into<Cow<'a, str>>) -> Self {
-        self.group = group.into();
+    pub fn group(mut self, group: &'a str) -> Self {
+        self.group = group;
         self
     }
 

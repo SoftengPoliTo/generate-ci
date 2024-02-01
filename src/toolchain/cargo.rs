@@ -1,5 +1,4 @@
 use minijinja::value::Value;
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
@@ -23,7 +22,7 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
 /// A cargo project data.
 #[derive(Default)]
 pub struct Cargo<'a> {
-    docker_image_description: Cow<'a, str>,
+    docker_image_description: &'a str,
     ci: bool,
     lib: bool,
 }
@@ -43,19 +42,19 @@ impl<'a> Cargo<'a> {
             ci: false,
         }
     }
+
     /// Sets a description
-    pub fn docker_image_description(
-        mut self,
-        docker_image_description: impl Into<Cow<'a, str>>,
-    ) -> Self {
-        self.docker_image_description = docker_image_description.into();
+    pub fn docker_image_description(mut self, docker_image_description: &'a str) -> Self {
+        self.docker_image_description = docker_image_description;
         self
     }
+
     /// Sets a library project
     pub fn create_lib(mut self) -> Self {
         self.lib = true;
         self
     }
+
     /// Sets just ci files
     pub fn only_ci(mut self) -> Self {
         self.ci = true;
