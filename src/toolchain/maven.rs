@@ -15,7 +15,8 @@ static MAVEN_TEMPLATES: &[(&str, &str)] = &builtin_templates!["maven" =>
     ("xml.pom", "pom.xml"),
     ("xml.checkstyle", "checkstyle.xml"),
     ("md.README", "README.md"),
-    ("ci.github", "github.yml")
+    ("ci.github", "github.yml"),
+    ("ci.github.dependabot", "dependabot.yml")
 ];
 
 const MAIN: &str = "main/java";
@@ -52,7 +53,8 @@ impl<'a> Maven<'a> {
         let root = project_path.to_path_buf();
         let main = project_path.join(format!("src/{MAIN}/{group}/{name}"));
         let tests = project_path.join(format!("src/{TESTS}/{group}/{name}/example"));
-        let github = project_path.join(".github/workflows");
+        let github = project_path.join(".github");
+        let workflows = github.join("workflows");
 
         let mut template_files = HashMap::new();
 
@@ -68,10 +70,13 @@ impl<'a> Maven<'a> {
         // All files in the test directory
         template_files.insert(tests.join("Example.java"), "java.example");
 
-        // Continuous integration files
-        template_files.insert(github.join(format!("{name}.yml")), "ci.github");
+        // dependabot
+        template_files.insert(github.join("dependabot.yml"), "ci.github.dependabot");
 
-        (template_files, vec![root, main, tests, github])
+        // Continuous integration files
+        template_files.insert(workflows.join(format!("{name}.yml")), "ci.github");
+
+        (template_files, vec![root, main, tests, workflows])
     }
 }
 

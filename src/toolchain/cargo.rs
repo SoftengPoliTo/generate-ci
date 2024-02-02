@@ -14,6 +14,7 @@ static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
     ("ci.github", "github.yml"),
     ("ci.github.deploy", "github-deploy.yml"),
     ("ci.github.docker", "github-docker-application.yml"),
+    ("ci.github.dependabot", "dependabot.yml"),
     ("docker.amd64", "Dockerfile-amd64"),
     ("docker.arm64", "Dockerfile-arm64"),
     ("rs.proptest", "proptest.rs"),
@@ -101,7 +102,8 @@ impl<'a> Cargo<'a> {
         ci: bool,
     ) -> (HashMap<PathBuf, &'static str>, Vec<PathBuf>) {
         let root = project_path.to_path_buf();
-        let github = project_path.join(".github/workflows");
+        let github = project_path.join(".github");
+        let workflows = github.join("workflows");
         let docker = project_path.join("docker");
         let cargo = project_path.join(".cargo");
         let xtask = project_path.join("xtask");
@@ -113,13 +115,16 @@ impl<'a> Cargo<'a> {
         // README
         template_files.insert(root.join("README.md"), "md.README");
 
+        // dependabot
+        template_files.insert(github.join("dependabot.yml"), "ci.github.dependabot");
+
         // Continuous Integration
-        template_files.insert(github.join(format!("{name}.yml")), "ci.github");
+        template_files.insert(workflows.join(format!("{name}.yml")), "ci.github");
         template_files.insert(
-            github.join(format!("{name}-docker-application.yml")),
+            workflows.join(format!("{name}-docker-application.yml")),
             "ci.github.docker",
         );
-        template_files.insert(github.join("deploy.yml"), "ci.github.deploy");
+        template_files.insert(workflows.join("deploy.yml"), "ci.github.deploy");
 
         // Docker
         template_files.insert(docker.join("Dockerfile-amd64"), "docker.amd64");
@@ -159,21 +164,12 @@ impl<'a> Cargo<'a> {
             template_files.insert(tests.join("proptest.rs"), "rs.proptest");
             (
                 template_files,
-                vec![
-                    root,
-                    github,
-                    docker,
-                    cargo,
-                    xtask,
-                    xtask_src,
-                    xtask_utils,
-                    tests,
-                ],
+                vec![root, workflows, docker, cargo, xtask_utils, tests],
             )
         } else {
             (
                 template_files,
-                vec![root, github, docker, cargo, xtask, xtask_src, xtask_utils],
+                vec![root, workflows, docker, cargo, xtask_utils],
             )
         }
     }

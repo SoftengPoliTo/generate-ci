@@ -16,7 +16,8 @@ static POETRY_TEMPLATES: &[(&str, &str)] = &builtin_templates!["poetry" =>
     ("py.__init__", "__init__.py"),
     ("py.__main__", "__main__.py"),
     ("py.test", "test_sum.py"),
-    ("ci.github", "github.yml")
+    ("ci.github", "github.yml"),
+    ("ci.github.dependabot", "dependabot.yml")
 ];
 
 /// A poetry project data.
@@ -43,7 +44,8 @@ impl Poetry {
         let main = project_path.join(name);
         let data = project_path.join(format!("{name}/data"));
         let tests = project_path.join(format!("{name}/tests"));
-        let github = project_path.join(".github/workflows");
+        let github = project_path.join(".github");
+        let workflows = github.join("workflows");
 
         let mut template_files = HashMap::new();
 
@@ -61,10 +63,13 @@ impl Poetry {
         template_files.insert(tests.join("__init__.py"), "py.__init__");
         template_files.insert(tests.join("test_sum.py"), "py.test");
 
-        // Continuous integration files
-        template_files.insert(github.join(format!("{name}.yml")), "ci.github");
+        // dependabot
+        template_files.insert(github.join("dependabot.yml"), "ci.github.dependabot");
 
-        (template_files, vec![root, main, data, tests, github])
+        // Continuous integration files
+        template_files.insert(workflows.join(format!("{name}.yml")), "ci.github");
+
+        (template_files, vec![root, main, data, tests, workflows])
     }
 }
 

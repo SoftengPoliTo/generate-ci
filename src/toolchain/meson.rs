@@ -25,7 +25,8 @@ static MESON_TEMPLATES: &[(&str, &str)] = &builtin_templates!["meson" =>
     ("docker.compose", "docker-compose.yml"),
     ("run.tests", "run_tests.sh"),
     ("md.README", "README.md"),
-    ("ci.github", "github.yml")
+    ("ci.github", "github.yml"),
+    ("ci.github.dependabot", "dependabot.yml")
 ];
 
 /// Kind of a meson project.
@@ -75,7 +76,8 @@ impl Meson {
         let cli = project_path.join("cli");
         let lib = project_path.join("lib");
         let tests = project_path.join("tests");
-        let github = project_path.join(".github/workflows");
+        let github = project_path.join(".github");
+        let workflows = github.join("workflows");
 
         let mut template_files = HashMap::new();
 
@@ -101,10 +103,13 @@ impl Meson {
         template_files.insert(root.join("docker-compose.yml"), "docker.compose");
         template_files.insert(root.join("run_tests.sh"), "run.tests");
 
-        // Continuous Integration
-        template_files.insert(github.join(format!("{name}.yml")), "ci.github");
+        // dependabot
+        template_files.insert(github.join("dependabot.yml"), "ci.github.dependabot");
 
-        (template_files, vec![root, cli, lib, tests, github])
+        // Continuous integration files
+        template_files.insert(workflows.join(format!("{name}.yml")), "ci.github");
+
+        (template_files, vec![root, cli, lib, tests, workflows])
     }
 }
 
