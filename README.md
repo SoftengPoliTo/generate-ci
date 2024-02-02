@@ -6,14 +6,13 @@
 [![dependency status][status badge]][status]
 
 This tool generates either new projects for some build systems or configuration
-files for some Continuous Integration with the use of templates.
+files for some Continuous Integration systems with the use of templates.
 
-Templates define the layout for a project and allow developers to insert data
-at runtime.
+The templates define the layout of a project while its data are inserted at runtime.
 
-Each template contains all files necessary to build a project with a build
-system, in addition to Continuous Integration and Docker files used to run
-tests and implement further checks.
+Each template contains all necessary files to build a project through a build
+system, in addition to Continuous Integration and Docker files to run
+tests and create safe containers.
 
 ## Supported build systems
 
@@ -31,32 +30,33 @@ tests and implement further checks.
 
 To see the list of supported commands, run: `ci-generate --help`
 
-Each command has an optional argument to define a license and an optional argument to
- override the project name instead of using the last component of the project-path.
- The default value for the license argument is `MIT`.
+Each command has:
+- An optional argument to define the license of a project (default: `MIT`)
+- An optional argument to set up the branch name (default: `main`)
 
 ### cargo
 
 ```
-$ ci-generate cargo [--docker-image-description DESCRIPTION] [ --lib --ci] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate cargo [--docker-image-description DESCRIPTION] [ --lib --ci] [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
 ```
 
-The argument `--docker-image-description` is an optional field that accepts any string type. 
-When `--lib` and `--ci` options are not provided, by default, the binary will be created similar to the `cargo new` command output. 
-If the `--lib` option is enabled, the tool generates a library project. 
-When the `--ci` option is enabled, the tool produces only the CI files. 
-If both the `--lib` and `--ci` options are enabled, then the CI files will be prioritized, and only CI files will be generated.
+The optional `--docker-image-description` argument sets up the description of a Docker image.
+If `--lib` and `--ci` arguments are not inserted, by default, a newly `cargo` project is created through the `cargo new` command.
+If the `--lib` option is enabled, the tool generates a `Rust` library project.
+If the `--ci` option is enabled, the tool produces only Continuous Integration files.
+If both `--lib` and `--ci` options are enabled, Continuous Integration is prioritized,
+so only its files are generated.
 
 ### maven
 
 ```
-$ ci-generate maven [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-group project-path
+$ ci-generate maven [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-group project-path
 ```
 
 ### meson
 
 ```
-$ ci-generate meson [--kind meson-project-kind] [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate meson [--kind meson-project-kind] [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
 ```
 
 Admitted values for the `kind` argument:
@@ -67,44 +67,40 @@ Admitted values for the `kind` argument:
 ### poetry
 
 ```
-$ ci-generate poetry [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate poetry [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
 ```
 
 ### yarn
 
 ```
-$ ci-generate yarn [--license LICENSE --name NAME --branch GITHUB_BRANCH] project-path
+$ ci-generate yarn [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
 ```
 
 ## Configuration
 
-It is possible to save a `config.toml` in `${XDG_CONFIG_HOME}/ci-generate` (Usually `~/.config/ci-generate`) with overrides for
- all the default and optional values, e.g:
+It is possible to save a `config.toml` in `${XDG_CONFIG_HOME}/ci-generate` (Usually `~/.config/ci-generate`) with overrides for all the default and optional values, e.g:
 
 ``` toml
 [default]
 license = "BSD-3-Clause"
-
-[meson]
-kind = "c++"
-
-[cargo]
-lib = false
-ci = false
+branch = "master"
 ```
 
-Will override the default `license` and `meson.kind` configuration items and it would be equivalent to call:
+This configuration will override the default `license` and `branch` configuration items
+and it is equivalent to call:
 
-``` sh
-$ ci-generate meson -k c++ -l BSD-3-Clause
+```sh
+$ ci-generate meson -b master -l BSD-3-Clause
 ```
 
-The cli arguments take priority over the built-in defaults and the `config.toml` overrides so
-```
+The cli arguments take priority over built-in defaults and `config.toml` overrides so
+
+```sh
 $ ci-generate meson -l LGPL-2.1
 ```
 
-Would take the `kind = c++` from the `config.toml` and `LGPL-2.1` from the command line.
+would take the `branch = master` from the `config.toml` file and `LGPL-2.1` license
+from command line.
 
 ## Testing
 
