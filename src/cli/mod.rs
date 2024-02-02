@@ -124,6 +124,13 @@ static DEFAULT_CONF: &str = r#"
     [default]
     license = "MIT"
     branch = "main"
+
+    [meson]
+    kind = "c"
+
+    [cargo]
+    lib = false
+    ci = false
 "#;
 
 #[derive(Parser, Debug)]
