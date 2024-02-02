@@ -157,13 +157,8 @@ cargo insta test --include-hidden --accept
 Once base snapshots are created, you can use the `test` command to generate
 new snapshots to be compared with. Any differences between new and base
 snapshots are displayed on the screen, allowing you to review and analyze
-the changes. In case no differences are found, insta will return a success message,
+the changes. In case no differences are found, `insta` will return a success message,
 indicating that there are no snapshots to be reviewed.
-
-## How works path_validation function
-The `path_validation` function is designed with the intent to perform validation and manipulation of the project path provided as input, accepting the parameter specified as `&Path` and returning a result of type `Result<PathBuf>`. Initially, the process of expanding the project path is undertaken through the use of the `shellexpand` library, thus allowing management of possible abbreviations or environment variables present in the provided path. The actual path-cleaning phase is obtained through the canonicalization function. The canonical path represents the absolute path to a file or directory after all path normalisations and resolutions have been applied. For example, it deletes points representing the current path (.) or the parent path (..) and resolves any symbolic links. It is important to emphasise that the final directory of the path passed to the function must exist, otherwise the canonicalisation will return an `error`.
-
-This implementation not only ensures the validity of the provided project path but also ensures its consistency.
 
 ## License
 
