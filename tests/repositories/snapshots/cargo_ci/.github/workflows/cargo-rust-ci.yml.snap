@@ -26,6 +26,21 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
 
+env:
+  #
+  # Dependency versioning
+  #
+
+  RCA_VERSION: "0.0.25"
+
+  GRCOV_VERSION: "0.8.13"
+
+  WCC_VERSION: "0.2.0"
+
+  UDEPS_VERSION: "0.1.35"
+
+  CAREFUL_VERSION: "0.3.4"
+
 jobs:
 
 ################################## LEGAL AND FORMAT LAYER ######################
@@ -36,7 +51,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
 
     - name: REUSE Compliance Check
       uses: fsfe/reuse-action@v1
@@ -73,7 +87,6 @@ jobs:
 
     env:
       RCA_LINK: https://github.com/mozilla/rust-code-analysis/releases/download
-      RCA_VERSION: v0.0.25
 
     strategy:
       matrix:
@@ -97,7 +110,7 @@ jobs:
       if: matrix.conf == 'ubuntu'
       run: |
         mkdir -p $HOME/.local/bin
-        curl -L "$RCA_LINK/$RCA_VERSION/rust-code-analysis-linux-cli-x86_64.tar.gz" |
+        curl -L "$RCA_LINK/v$RCA_VERSION/rust-code-analysis-linux-cli-x86_64.tar.gz" |
         tar xz -C $HOME/.local/bin
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
@@ -105,7 +118,7 @@ jobs:
       if: matrix.conf == 'windows'
       run: |
         mkdir -p $HOME/bin
-        curl -LO "$Env:RCA_LINK/$env:RCA_VERSION/rust-code-analysis-win-cli-x86_64.zip"
+        curl -LO "$Env:RCA_LINK/v$env:RCA_VERSION/rust-code-analysis-win-cli-x86_64.zip"
         7z e -y "rust-code-analysis-win-cli-x86_64.zip" -o"$HOME/bin"
         echo "$HOME/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
@@ -183,9 +196,8 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
       run: |
-        curl -L "$GRCOV_LINK/$GRCOV_VERSION/grcov-x86_64-unknown-linux-musl.tar.bz2" |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/grcov-x86_64-unknown-linux-musl.tar.bz2" |
         tar xj -C $HOME/.cargo/bin
 
     - name: Install llvm-tools-preview
@@ -260,9 +272,8 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
       run: |
-        curl -L "$GRCOV_LINK/$GRCOV_VERSION/grcov-x86_64-apple-darwin.tar.bz2" |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/grcov-x86_64-apple-darwin.tar.bz2" |
         tar xj -C $HOME/.cargo/bin
 
     - name: Install llvm-tools-preview
@@ -337,10 +348,9 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
         GRCOV_BINARY: grcov-x86_64-pc-windows-msvc.zip
       run: |
-        curl -LO "$Env:GRCOV_LINK/$Env:GRCOV_VERSION/$Env:GRCOV_BINARY"
+        curl -LO "$Env:GRCOV_LINK/v$Env:GRCOV_VERSION/$Env:GRCOV_BINARY"
         7z e -y "$Env:GRCOV_BINARY" -o"${env:USERPROFILE}\.cargo\bin"
 
     - name: Install llvm-tools-preview
@@ -415,19 +425,16 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
         GRCOV_BINARY: grcov-x86_64-unknown-linux-musl.tar.bz2
       run: |
-        curl -L "$GRCOV_LINK/$GRCOV_VERSION/$GRCOV_BINARY" |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
         tar xj -C $HOME/.cargo/bin
 
     - name: Install weighted-code-coverage
       env:
         WCC_LINK: https://github.com/SoftengPoliTo/weighted-code-coverage/releases/download
-        WCC_VERSION: v0.2.0
-        WCC_BINARY: weighted-code-coverage-0.2.0-x86_64-unknown-linux-gnu.tar.gz
       run: |
-        curl -L "$WCC_LINK/$WCC_VERSION/$WCC_BINARY" |
+        curl -L "$WCC_LINK/v$WCC_VERSION/weighted-code-coverage-$WCC_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
         tar xz -C $HOME/.cargo/bin
 
     - name: Install llvm-tools-preview
@@ -478,19 +485,16 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
         GRCOV_BINARY: grcov-x86_64-apple-darwin.tar.bz2
       run: |
-        curl -L "$GRCOV_LINK/$GRCOV_VERSION/$GRCOV_BINARY" |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
         tar xj -C $HOME/.cargo/bin
 
     - name: Install weighted-code-coverage
       env:
         WCC_LINK: https://github.com/SoftengPoliTo/weighted-code-coverage/releases/download
-        WCC_VERSION: v0.2.0
-        WCC_BINARY: weighted-code-coverage-0.2.0-x86_64-apple-darwin.tar.gz
       run: |
-        curl -L "$WCC_LINK/$WCC_VERSION/$WCC_BINARY" |
+        curl -L "$WCC_LINK/v$WCC_VERSION/weighted-code-coverage-$WCC_VERSION-x86_64-apple-darwin.tar.gz" |
         tar xz -C $HOME/.cargo/bin
 
     - name: Install llvm-tools-preview
@@ -541,19 +545,16 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
         GRCOV_BINARY: grcov-x86_64-pc-windows-msvc.zip
       run: |
-        curl -LO "$Env:GRCOV_LINK/$Env:GRCOV_VERSION/$Env:GRCOV_BINARY"
+        curl -LO "$Env:GRCOV_LINK/v$Env:GRCOV_VERSION/$Env:GRCOV_BINARY"
         7z e -y "$Env:GRCOV_BINARY" -o"${env:USERPROFILE}\.cargo\bin"
 
     - name: Install weighted-code-coverage
       env:
         WCC_LINK: https://github.com/SoftengPoliTo/weighted-code-coverage/releases/download
-        WCC_VERSION: v0.2.0
-        WCC_BINARY: weighted-code-coverage-0.2.0-x86_64-pc-windows-msvc.zip
       run: |
-        curl -LO "$Env:WCC_LINK/$Env:WCC_VERSION/$Env:WCC_BINARY"
+        curl -LO "$Env:WCC_LINK/v$Env:WCC_VERSION/weighted-code-coverage-$Env:WCC_VERSION-x86_64-pc-windows-msvc.zip"
         7z e -y "$Env:WCC_BINARY" -o"${env:USERPROFILE}\.cargo\bin"
 
     - name: Install llvm-tools-preview
@@ -631,27 +632,11 @@ jobs:
             - 'Cargo.toml'
             - 'Cargo.lock'
 
-    - name: Install Rust stable
+    - name: Detect multiple versions of the same crate
       if: steps.changes.outputs.cargo == 'true'
-      uses: dtolnay/rust-toolchain@stable
+      uses: EmbarkStudios/cargo-deny-action@v1
       with:
-        toolchain: stable
-
-    - name: Install cargo-deny
-      if: steps.changes.outputs.cargo == 'true'
-      env:
-        DENY_LINK: https://github.com/EmbarkStudios/cargo-deny/releases/download
-        DENY_VERSION: 0.13.7
-      run: |
-        curl -L "$DENY_LINK/$DENY_VERSION/cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz" |
-        tar xz -C $HOME/.cargo/bin --strip-components 1
-
-    - name: Run cargo-deny
-      if: steps.changes.outputs.cargo == 'true'
-      run: |
-        cargo deny init
-        cargo deny check bans
-        # cargo deny check licenses
+        command: check bans
 
   udeps-ubuntu:
 
@@ -681,9 +666,8 @@ jobs:
       if: steps.changes.outputs.cargo == 'true'
       env:
         UDEPS_LINK: https://github.com/est31/cargo-udeps/releases/download
-        UDEPS_VERSION: v0.1.35
       run: |
-        curl -L "$UDEPS_LINK/$UDEPS_VERSION/cargo-udeps-$UDEPS_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
+        curl -L "$UDEPS_LINK/v$UDEPS_VERSION/cargo-udeps-v$UDEPS_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
         tar xz -C $HOME/.cargo/bin --strip-components 2
 
     - name: Run cargo-udeps
@@ -733,27 +717,11 @@ jobs:
             - 'Cargo.toml'
             - 'Cargo.lock'
 
-    - name: Install Rust stable
+    - name: Detect multiple versions of the same crate
       if: steps.changes.outputs.cargo == 'true'
-      uses: dtolnay/rust-toolchain@stable
+      uses: EmbarkStudios/cargo-deny-action@v1
       with:
-        toolchain: stable
-
-    - name: Install cargo-deny
-      if: steps.changes.outputs.cargo == 'true'
-      env:
-        DENY_LINK: https://github.com/EmbarkStudios/cargo-deny/releases/download
-        DENY_VERSION: 0.13.7
-      run: |
-        curl -L "$DENY_LINK/$DENY_VERSION/cargo-deny-$DENY_VERSION-x86_64-apple-darwin.tar.gz" |
-        tar xz -C $HOME/.cargo/bin --strip-components 1
-
-    - name: Run cargo-deny
-      if: steps.changes.outputs.cargo == 'true'
-      run: |
-        cargo deny init
-        cargo deny check bans
-        # cargo deny check licenses
+        command: check bans
 
   udeps-macos:
 
@@ -783,9 +751,8 @@ jobs:
       if: steps.changes.outputs.cargo == 'true'
       env:
         UDEPS_LINK: https://github.com/est31/cargo-udeps/releases/download
-        UDEPS_VERSION: v0.1.35
       run: |
-        curl -L "$UDEPS_LINK/$UDEPS_VERSION/cargo-udeps-$UDEPS_VERSION-x86_64-apple-darwin.tar.gz" |
+        curl -L "$UDEPS_LINK/v$UDEPS_VERSION/cargo-udeps-v$UDEPS_VERSION-x86_64-apple-darwin.tar.gz" |
         tar xz -C $HOME/.cargo/bin --strip-components 2
 
     - name: Run cargo-udeps
@@ -835,28 +802,11 @@ jobs:
             - 'Cargo.toml'
             - 'Cargo.lock'
 
-    - name: Install Rust stable
+    - name: Detect multiple versions of the same crate
       if: steps.changes.outputs.cargo == 'true'
-      uses: dtolnay/rust-toolchain@stable
+      uses: EmbarkStudios/cargo-deny-action@v1
       with:
-        toolchain: stable
-
-    - name: Install cargo-deny
-      if: steps.changes.outputs.cargo == 'true'
-      env:
-        DENY_LINK: https://github.com/EmbarkStudios/cargo-deny/releases/download
-        DENY_VERSION: 0.13.7
-      run: |
-        $DENY_BINARY = "cargo-deny-$Env:DENY_VERSION-x86_64-pc-windows-msvc.tar.gz"
-        curl -LO "$Env:DENY_LINK/$Env:DENY_VERSION/$DENY_BINARY"
-        tar xz -C "${env:USERPROFILE}\.cargo\bin" -f $DENY_BINARY --strip-components 1
-
-    - name: Run cargo-deny
-      if: steps.changes.outputs.cargo == 'true'
-      run: |
-        cargo deny init
-        cargo deny check bans
-        # cargo deny check licenses
+        command: check bans
 
   udeps-windows:
 
@@ -886,10 +836,9 @@ jobs:
       if: steps.changes.outputs.cargo == 'true'
       env:
         UDEPS_LINK: https://github.com/est31/cargo-udeps/releases/download
-        UDEPS_VERSION: v0.1.35
       run: |
-        $UDEPS_BINARY = "cargo-udeps-$Env:UDEPS_VERSION-x86_64-pc-windows-msvc.zip"
-        curl -LO "$Env:UDEPS_LINK/$Env:UDEPS_VERSION/$UDEPS_BINARY"
+        $UDEPS_BINARY = "cargo-udeps-v$Env:UDEPS_VERSION-x86_64-pc-windows-msvc.zip"
+        curl -LO "$Env:UDEPS_LINK/v$Env:UDEPS_VERSION/$UDEPS_BINARY"
         7z e -y "$UDEPS_BINARY" -o"${env:USERPROFILE}\.cargo\bin"
 
     - name: Run cargo-udeps
@@ -912,20 +861,12 @@ jobs:
       run: |
         sudo apt-get install valgrind
 
-    - name: Install cargo-valgrind
-      env:
-        VALGRIND_LINK: https://github.com/jfrimmel/cargo-valgrind/releases/download
-        VALGRIND_VERSION: 2.1.0
-      run: |
-        curl -L "$VALGRIND_LINK/v$VALGRIND_VERSION/cargo-valgrind-$VALGRIND_VERSION-x86_64-unknown-linux-musl.tar.gz" |
-        tar xz -C $HOME/.cargo/bin
-
-    # Usage of the `help` command as base command, please replace it
-    # with the effective command that valgrind has to analyze
     - name: Run cargo-valgrind
+      env:
+        CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER: "valgrind -s --leak-check=full --show-leak-kinds=all --error-exitcode=1"
+      # Looking for vulnerabilities
       run: |
-        cargo valgrind run -- --help
-        # cargo valgrind test
+        cargo test
 
   careful-ubuntu:
 
@@ -945,7 +886,6 @@ jobs:
     - name: Install cargo-careful
       env:
         CAREFUL_LINK: https://github.com/RalfJung/cargo-careful/releases/download
-        CAREFUL_VERSION: 0.3.4
       run: |
         curl -L "$CAREFUL_LINK/v$CAREFUL_VERSION/cargo-careful.x86_64-unknown-linux-musl" \
         --output $HOME/.cargo/bin/cargo-careful
@@ -999,7 +939,6 @@ jobs:
     - name: Install cargo-careful
       env:
         CAREFUL_LINK: https://github.com/RalfJung/cargo-careful/releases/download
-        CAREFUL_VERSION: 0.3.4
       run: |
         curl -L "$CAREFUL_LINK/v$CAREFUL_VERSION/cargo-careful.x86_64-apple-darwin" \
         --output $HOME/.cargo/bin/cargo-careful
@@ -1055,7 +994,6 @@ jobs:
     - name: Install cargo-careful
       env:
         CAREFUL_LINK: https://github.com/RalfJung/cargo-careful/releases/download
-        CAREFUL_VERSION: 0.3.4
       run: |
         curl -LO "$Env:CAREFUL_LINK/v$Env:CAREFUL_VERSION/cargo-careful.exe" `
         --output-dir "${env:USERPROFILE}\.cargo\bin"
