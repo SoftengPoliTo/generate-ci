@@ -84,10 +84,22 @@ It is possible to save a `config.toml` in `${XDG_CONFIG_HOME}/ci-generate` (Usua
 [default]
 license = "BSD-3-Clause"
 branch = "master"
+
+[meson]
+kind = "c"
+
+[cargo]
+lib = false
+ci = false
 ```
 
-This configuration will override the default `license` and `branch` configuration items
-and it is equivalent to call:
+This is the default configuration file.
+The first section contains all default arguments common to each toolchain.
+The other sections contain default arguments **specific** to the toolchain
+defined by the section name.
+
+For each toolchain, this configuration will override the default
+`license` and `branch` items and it is the same as this command:
 
 ```sh
 $ ci-generate meson -b master -l BSD-3-Clause
