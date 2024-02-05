@@ -1,0 +1,17 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+name: publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-cargo-rust-library:
+    uses: /cargo-rust-library/.github/workflows/publish-template.yml@main
+    with:
+      crate: cargo-rust-library
+    secrets: inherit

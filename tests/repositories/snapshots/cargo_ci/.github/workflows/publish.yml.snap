@@ -1,0 +1,17 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+name: publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-cargo-rust-ci:
+    uses: /cargo-rust-ci/.github/workflows/publish-template.yml@main
+    with:
+      crate: cargo-rust-ci
+    secrets: inherit
