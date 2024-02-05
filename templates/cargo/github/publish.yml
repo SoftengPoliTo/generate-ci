@@ -1,0 +1,13 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-{{ name }}:
+    uses: {{ organization }}/{{ name}}/.github/workflows/publish-template.yml@main
+    with:
+      crate: {{ name }}
+    secrets: inherit

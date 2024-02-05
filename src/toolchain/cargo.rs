@@ -11,13 +11,17 @@ use super::create_toolchain;
 
 static CARGO_TEMPLATES: &[(&str, &str)] = &builtin_templates!["cargo" =>
     ("md.README", "README.md"),
-    ("ci.github", "github.yml"),
-    ("ci.github.deploy", "github-deploy.yml"),
-    ("ci.github.docker", "github-docker-application.yml"),
+    ("rs.proptest", "proptest.rs"),
+    // GitHub
+    ("ci.github", "github/test.yml"),
+    ("ci.github.deploy", "github/deploy.yml"),
+    ("ci.github.publish.template", "github/publish-template.yml"),
+    ("ci.github.publish", "github/publish.yml"),
+    ("ci.github.docker", "github/docker-application.yml"),
     ("ci.github.dependabot", "dependabot.yml"),
+    // Dockerfile
     ("docker.amd64", "Dockerfile-amd64"),
     ("docker.arm64", "Dockerfile-arm64"),
-    ("rs.proptest", "proptest.rs"),
     // Execute checks and tests locally through xtask
     ("xtask.config", "xtask-config"),
     ("xtask.toml", "xtask/Cargo.toml"),
@@ -125,6 +129,11 @@ impl<'a> Cargo<'a> {
             "ci.github.docker",
         );
         template_files.insert(workflows.join("deploy.yml"), "ci.github.deploy");
+        template_files.insert(
+            workflows.join("publish-template.yml"),
+            "ci.github.publish.template",
+        );
+        template_files.insert(workflows.join("publish.yml"), "ci.github.publish");
 
         // Docker
         template_files.insert(docker.join("Dockerfile-amd64"), "docker.amd64");
