@@ -1,12 +1,14 @@
 use clap::ArgMatches;
 use figment::Figment;
 
-use ci_generate::poetry::Poetry;
-use ci_generate::{CreateProject, TemplateData};
+use generate_ci::poetry::Poetry;
+use generate_ci::{CreateProject, TemplateData};
 
-use crate::cli::{retrieve_data, CommonData};
+use crate::CommonData;
 
-pub(super) fn poetry_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
+use super::retrieve_data;
+
+pub(crate) fn poetry_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let poetry = retrieve_data::<CommonData>(config, matches, "poetry")?;
     let data = TemplateData::new(&poetry.project_path, &poetry.name)
         .branch(&poetry.branch)

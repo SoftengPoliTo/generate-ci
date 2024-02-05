@@ -1,3 +1,5 @@
+mod toolchains;
+
 use std::path::PathBuf;
 
 use anyhow::anyhow;
@@ -15,108 +17,40 @@ use figment::Figment;
 
 use tracing_subscriber::EnvFilter;
 
-#[cfg(not(any(
-    feature = "cargo",
-    feature = "maven",
-    feature = "meson",
-    feature = "poetry",
-    feature = "yarn"
-)))]
-#[path = "."]
-mod toolchain {
+use toolchains::*;
 
-    mod cargo;
-    mod maven;
-    mod meson;
-    mod poetry;
-    mod yarn;
-
-    #[derive(clap::Parser, Debug)]
-    pub(super) enum Cmd {
-        /// Generate a CI for a cargo project.
-        Cargo(cargo::CargoData),
-        /// Generate a new maven project
-        Maven(maven::MavenData),
-        /// Generate a new meson project
-        Meson(meson::MesonData),
-        /// Generate a new poetry project.
-        Poetry(super::CommonData),
-        /// Generate a new yarn project.
-        Yarn(super::CommonData),
-    }
-
-    pub(super) fn choose_commands(
-        config: super::Figment,
-        sub: (&str, &super::ArgMatches),
-    ) -> anyhow::Result<()> {
-        match sub {
-            ("cargo", matches) => cargo::cargo_config(config, matches),
-            ("maven", matches) => maven::maven_config(config, matches),
-            ("meson", matches) => meson::meson_config(config, matches),
-            ("poetry", matches) => poetry::poetry_config(config, matches),
-            ("yarn", matches) => yarn::yarn_config(config, matches),
-            _ => unreachable!("unexpected command"),
-        }
-    }
+#[derive(clap::Parser, Debug)]
+enum Cmd {
+    #[cfg(feature = "cargo")]
+    /// Generate a CI for a cargo project.
+    Cargo(cargo::CargoData),
+    #[cfg(feature = "maven")]
+    /// Generate a new maven project
+    Maven(maven::MavenData),
+    #[cfg(feature = "meson")]
+    /// Generate a new meson project
+    Meson(meson::MesonData),
+    #[cfg(feature = "poetry")]
+    /// Generate a new poetry project.
+    Poetry(CommonData),
+    #[cfg(feature = "yarn")]
+    /// Generate a new yarn project.
+    Yarn(CommonData),
 }
 
-#[cfg(any(
-    feature = "cargo",
-    feature = "maven",
-    feature = "meson",
-    feature = "poetry",
-    feature = "yarn"
-))]
-#[path = "."]
-mod toolchain {
-
-    #[cfg(feature = "cargo")]
-    mod cargo;
-    #[cfg(feature = "maven")]
-    mod maven;
-    #[cfg(feature = "meson")]
-    mod meson;
-    #[cfg(feature = "poetry")]
-    mod poetry;
-    #[cfg(feature = "yarn")]
-    mod yarn;
-
-    #[derive(clap::Parser, Debug)]
-    pub(super) enum Cmd {
+fn choose_commands(config: Figment, sub: (&str, &ArgMatches)) -> anyhow::Result<()> {
+    match sub {
         #[cfg(feature = "cargo")]
-        /// Generate a CI for a cargo project.
-        Cargo(cargo::CargoData),
+        ("cargo", matches) => cargo::cargo_config(config, matches),
         #[cfg(feature = "maven")]
-        /// Generate a new maven project
-        Maven(maven::MavenData),
+        ("maven", matches) => maven::maven_config(config, matches),
         #[cfg(feature = "meson")]
-        /// Generate a new meson project
-        Meson(meson::MesonData),
+        ("meson", matches) => meson::meson_config(config, matches),
         #[cfg(feature = "poetry")]
-        /// Generate a new poetry project.
-        Poetry(super::CommonData),
+        ("poetry", matches) => poetry::poetry_config(config, matches),
         #[cfg(feature = "yarn")]
-        /// Generate a new yarn project.
-        Yarn(super::CommonData),
-    }
-
-    pub(super) fn choose_commands(
-        config: super::Figment,
-        sub: (&str, &super::ArgMatches),
-    ) -> anyhow::Result<()> {
-        match sub {
-            #[cfg(feature = "cargo")]
-            ("cargo", matches) => cargo::cargo_config(config, matches),
-            #[cfg(feature = "maven")]
-            ("maven", matches) => maven::maven_config(config, matches),
-            #[cfg(feature = "meson")]
-            ("meson", matches) => meson::meson_config(config, matches),
-            #[cfg(feature = "poetry")]
-            ("poetry", matches) => poetry::poetry_config(config, matches),
-            #[cfg(feature = "yarn")]
-            ("yarn", matches) => yarn::yarn_config(config, matches),
-            _ => unreachable!("unexpected command"),
-        }
+        ("yarn", matches) => yarn::yarn_config(config, matches),
+        _ => unreachable!("unexpected command"),
     }
 }
 
@@ -142,7 +76,7 @@ struct Opts {
     #[clap(short, long, global = true)]
     verbose: bool,
     #[clap(subcommand)]
-    cmd: toolchain::Cmd,
+    cmd: Cmd,
 }
 
 fn from_id(id: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync + 'static>> {
@@ -235,18 +169,7 @@ fn local_config() -> anyhow::Result<PathBuf> {
     Ok(config_dir.join("ci-generate").join("config.toml"))
 }
 
-fn retrieve_data<'a, T: Deserialize<'a>>(
-    config: Figment,
-    matches: &ArgMatches,
-    toolchain: &str,
-) -> anyhow::Result<T> {
-    let config = config
-        .merge(ClapSerialized::<CommonData>::globals(matches.clone()))
-        .select(toolchain);
-    config.extract::<T>().map_err(|e| e.into())
-}
-
-pub(crate) fn create_config() -> anyhow::Result<()> {
+fn create_config() -> anyhow::Result<()> {
     let cmd = Opts::command();
     let matches = cmd.get_matches();
     let verbose = matches.get_flag("verbose");
@@ -281,5 +204,9 @@ pub(crate) fn create_config() -> anyhow::Result<()> {
         .subcommand()
         .ok_or_else(|| anyhow::anyhow!("Missing command"))?;
 
-    toolchain::choose_commands(config, sub)
+    choose_commands(config, sub)
+}
+
+fn main() -> anyhow::Result<()> {
+    create_config()
 }

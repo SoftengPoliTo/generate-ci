@@ -3,7 +3,7 @@ mod common;
 use std::env::temp_dir;
 use std::path::Path;
 
-use ci_generate::{
+use generate_ci::{
     meson::{Meson, ProjectKind},
     CreateProject, TemplateData,
 };

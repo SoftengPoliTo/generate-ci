@@ -3,10 +3,12 @@ use clap::{ArgMatches, Parser};
 use figment::Figment;
 use serde::{Deserialize, Serialize};
 
-use ci_generate::maven::Maven;
-use ci_generate::{CreateProject, TemplateData};
+use generate_ci::maven::Maven;
+use generate_ci::{CreateProject, TemplateData};
 
-use crate::cli::{retrieve_data, CommonData};
+use crate::CommonData;
+
+use super::retrieve_data;
 
 #[derive(Parser, Debug, Serialize, Deserialize)]
 pub(crate) struct MavenData {
@@ -17,7 +19,7 @@ pub(crate) struct MavenData {
     common: CommonData,
 }
 
-pub(super) fn maven_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
+pub(crate) fn maven_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let maven = retrieve_data::<MavenData>(config, matches, "maven")?;
     let data = TemplateData::new(&maven.common.project_path, &maven.common.name)
         .branch(&maven.common.branch)

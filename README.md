@@ -1,20 +1,26 @@
-# ci-generate
+# generate-ci
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 [![dependency status][status badge]][status]
 
-This tool generates either new projects for some build systems or configuration
-files for some Continuous Integration systems with the use of templates.
+This library generates specific build systems
+or Continuous Integration configuration files with the use of templates.
 
-The templates define the layout of a project while its data are inserted at runtime.
+Templates define a project layout while its data is inserted
+at runtime.
 
-Each template contains all necessary files to build a project through a build
-system, in addition to Continuous Integration and Docker files to run
-tests and create safe containers.
+Each template can be:
+- A configuration file needed to build a project
+- A file needed to set up a Continuous Integration system
+- A `Dockerfile` used to create a docker image
 
 ## Supported build systems
+
+We support the most common build systems and we have set up a code structure
+which allows to add more of them with simplicity just modifying determined
+files. We will call this build systems with the term `toolchain`.
 
 | Build system | Languages | Project template | CI style checks | CI build | CI test | CI coverage upload | CI static analysis | CI dynamic analisys | CI license checks |
 | - | - | - | - | - | - | - | - | - | - |
@@ -26,93 +32,31 @@ tests and create safe containers.
 
 :white_check_mark:: Not necessary for the considered language
 
-## Commands
+## API
 
-To see the list of supported commands, run: `ci-generate --help`
+In the [src](src/) directory, you can find:
+- An API which creates a build system project in addition to determined
+Continuous Integration systems files. This API is called `create_project`.
+- An API which creates **only** Continuous Integration files called `create_ci`
 
-Each command has:
-- An optional argument to define the license of a project (default: `MIT`)
-- An optional argument to set up the branch name (default: `main`)
+These APIs needs a specific information to create a project being
+called. Below an example of its usage:
 
-### cargo
+```rust
+// Saves necessary information for project creation
+let data = TemplateData::new(&project_path, "project-name") // Project path and name
+    .license("MIT") // Project license
+    .branch("main"); // Default branch name
 
-```
-$ ci-generate cargo [--docker-image-description DESCRIPTION] [ --lib --ci] [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
-```
-
-The optional `--docker-image-description` argument sets up the description of a Docker image.
-If `--lib` and `--ci` arguments are not inserted, by default, a newly `cargo` project is created through the `cargo new` command.
-If the `--lib` option is enabled, the tool generates a `Rust` library project.
-If the `--ci` option is enabled, the tool produces only Continuous Integration files.
-If both `--lib` and `--ci` options are enabled, Continuous Integration is prioritized,
-so only its files are generated.
-
-### maven
-
-```
-$ ci-generate maven [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-group project-path
+// Constructs `cargo` instance and creates the project
+Cargo::new().create_project(data)
 ```
 
-### meson
-
-```
-$ ci-generate meson [--kind meson-project-kind] [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
-```
-
-Admitted values for the `kind` argument:
-
-- `c`
-- `c++`
-
-### poetry
-
-```
-$ ci-generate poetry [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
-```
-
-### yarn
-
-```
-$ ci-generate yarn [--license LICENSE --branch GITHUB_BRANCH] --name NAME project-path
-```
-
-## Configuration
-
-It is possible to save a `config.toml` in `${XDG_CONFIG_HOME}/ci-generate` (Usually `~/.config/ci-generate`) with overrides for all the default and optional values, e.g:
-
-``` toml
-[default]
-license = "BSD-3-Clause"
-branch = "master"
-
-[meson]
-kind = "c"
-
-[cargo]
-lib = false
-ci = false
-```
-
-This is the default configuration file.
-The first section contains all default arguments common to each toolchain.
-The other sections contain default arguments **specific** to the toolchain
-defined by the section name.
-
-For each toolchain, this configuration will override the default
-`license` and `branch` items and it is the same as this command:
-
-```sh
-$ ci-generate meson -b master -l BSD-3-Clause
-```
-
-The cli arguments take priority over built-in defaults and `config.toml` overrides so
-
-```sh
-$ ci-generate meson -l LGPL-2.1
-```
-
-would take the `branch = master` from the `config.toml` file and `LGPL-2.1` license
-from command line.
+The code above first defines the necessary information to create a project through
+`TemplateData` structure and then constructs the `cargo` project which
+calls `create_project` API.
+All files will be created within `path` directory with `name` as project name,
+`MIT` as license, and `main` as default branch.
 
 ## Testing
 
@@ -128,7 +72,7 @@ and dependability of single code units.
 
 We use [insta] (https://insta.rs) for our integration tests: a snapshot tests
 library for Rust.
-Insta serves the purpose of highlighting any content-level differences
+`insta` serves the purpose of highlighting any content-level differences
 among two versions of the same file. In this way, you can easily compare and
 contrast the two versions, making informed decisions based on the differences.
 
@@ -177,13 +121,13 @@ indicating that there are no snapshots to be reviewed.
 Released under the [MIT License](LICENSES/MIT.txt).
 
 <!-- Links -->
-[actions]: https://github.com/SoftengPoliTo/ci-generate/actions
-[codecov]: https://codecov.io/gh/SoftengPoliTo/ci-generate
+[actions]: https://github.com/SoftengPoliTo/generate-ci/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/generate-ci
 [license]: LICENSES/MIT.txt
-[status]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate
+[status]: https://deps.rs/repo/github/SoftengPoliTo/generate-ci
 
 <!-- Badges -->
-[actions badge]: https://github.com/SoftengPoliTo/ci-generate/workflows/ci-generate/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/ci-generate/branch/master/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/generate-ci/workflows/generate-ci/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/generate-ci/branch/master/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[status badge]: https://deps.rs/repo/github/SoftengPoliTo/ci-generate/status.svg
+[status badge]: https://deps.rs/repo/github/SoftengPoliTo/generate-ci/status.svg

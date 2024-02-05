@@ -3,7 +3,7 @@ mod common;
 use std::env::temp_dir;
 use std::path::Path;
 
-use ci_generate::{cargo::Cargo, CreateCi, TemplateData};
+use generate_ci::{cargo::Cargo, CreateCi, TemplateData};
 
 use common::compare_template_skip;
 

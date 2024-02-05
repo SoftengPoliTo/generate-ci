@@ -3,7 +3,7 @@ mod common;
 use std::env::temp_dir;
 use std::path::Path;
 
-use ci_generate::{poetry::Poetry, CreateProject, TemplateData};
+use generate_ci::{poetry::Poetry, CreateProject, TemplateData};
 
 use common::compare_template;
 

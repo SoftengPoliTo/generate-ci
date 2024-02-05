@@ -3,10 +3,12 @@ use clap::{ArgMatches, Parser};
 use figment::Figment;
 use serde::{Deserialize, Serialize};
 
-use ci_generate::cargo::Cargo;
-use ci_generate::{CreateCi, TemplateData};
+use generate_ci::cargo::Cargo;
+use generate_ci::{CreateCi, TemplateData};
 
-use crate::cli::{retrieve_data, CommonData};
+use crate::CommonData;
+
+use super::retrieve_data;
 
 #[derive(Parser, Debug, Serialize, Deserialize)]
 pub(crate) struct CargoData {
@@ -24,7 +26,7 @@ pub(crate) struct CargoData {
     common: CommonData,
 }
 
-pub(super) fn cargo_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
+pub(crate) fn cargo_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let cargo = retrieve_data::<CargoData>(config, matches, "cargo")?;
     let docker_image_description = cargo.docker_image_description.map_or_else(
         || format!("{} description", &cargo.common.name),

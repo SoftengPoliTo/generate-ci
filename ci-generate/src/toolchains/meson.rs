@@ -3,10 +3,12 @@ use clap::{ArgMatches, Parser};
 use figment::Figment;
 use serde::{Deserialize, Serialize};
 
-use ci_generate::meson::{Meson, ProjectKind};
-use ci_generate::{CreateProject, TemplateData};
+use generate_ci::meson::{Meson, ProjectKind};
+use generate_ci::{CreateProject, TemplateData};
 
-use crate::cli::{retrieve_data, CommonData};
+use crate::CommonData;
+
+use super::retrieve_data;
 
 #[derive(Parser, Debug, Serialize, Deserialize)]
 pub(crate) struct MesonData {
@@ -28,7 +30,7 @@ fn project_kind(
     }
 }
 
-pub(super) fn meson_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
+pub(crate) fn meson_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let meson = retrieve_data::<MesonData>(config, matches, "meson")?;
     let data = TemplateData::new(&meson.common.project_path, &meson.common.name)
         .branch(&meson.common.branch)

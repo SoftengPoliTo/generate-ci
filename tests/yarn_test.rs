@@ -3,7 +3,7 @@ mod common;
 use std::env::temp_dir;
 use std::path::Path;
 
-use ci_generate::{yarn::Yarn, CreateCi, TemplateData};
+use generate_ci::{yarn::Yarn, CreateCi, TemplateData};
 
 use common::compare_template;
 

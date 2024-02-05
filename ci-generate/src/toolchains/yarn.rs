@@ -2,12 +2,14 @@ use clap::ArgMatches;
 
 use figment::Figment;
 
-use ci_generate::yarn::Yarn;
-use ci_generate::{CreateCi, TemplateData};
+use generate_ci::yarn::Yarn;
+use generate_ci::{CreateCi, TemplateData};
 
-use crate::cli::{retrieve_data, CommonData};
+use crate::CommonData;
 
-pub(super) fn yarn_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
+use super::retrieve_data;
+
+pub(crate) fn yarn_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let yarn = retrieve_data::<CommonData>(config, matches, "yarn")?;
     let data = TemplateData::new(&yarn.project_path, &yarn.name)
         .branch(&yarn.branch)

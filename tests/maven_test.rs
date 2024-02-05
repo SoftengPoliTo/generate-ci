@@ -3,7 +3,7 @@ mod common;
 use std::env::temp_dir;
 use std::path::Path;
 
-use ci_generate::{maven::Maven, CreateProject, TemplateData};
+use generate_ci::{maven::Maven, CreateProject, TemplateData};
 
 use common::compare_template;
 

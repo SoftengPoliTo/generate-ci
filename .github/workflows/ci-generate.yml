@@ -7,7 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'crates/**'
-      - 'fuzz/**'
+      - 'ci-generate/**'
       - '.github/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
@@ -17,7 +17,7 @@ on:
     paths:
       - 'src/**'
       - 'crates/**'
-      - 'fuzz/**'
+      - 'ci-generate/**'
       - '.github/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
@@ -178,7 +178,7 @@ jobs:
       run: |
         grcov . --binary-path ./target/debug/ -s . -t lcov --branch \
               --ignore-not-existing --ignore "/*" --ignore "../*" \
-              --ignore "src/cli/*" --ignore "src/bin/*" -o lcov.info
+              --ignore "templates/*" --ignore "ci-generate/*" -o lcov.info
 
     - name: Codecov upload
       uses: codecov/codecov-action@v3

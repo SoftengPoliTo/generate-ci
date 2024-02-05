@@ -1,12 +1,9 @@
 [package]
-name = "generate-ci"
-version = "0.1.0"
+name = "ci-generate"
+version = "0.5.3"
 edition = "2021"
 license = "MIT"
-description = """
-    Provide a series of APIs to generate build systems and Continuous Integration
-    configuration files with the use of templates.
-    """
+description = "Generate a new project for some build systems with the use of templates."
 repository = "https://github.com/SoftengPoliTo/ci-generate"
 homepage = "https://github.com/SoftengPoliTo/ci-generate"
 
@@ -14,19 +11,27 @@ homepage = "https://github.com/SoftengPoliTo/ci-generate"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+generate-ci = { path = ".." }
+
+anyhow = "1"
+clap = { version = "^4.4", features = ["derive"] }
+figment = { version = "^0.10", features = ["toml"] }
 home = "0.5.9"
 license = "^3.2"
-minijinja = "^1.0"
 serde = { version = "1", features = ["derive"] }
-textwrap = "0.16"
-thiserror = "1.0.50"
-tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
-[dev-dependencies]
-insta = "1.34.0"
-proptest = "1.4.0"
-proptest-derive = "0.4.0"
-walkdir = "2.4.0"
+
+[[bin]]
+name = "ci-generate"
+
+[features]
+default = ["cargo", "maven", "meson", "poetry", "yarn"]
+cargo = []
+maven = []
+meson = []
+poetry = []
+yarn = []
 
 [profile.release]
 codegen-units = 1
