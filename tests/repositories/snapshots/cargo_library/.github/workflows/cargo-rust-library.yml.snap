@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - 'src/**'
+      - 'tests/**'
       - 'crates/**'
       - 'fuzz/**'
       - '.github/**'
@@ -20,6 +21,7 @@ on:
       - main
     paths:
       - 'src/**'
+      - 'tests/**'
       - 'crates/**'
       - 'fuzz/**'
       - '.github/**'
