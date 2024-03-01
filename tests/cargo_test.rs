@@ -14,6 +14,12 @@ const SNAPSHOT_PATH_C: &str = "../repositories/snapshots/cargo_ci/";
 
 #[test]
 fn test_cargo_binary() {
+    // Rust nightly version can introduce changes making tests fail, so this
+    // test is not executed on nightly
+    if std::env::var("RUSTUP_TOOLCHAIN").map_or(true, |env| env.starts_with("nightly")) {
+        return;
+    }
+
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo");
     let data = TemplateData::new(&path, "cargo-rust-binary")
@@ -29,6 +35,12 @@ fn test_cargo_binary() {
 
 #[test]
 fn test_cargo_library() {
+    // Rust nightly version can introduce changes making tests fail, so this
+    // test is not executed on nightly
+    if std::env::var("RUSTUP_TOOLCHAIN").map_or(true, |env| env.starts_with("nightly")) {
+        return;
+    }
+
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo_library");
     let data = TemplateData::new(&path, "cargo-rust-library")
