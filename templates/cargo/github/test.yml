@@ -6,6 +6,7 @@ on:
       - {{ branch }}
     paths:
       - 'src/**'
+      - 'tests/**'
       - 'crates/**'
       - 'fuzz/**'
       - '.github/**'
@@ -16,6 +17,7 @@ on:
       - {{ branch }}
     paths:
       - 'src/**'
+      - 'tests/**'
       - 'crates/**'
       - 'fuzz/**'
       - '.github/**'
