@@ -1,4 +1,4 @@
-name: ci-generate
+name: generate-ci
 
 on:
   push:
@@ -172,7 +172,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "ci-generate-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "generate-ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
@@ -231,7 +231,7 @@ jobs:
     - name: Run tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "ci-generate-%p-%m.profraw"
+        LLVM_PROFILE_FILE: "generate-ci-%p-%m.profraw"
       run: |
         cargo test --verbose
 
