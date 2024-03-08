@@ -67,7 +67,6 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
         components: clippy, rustfmt
 
     - name: Run rustfmt
@@ -148,8 +147,6 @@ jobs:
 
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
-      with:
-        toolchain: stable
 
     - name: Build
       run: cargo build --verbose
@@ -169,8 +166,6 @@ jobs:
 
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
-      with:
-        toolchain: stable
 
     - name: Generate docs
       run: cargo doc --verbose --no-deps
@@ -189,7 +184,7 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
@@ -197,15 +192,6 @@ jobs:
       run: |
         curl -L "$GRCOV_LINK/v$GRCOV_VERSION/grcov-x86_64-unknown-linux-musl.tar.bz2" |
         tar xj -C $HOME/.cargo/bin
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -220,38 +206,11 @@ jobs:
               --ignore-not-existing --ignore "/*" --ignore "../*" -o lcov.info
 
     - name: Codecov upload
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: lcov.info
+        token: {{ '${{ secrets.CODECOV_TOKEN }}' }}
 
-    - name: Get total coverage
-      run: |
-        # Remove lcov.info file to avoid function duplications
-        rm -rf lcov.info
-        grcov . --binary-path ./target/debug/ -s . -t covdir --branch \
-              --token YOUR_COVDIR_TOKEN --ignore-not-existing --ignore "/*" \
-              --ignore "../*" -o covdir.json
-
-    - name: Evaluate code coverage value
-      shell: bash
-      run: |
-        # Retrieve code coverage associated to the repository
-        FLOAT_COVERAGE=$(jq '.coveragePercent' covdir.json)
-        # Round the float value to the nearest value
-        COVERAGE_OUTPUT=$(printf "%.0f" $FLOAT_COVERAGE)
-        # If code coverage >= 80, green traffic light
-        if [ $COVERAGE_OUTPUT -ge 80 ]
-        then
-            echo "$COVERAGE_OUTPUT > 80 --> Green"
-        # If code coverage is >=60 but < 80, orange traffic light
-        elif [ $COVERAGE_OUTPUT -ge 60 ]
-        then
-            echo "60 <= $COVERAGE_OUTPUT < 80 --> Orange"
-        # Otherwise, red traffic light
-        else
-            echo "$COVERAGE_OUTPUT < 60 --> Red"
-            exit 1
-        fi
 
   code-coverage-macos:
 
@@ -265,7 +224,7 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
@@ -273,15 +232,6 @@ jobs:
       run: |
         curl -L "$GRCOV_LINK/v$GRCOV_VERSION/grcov-x86_64-apple-darwin.tar.bz2" |
         tar xj -C $HOME/.cargo/bin
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -296,38 +246,10 @@ jobs:
               --ignore-not-existing --ignore "/*" --ignore "../*" -o lcov.info
 
     - name: Codecov upload
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: lcov.info
-
-    - name: Get total coverage
-      run: |
-        # Remove lcov.info file to avoid function duplications
-        rm -rf lcov.info
-        grcov . --binary-path ./target/debug/ -s . -t covdir --branch \
-              --token YOUR_COVDIR_TOKEN --ignore-not-existing --ignore "/*" \
-              --ignore "../*" -o covdir.json
-
-    - name: Evaluate code coverage value
-      shell: bash
-      run: |
-        # Retrieve code coverage associated to the repository
-        FLOAT_COVERAGE=$(jq '.coveragePercent' covdir.json)
-        # Round the float value to the nearest value
-        COVERAGE_OUTPUT=$(printf "%.0f" $FLOAT_COVERAGE)
-        # If code coverage >= 80, green traffic light
-        if [ $COVERAGE_OUTPUT -ge 80 ]
-        then
-            echo "$COVERAGE_OUTPUT > 80 --> Green"
-        # If code coverage is >=60 but < 80, orange traffic light
-        elif [ $COVERAGE_OUTPUT -ge 60 ]
-        then
-            echo "60 <= $COVERAGE_OUTPUT < 80 --> Orange"
-        # Otherwise, red traffic light
-        else
-            echo "$COVERAGE_OUTPUT < 60 --> Red"
-            exit 1
-        fi
+        token: {{ '${{ secrets.CODECOV_TOKEN }}' }}
 
   code-coverage-windows:
 
@@ -341,7 +263,7 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
@@ -350,15 +272,6 @@ jobs:
       run: |
         curl -LO "$Env:GRCOV_LINK/v$Env:GRCOV_VERSION/$Env:GRCOV_BINARY"
         7z e -y "$Env:GRCOV_BINARY" -o"${env:USERPROFILE}\.cargo\bin"
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -373,38 +286,11 @@ jobs:
               --ignore-not-existing --ignore "/*" --ignore "../*" -o lcov.info
 
     - name: Codecov upload
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: lcov.info
+        token: {{ '${{ secrets.CODECOV_TOKEN }}' }}
 
-    - name: Get total coverage
-      run: |
-        # Remove lcov.info file to avoid function duplications
-        Remove-Item -fo lcov.info
-        grcov . --binary-path ./target/debug/ -s . -t covdir --branch `
-              --token YOUR_COVDIR_TOKEN --ignore-not-existing --ignore "/*" `
-              --ignore "../*" -o covdir.json
-
-    - name: Evaluate code coverage value
-      shell: bash
-      run: |
-        # Retrieve code coverage associated to the repository
-        FLOAT_COVERAGE=$(jq '.coveragePercent' covdir.json)
-        # Round the float value to the nearest value
-        COVERAGE_OUTPUT=$(printf "%.0f" $FLOAT_COVERAGE)
-        # If code coverage >= 80, green traffic light
-        if [ $COVERAGE_OUTPUT -ge 80 ]
-        then
-            echo "$COVERAGE_OUTPUT > 80 --> Green"
-        # If code coverage is >=60 but < 80, orange traffic light
-        elif [ $COVERAGE_OUTPUT -ge 60 ]
-        then
-            echo "60 <= $COVERAGE_OUTPUT < 80 --> Orange"
-        # Otherwise, red traffic light
-        else
-            echo "$COVERAGE_OUTPUT < 60 --> Red"
-            exit 1
-        fi
 
   weighted-code-coverage-ubuntu:
 
@@ -418,7 +304,7 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
@@ -434,15 +320,6 @@ jobs:
       run: |
         curl -L "$WCC_LINK/v$WCC_VERSION/weighted-code-coverage-$WCC_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
         tar xz -C $HOME/.cargo/bin
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -478,7 +355,7 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
@@ -494,15 +371,6 @@ jobs:
       run: |
         curl -L "$WCC_LINK/v$WCC_VERSION/weighted-code-coverage-$WCC_VERSION-x86_64-apple-darwin.tar.gz" |
         tar xz -C $HOME/.cargo/bin
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -538,7 +406,7 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
@@ -554,15 +422,6 @@ jobs:
       run: |
         curl -LO "$Env:WCC_LINK/v$Env:WCC_VERSION/weighted-code-coverage-$Env:WCC_VERSION-x86_64-pc-windows-msvc.zip"
         7z e -y "$Env:WCC_BINARY" -o"${env:USERPROFILE}\.cargo\bin"
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -657,8 +516,6 @@ jobs:
     - name: Install Rust nightly
       if: steps.changes.outputs.cargo == 'true'
       uses: dtolnay/rust-toolchain@nightly
-      with:
-        toolchain: nightly
 
     - name: Install cargo-udeps
       if: steps.changes.outputs.cargo == 'true'
@@ -742,8 +599,6 @@ jobs:
     - name: Install Rust nightly
       if: steps.changes.outputs.cargo == 'true'
       uses: dtolnay/rust-toolchain@nightly
-      with:
-        toolchain: nightly
 
     - name: Install cargo-udeps
       if: steps.changes.outputs.cargo == 'true'
@@ -827,8 +682,6 @@ jobs:
     - name: Install Rust nightly
       if: steps.changes.outputs.cargo == 'true'
       uses: dtolnay/rust-toolchain@nightly
-      with:
-        toolchain: nightly
 
     - name: Install cargo-udeps
       if: steps.changes.outputs.cargo == 'true'
@@ -878,7 +731,6 @@ jobs:
     - name: Install Rust nightly
       uses: dtolnay/rust-toolchain@nightly
       with:
-        toolchain: nightly
         components: rust-src
 
     - name: Install cargo-careful
@@ -906,7 +758,6 @@ jobs:
     - name: Install Rust nightly
       uses: dtolnay/rust-toolchain@nightly
       with:
-        toolchain: nightly
         components: rust-src
 
     - name: Run AddressSanitizer
@@ -931,7 +782,6 @@ jobs:
     - name: Install Rust nightly
       uses: dtolnay/rust-toolchain@nightly
       with:
-        toolchain: nightly
         components: rust-src
 
     - name: Install cargo-careful
@@ -959,7 +809,6 @@ jobs:
     - name: Install Rust nightly
       uses: dtolnay/rust-toolchain@nightly
       with:
-        toolchain: nightly
         components: rust-src
 
     # Usage of the `help` command as base command, please replace it
@@ -986,7 +835,6 @@ jobs:
     - name: Install Rust nightly
       uses: dtolnay/rust-toolchain@nightly
       with:
-        toolchain: nightly
         components: rust-src
 
     - name: Install cargo-careful
