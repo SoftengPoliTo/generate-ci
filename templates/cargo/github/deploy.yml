@@ -16,8 +16,6 @@ jobs:
 
     - name: Install stable
       uses: dtolnay/rust-toolchain@stable
-      with:
-        toolchain: stable
 
     - name: Build {{ name }}
       run: |
@@ -66,7 +64,6 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
         target: {{ '${{ matrix.target }}' }}
 
     - name: Install musl
@@ -117,8 +114,6 @@ jobs:
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
 
       - name: Create Cargo.lock
         run: |
@@ -144,4 +139,3 @@ jobs:
             ./binaries/**/*.tar.gz
         env:
           GITHUB_TOKEN: {{ '${{ secrets.GITHUB_TOKEN }}' }}
-
