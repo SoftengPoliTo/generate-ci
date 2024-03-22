@@ -8,7 +8,6 @@ use crate::{
     compute_template, define_license, error::Result, path_validation, BuildTemplate, TemplateData,
 };
 
-#[macro_export]
 macro_rules! builtin_templates {
     ($root:expr => $(($name:expr, $template:expr)),+) => {
         [
@@ -21,6 +20,8 @@ macro_rules! builtin_templates {
         ]
     }
 }
+
+pub(crate) use builtin_templates;
 
 fn create_toolchain<T: BuildTemplate>(toolchain: &T, data: TemplateData) -> Result<()> {
     let project_path = path_validation(data.project_path)?;
