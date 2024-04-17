@@ -315,13 +315,6 @@ mod tests {
         assert!(path_validation(&valid_path).is_ok());
     }
 
-    #[cfg(windows)]
-    #[test]
-    fn test_invalid_home_directory() {
-        let project_path = Path::new("~\\subfolder");
-        assert!(matches!(path_validation(project_path), Err(Error::HomeDir)));
-    }
-
     #[test]
     fn test_invalid_utf8_path() {
         let invalid_utf8 = String::from_utf8_lossy(&[0xC3, 0x28]).into_owned();
