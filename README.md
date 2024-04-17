@@ -2,6 +2,7 @@
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
+[![Wcc][wcc badge]][wcc]
 [![LICENSE][license badge]][license]
 [![dependency status][status badge]][status]
 
@@ -123,11 +124,13 @@ Released under the [MIT License](LICENSES/MIT.txt).
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/generate-ci/actions
 [codecov]: https://codecov.io/gh/SoftengPoliTo/generate-ci
+[wcc]: https://SoftengPolito.github.io/generate-ci/
 [license]: LICENSES/MIT.txt
 [status]: https://deps.rs/repo/github/SoftengPoliTo/generate-ci
 
 <!-- Badges -->
 [actions badge]: https://github.com/SoftengPoliTo/generate-ci/workflows/generate-ci/badge.svg
 [codecov badge]: https://codecov.io/gh/SoftengPoliTo/generate-ci/branch/master/graph/badge.svg
+[wcc badge]: .github/badges/wcc.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [status badge]: https://deps.rs/repo/github/SoftengPoliTo/generate-ci/status.svg

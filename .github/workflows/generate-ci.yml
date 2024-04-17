@@ -24,6 +24,20 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
 
+env:
+  #
+  # Dependency versioning
+  #
+
+  GRCOV_VERSION: "0.8.13"
+
+  WCC_VERSION: "0.3.0"
+
+  UDEPS_VERSION: "0.1.35"
+
+  CAREFUL_VERSION: "0.3.4"
+
+
 jobs:
 
 ################################## LEGAL AND FORMAT LAYER ######################
@@ -155,9 +169,9 @@ jobs:
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
+        GRCOV_BINARY: grcov-x86_64-unknown-linux-musl.tar.bz2
       run: |
-        curl -L "$GRCOV_LINK/$GRCOV_VERSION/grcov-x86_64-unknown-linux-musl.tar.bz2" |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
         tar xj -C $HOME/.cargo/bin
 
     - name: Install llvm-tools-preview
@@ -191,6 +205,18 @@ jobs:
 
     needs: [build, docs]
 
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages 
+    # and pull-requests write pemission for the pull request comment.
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+      pull-requests: write
+
+    environment:
+      name: wcc
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -199,34 +225,23 @@ jobs:
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        components: llvm-tools-preview
 
     - name: Install grcov
       env:
         GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-        GRCOV_VERSION: v0.8.13
         GRCOV_BINARY: grcov-x86_64-unknown-linux-musl.tar.bz2
       run: |
-        curl -L "$GRCOV_LINK/$GRCOV_VERSION/$GRCOV_BINARY" |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
         tar xj -C $HOME/.cargo/bin
 
     - name: Install weighted-code-coverage
       env:
         WCC_LINK: https://github.com/SoftengPoliTo/weighted-code-coverage/releases/download
-        WCC_VERSION: v0.2.0
-        WCC_BINARY: weighted-code-coverage-0.2.0-x86_64-unknown-linux-gnu.tar.gz
+        WCC_BINARY: weighted-code-coverage-x86_64-unknown-linux-gnu.tar.gz
       run: |
-        curl -L "$WCC_LINK/$WCC_VERSION/$WCC_BINARY" |
+        curl -L "$WCC_LINK/v$WCC_VERSION/$WCC_BINARY" |
         tar xz -C $HOME/.cargo/bin
-
-    - name: Install llvm-tools-preview
-      run: |
-        rustup component add llvm-tools-preview
-
-    # Not necessary on a newly created image, but strictly advised
-    - name: Run cargo clean
-      run: |
-        cargo clean
 
     - name: Run tests
       env:
@@ -237,18 +252,126 @@ jobs:
 
     - name: Run grcov
       run: |
-        grcov . --binary-path ./target/debug/ -t coveralls -s . --token YOUR_COVERALLS_TOKEN > coveralls.json
+        grcov . --binary-path ./target/debug/ --ignore "**/.cargo/**" --ignore "**/rustc/**" --ignore "./target/**" -t coveralls -s . --token YOUR_COVERALLS_TOKEN > coveralls.json
 
     - name: Run weighted-code-coverage
+      id: wcc-run
       run: |
         mkdir $HOME/wcc-output
-        weighted-code-coverage -p src/ -j coveralls.json -c cyclomatic --json $HOME/wcc-output/out.json
+        echo "html=$HOME/wcc-output" >> $GITHUB_OUTPUT
+        echo "json=$HOME/wcc-output/wcc.json" >> $GITHUB_OUTPUT
+        weighted-code-coverage --project-path ./ --grcov-format coveralls --grcov-path ./coveralls.json -m functions --json $HOME/wcc-output/wcc.json --html $HOME/wcc-output/
 
-    - name: Upload weighted-code-coverage data
-      uses: actions/upload-artifact@v3
+    - name: Setup GitHub Pages
+      uses: actions/configure-pages@v5.0.0
       with:
-        name: weighted-code-coverage-ubuntu
-        path: ~/wcc-output/out.json
+        enablement: true
+
+    - name: Upload Wcc html output
+      uses: actions/upload-pages-artifact@v3.0.1
+      with:
+        path: ${{ steps.wcc-run.outputs.html }}
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4.0.5
+
+    - name: Extract metric values
+      id: metrics
+      env:
+        JSON: ${{ steps.wcc-run.outputs.json }}
+      run: |
+        content=`cat ${JSON}`
+        echo "json=$content" >> $GITHUB_OUTPUT
+
+    - name: Extract branch name
+      id: extract-branch
+      if: github.event_name != 'pull_request'
+      run: echo "branch=${GITHUB_REF#refs/heads/}" >> "${GITHUB_OUTPUT}"
+
+    - name: Define badge path
+      id: badge-path
+      if: github.event_name != 'pull_request'
+      env:
+        BADGE_PATH: .github/badges/wcc.svg
+      run: echo "path=${BADGE_PATH}" >> "${GITHUB_OUTPUT}"
+      
+    - name: Create badge directory
+      if: github.event_name != 'pull_request'
+      env:
+        BADGE_PATH: ${{ steps.badge-path.outputs.path }}
+      run: mkdir -p "${BADGE_PATH%/*}" 
+
+    - name: Determine badge color
+      if: github.event_name != 'pull_request'
+      id: badge-color
+      env:
+        WCC: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cyclomatic.wcc }}
+      run: |
+        if [ $(echo "${WCC} < 60.0" | bc) -eq 1 ]; then
+          echo "color=red" >> "${GITHUB_OUTPUT}"
+        else
+          echo "color=green" >> "${GITHUB_OUTPUT}"
+        fi
+
+    - name: Create badge
+      if: github.event_name != 'pull_request'
+      uses: emibcn/badge-action@v2.0.3
+      id: badge
+      with:
+        label: wcc
+        status: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cyclomatic.wcc }}%
+        color: ${{ steps.badge-color.outputs.color }}
+        path: ${{ steps.badge-path.outputs.path }}
+
+    - name: Verify if badge changed
+      if: github.event_name != 'pull_request'
+      uses: tj-actions/verify-changed-files@v19
+      id: badge-changed 
+      with:
+        files: ${{ steps.badge-path.outputs.path }}
+      
+    - name: Commit badge
+      if: ${{ github.event_name != 'pull_request' && steps.badge-changed.outputs.files_changed == 'true' }}
+      env:
+        BADGE: ${{ steps.badge-path.outputs.path }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add "${BADGE}"
+        git commit -m "Add/Update wcc badge"
+
+    - name: Push badge
+      uses: ad-m/github-push-action@master
+      if: ${{ github.event_name != 'pull_request' && success() }}
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ steps.extract-branch.outputs.branch }}
+
+    - name: Create or update comment
+      if: github.event_name == 'pull_request'
+      uses: peter-evans/create-or-update-comment@v4
+      env:
+        COVERAGE: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.coverage }}
+        WCC_CYC: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cyclomatic.wcc }}
+        WCC_COG: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cognitive.wcc }}
+        CRAP_CYC: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cyclomatic.crap }}
+        CRAP_COG: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cognitive.crap }}
+        SKUNK_CYC: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cyclomatic.skunk }}
+        SKUNK_COG: ${{ fromJson(steps.metrics.outputs.json).projectMetrics.total.cognitive.skunk }}
+      with:
+        comment-id: ${{ github.event.comment.id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ## Weighted Code Coverage
+          Project metrics:
+          - **Coverage**: ${{ env.COVERAGE }}%
+
+          |             | Wcc                  | CRAP                | Skunk                |
+          |-------------|----------------------|---------------------|----------------------|
+          | Cyclomatic  | ${{ env.WCC_CYC }}%  | ${{ env.CRAP_CYC }} | ${{ env.SKUNK_CYC }} |
+          | Cognitive   | ${{ env.WCC_COG }}%  | ${{ env.CRAP_COG }} | ${{ env.SKUNK_COG }} |
+        edit-mode: replace
 
 ################################## DEPENDENCY LAYER ###########################
 
@@ -344,9 +467,8 @@ jobs:
       if: steps.changes.outputs.cargo == 'true'
       env:
         UDEPS_LINK: https://github.com/est31/cargo-udeps/releases/download
-        UDEPS_VERSION: v0.1.35
       run: |
-        curl -L "$UDEPS_LINK/$UDEPS_VERSION/cargo-udeps-$UDEPS_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
+        curl -L "$UDEPS_LINK/v$UDEPS_VERSION/cargo-udeps-v$UDEPS_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
         tar xz -C $HOME/.cargo/bin --strip-components 2
 
     - name: Run cargo-udeps
@@ -403,7 +525,6 @@ jobs:
     - name: Install cargo-careful
       env:
         CAREFUL_LINK: https://github.com/RalfJung/cargo-careful/releases/download
-        CAREFUL_VERSION: 0.3.4
       run: |
         curl -L "$CAREFUL_LINK/v$CAREFUL_VERSION/cargo-careful.x86_64-unknown-linux-musl" \
         --output $HOME/.cargo/bin/cargo-careful
