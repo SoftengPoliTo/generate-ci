@@ -15,7 +15,7 @@ homepage = "https://github.com/SoftengPoliTo/ci-generate"
 
 [dependencies]
 home = "0.5.9"
-license = "^3.2"
+license = { version = "^3.3", features = ["offline"] }
 minijinja = "^1.0"
 serde = { version = "1", features = ["derive"] }
 textwrap = "0.16"
