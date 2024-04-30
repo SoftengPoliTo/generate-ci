@@ -13,7 +13,7 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/poetry/";
 fn test_poetry() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("poetry");
-    let data = TemplateData::new(&path, "poetry-python")
+    let data = TemplateData::new(&path, "poetry-python", "SoftengPoliTo")
         .license("MIT")
         .branch("main");
 

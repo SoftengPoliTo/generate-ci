@@ -13,7 +13,7 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/yarn/";
 fn test_yarn() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("yarn");
-    let data = TemplateData::new(&path, "yarn-javascript")
+    let data = TemplateData::new(&path, "yarn-javascript", "SoftengPoliTo")
         .license("MIT")
         .branch("main");
 

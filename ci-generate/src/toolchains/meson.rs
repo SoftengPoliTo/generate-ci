@@ -32,7 +32,7 @@ fn project_kind(
 
 pub(crate) fn meson_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let meson = retrieve_data::<MesonData>(config, matches, "meson")?;
-    let data = TemplateData::new(&meson.common.project_path, &meson.common.name)
+    let data = TemplateData::new(&meson.common.project_path, &meson.common.name, &meson.common.organization)
         .branch(&meson.common.branch)
         .license(&meson.common.license);
     Ok(Meson::new().kind(meson.kind).create_project(data)?)

@@ -32,7 +32,7 @@ pub(crate) fn cargo_config(config: Figment, matches: &ArgMatches) -> anyhow::Res
         || format!("{} description", &cargo.common.name),
         |desc| desc,
     );
-    let data = TemplateData::new(&cargo.common.project_path, &cargo.common.name)
+    let data = TemplateData::new(&cargo.common.project_path, &cargo.common.name, &cargo.common.organization)
         .branch(&cargo.common.branch)
         .license(&cargo.common.license);
     if cargo.ci {

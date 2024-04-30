@@ -13,11 +13,11 @@ meson-cpp's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/meson-cpp/actions
-[codecov]: https://codecov.io/gh/<your-account>/meson-cpp
+[actions]: https://github.com/SoftengPoliTo/meson-cpp/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/meson-cpp
 [license]: LICENSES/BSD-1-Clause.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/meson-cpp/workflows/meson-cpp/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/meson-cpp/branch/master/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/meson-cpp/workflows/meson-cpp/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/meson-cpp/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-BSD-1-Clause-blue.svg

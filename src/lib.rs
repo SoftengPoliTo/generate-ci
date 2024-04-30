@@ -26,15 +26,17 @@ pub struct TemplateData<'a> {
     name: &'a str,
     license: &'a str,
     branch: &'a str,
+    organization: &'a str,
 }
 impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
-    pub fn new(project_path: &'a Path, name: &'a str) -> Self {
+    pub fn new(project_path: &'a Path, name: &'a str, organization: &'a str) -> Self {
         Self {
             project_path,
             name,
             license: "MIT",
             branch: "main",
+            organization,
         }
     }
     /// Sets a new license.
@@ -117,12 +119,12 @@ impl CiTemplate {
 
         let mut license_ctx = HashMap::new();
 
-        license_ctx.insert("header", Value::from_serializable(&header));
-        license_ctx.insert("text", Value::from_serializable(&text_without_blank));
-        license_ctx.insert("id", Value::from_serializable(&id));
+        license_ctx.insert("header", Value::from_serialize(header));
+        license_ctx.insert("text", Value::from_serialize(text_without_blank));
+        license_ctx.insert("id", Value::from_serialize(id));
 
         self.context
-            .insert("license", Value::from_serializable(&license_ctx));
+            .insert("license", Value::from_serialize(license_ctx));
 
         self.env.add_template("build.license", license.text())?;
 
@@ -141,11 +143,10 @@ impl CiTemplate {
 
         let mut reuse = HashMap::new();
 
-        reuse.insert("name", Value::from_serializable(&name));
-        reuse.insert("id", Value::from_serializable(&id));
+        reuse.insert("name", Value::from_serialize(name));
+        reuse.insert("id", Value::from_serialize(id));
 
-        self.context
-            .insert("reuse", Value::from_serializable(&reuse));
+        self.context.insert("reuse", Value::from_serialize(reuse));
 
         self.env.add_template("dep5.reuse", REUSE_TEMPLATE)?;
 
@@ -167,6 +168,7 @@ trait BuildTemplate {
         project_name: &str,
         license: &str,
         github_branch: &str,
+        organization: &str,
     ) -> Result<ProjectOutput>;
 
     fn get_templates() -> &'static [(&'static str, &'static str)];
@@ -177,8 +179,15 @@ trait BuildTemplate {
         project_name: &str,
         license: &str,
         github_branch: &str,
+        organization: &str,
     ) -> Result<CiTemplate> {
-        let t = self.define(project_path, project_name, license, github_branch)?;
+        let t = self.define(
+            project_path,
+            project_name,
+            license,
+            github_branch,
+            organization,
+        )?;
         let env = build_environment(Self::get_templates());
 
         Ok(CiTemplate {

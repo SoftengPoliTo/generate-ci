@@ -191,15 +191,17 @@ impl<'a> BuildTemplate for Cargo<'a> {
         project_name: &str,
         license: &str,
         github_branch: &str,
+        organization: &str,
     ) -> Result<ProjectOutput> {
         let mut context = HashMap::new();
 
-        context.insert("name", Value::from_serializable(&project_name));
-        context.insert("branch", Value::from_serializable(&github_branch));
-        context.insert("license_id", Value::from_serializable(&license));
+        context.insert("name", Value::from_serialize(project_name));
+        context.insert("branch", Value::from_serialize(github_branch));
+        context.insert("license_id", Value::from_serialize(license));
+        context.insert("organization", Value::from_serialize(organization));
         context.insert(
             "docker_image_description",
-            Value::from_serializable(&self.docker_image_description),
+            Value::from_serialize(self.docker_image_description),
         );
 
         Cargo::project_creation(self, project_path)?;
