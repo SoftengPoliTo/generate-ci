@@ -102,6 +102,9 @@ struct CommonData {
     /// Organization name 
     #[clap(long, short = 'o')]
     organization: String,
+    /// Repository name
+    #[clap(long, short = 'r')]
+    repository: String,
 }
 
 struct ClapSerialized<T> {

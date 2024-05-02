@@ -21,7 +21,7 @@ pub(crate) struct MavenData {
 
 pub(crate) fn maven_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let maven = retrieve_data::<MavenData>(config, matches, "maven")?;
-    let data = TemplateData::new(&maven.common.project_path, &maven.common.name, &maven.common.organization)
+    let data = TemplateData::new(&maven.common.project_path, &maven.common.name, &maven.common.organization, &maven.common.repository)
         .branch(&maven.common.branch)
         .license(&maven.common.license);
     Ok(Maven::new().group(&maven.group).create_project(data)?)

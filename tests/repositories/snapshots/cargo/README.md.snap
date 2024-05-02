@@ -16,13 +16,13 @@ cargo-rust-binary's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/SoftengPoliTo/cargo-rust-binary/actions
-[codecov]: https://codecov.io/gh/SoftengPoliTo/cargo-rust-binary
-[wcc]: https://SoftengPoliTo.github.io/cargo-rust-binary
+[actions]: https://github.com/SoftengPoliTo/test-cargo-bin/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-cargo-bin
+[wcc]: https://SoftengPoliTo.github.io/test-cargo-bin
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/SoftengPoliTo/cargo-rust-binary/workflows/cargo-rust-binary/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/cargo-rust-binary/branch/master/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-cargo-bin/workflows/cargo-rust-binary/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-cargo-bin/branch/master/graph/badge.svg
 [wcc badge]: .github/badges/wcc.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

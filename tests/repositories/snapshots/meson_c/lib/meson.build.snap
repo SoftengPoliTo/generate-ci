@@ -22,4 +22,3 @@ meson_c_dep = declare_dependency(
     link_with: meson_c, # Name of the library that needs to be linked
     include_directories: incs, # Directories to be included when linking the library
 )
-

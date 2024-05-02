@@ -32,6 +32,7 @@ fn create_toolchain<T: BuildTemplate>(toolchain: &T, data: TemplateData) -> Resu
         license.id(),
         data.branch,
         data.organization,
+        data.repository
     );
     compute_template(template?, license, &project_path)
 }

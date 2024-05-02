@@ -16,13 +16,13 @@ cargo-rust-library's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/SoftengPoliTo/cargo-rust-library/actions
-[codecov]: https://codecov.io/gh/SoftengPoliTo/cargo-rust-library
-[wcc]: https://SoftengPoliTo.github.io/cargo-rust-library
+[actions]: https://github.com/SoftengPoliTo/test-cargo-lib/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-cargo-lib
+[wcc]: https://SoftengPoliTo.github.io/test-cargo-lib
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/SoftengPoliTo/cargo-rust-library/workflows/cargo-rust-library/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/cargo-rust-library/branch/main/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-cargo-lib/workflows/cargo-rust-library/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-cargo-lib/branch/main/graph/badge.svg
 [wcc badge]: .github/badges/wcc.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

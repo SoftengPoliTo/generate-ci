@@ -13,11 +13,11 @@ meson-c's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/SoftengPoliTo/meson-c/actions
-[codecov]: https://codecov.io/gh/SoftengPoliTo/meson-c
+[actions]: https://github.com/SoftengPoliTo/test-meson-c/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-meson-c
 [license]: LICENSES/BSD-1-Clause.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/SoftengPoliTo/meson-c/workflows/meson-c/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/meson-c/branch/main/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-meson-c/workflows/meson-c/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-meson-c/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-BSD-1-Clause-blue.svg

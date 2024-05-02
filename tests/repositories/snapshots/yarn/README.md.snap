@@ -13,11 +13,11 @@ yarn-javascript's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/SoftengPoliTo/yarn-javascript/actions
-[codecov]: https://codecov.io/gh/SoftengPoliTo/yarn-javascript
+[actions]: https://github.com/SoftengPoliTo/test-yarn/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-yarn
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/SoftengPoliTo/yarn-javascript/workflows/yarn-javascript/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/yarn-javascript/branch/main/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-yarn/workflows/yarn-javascript/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-yarn/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

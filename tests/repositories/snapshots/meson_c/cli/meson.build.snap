@@ -13,4 +13,3 @@ meson_c_cli = executable(
     include_directories: incs, # Directories to be included when building the executable
     dependencies: meson_c_dep # Libraries to be linked at the executable
 )
-

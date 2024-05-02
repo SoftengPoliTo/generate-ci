@@ -27,16 +27,18 @@ pub struct TemplateData<'a> {
     license: &'a str,
     branch: &'a str,
     organization: &'a str,
+    repository: &'a str,
 }
 impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
-    pub fn new(project_path: &'a Path, name: &'a str, organization: &'a str) -> Self {
+    pub fn new(project_path: &'a Path, name: &'a str, organization: &'a str, repository: &'a str) -> Self {
         Self {
             project_path,
             name,
             license: "MIT",
             branch: "main",
             organization,
+            repository,
         }
     }
     /// Sets a new license.
@@ -169,6 +171,7 @@ trait BuildTemplate {
         license: &str,
         github_branch: &str,
         organization: &str,
+        repository: &str,
     ) -> Result<ProjectOutput>;
 
     fn get_templates() -> &'static [(&'static str, &'static str)];
@@ -180,6 +183,7 @@ trait BuildTemplate {
         license: &str,
         github_branch: &str,
         organization: &str,
+        repository: &str,
     ) -> Result<CiTemplate> {
         let t = self.define(
             project_path,
@@ -187,6 +191,7 @@ trait BuildTemplate {
             license,
             github_branch,
             organization,
+            repository,
         )?;
         let env = build_environment(Self::get_templates());
 

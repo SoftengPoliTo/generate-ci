@@ -5,4 +5,3 @@ expression: content
 fn main() {
     println!("Hello, world!");
 }
-

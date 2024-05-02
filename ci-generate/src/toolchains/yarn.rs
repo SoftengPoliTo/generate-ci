@@ -11,7 +11,7 @@ use super::retrieve_data;
 
 pub(crate) fn yarn_config(config: Figment, matches: &ArgMatches) -> anyhow::Result<()> {
     let yarn = retrieve_data::<CommonData>(config, matches, "yarn")?;
-    let data = TemplateData::new(&yarn.project_path, &yarn.name, &yarn.organization)
+    let data = TemplateData::new(&yarn.project_path, &yarn.name, &yarn.organization, &yarn.repository)
         .branch(&yarn.branch)
         .license(&yarn.license);
     Ok(Yarn::new().create_ci(data)?)
