@@ -31,7 +31,12 @@ pub struct TemplateData<'a> {
 }
 impl<'a> TemplateData<'a> {
     /// Creates a new `Common` instance.
-    pub fn new(project_path: &'a Path, name: &'a str, organization: &'a str, repository: &'a str) -> Self {
+    pub fn new(
+        project_path: &'a Path,
+        name: &'a str,
+        organization: &'a str,
+        repository: &'a str,
+    ) -> Self {
         Self {
             project_path,
             name,

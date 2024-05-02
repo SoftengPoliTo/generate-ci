@@ -81,7 +81,7 @@ impl BuildTemplate for Poetry {
         license: &str,
         github_branch: &str,
         organization: &str,
-        repository: &str
+        repository: &str,
     ) -> Result<ProjectOutput> {
         let mut context = HashMap::new();
 

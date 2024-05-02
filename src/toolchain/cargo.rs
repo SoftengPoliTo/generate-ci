@@ -205,7 +205,7 @@ impl<'a> BuildTemplate for Cargo<'a> {
             Value::from_serialize(self.docker_image_description),
         );
         context.insert("repository", Value::from_serialize(repository));
-        
+
         Cargo::project_creation(self, project_path)?;
 
         let (files, dirs) = Cargo::project_structure(project_path, project_name, self.ci);

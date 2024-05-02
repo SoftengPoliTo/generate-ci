@@ -32,9 +32,14 @@ pub(crate) fn cargo_config(config: Figment, matches: &ArgMatches) -> anyhow::Res
         || format!("{} description", &cargo.common.name),
         |desc| desc,
     );
-    let data = TemplateData::new(&cargo.common.project_path, &cargo.common.name, &cargo.common.organization, &cargo.common.repository)
-        .branch(&cargo.common.branch)
-        .license(&cargo.common.license);
+    let data = TemplateData::new(
+        &cargo.common.project_path,
+        &cargo.common.name,
+        &cargo.common.organization,
+        &cargo.common.repository,
+    )
+    .branch(&cargo.common.branch)
+    .license(&cargo.common.license);
     if cargo.ci {
         Ok(Cargo::new()
             .docker_image_description(&docker_image_description)
