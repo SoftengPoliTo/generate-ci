@@ -13,7 +13,7 @@ const SNAPSHOT_PATH: &str = "../repositories/snapshots/maven/";
 fn test_maven() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("maven");
-    let data = TemplateData::new(&path, "maven-java")
+    let data = TemplateData::new(&path, "maven-java", "SoftengPoliTo", "test-maven")
         .license("BSD-1-Clause")
         .branch("main");
 

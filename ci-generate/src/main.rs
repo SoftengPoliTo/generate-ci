@@ -99,6 +99,12 @@ struct CommonData {
     /// Path to the new project
     #[clap(value_hint = clap::ValueHint::DirPath)]
     project_path: PathBuf,
+    /// Organization name
+    #[clap(long, short = 'o')]
+    organization: String,
+    /// Repository name
+    #[clap(long, short = 'r')]
+    repository: String,
 }
 
 struct ClapSerialized<T> {

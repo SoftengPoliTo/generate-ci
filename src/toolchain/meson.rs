@@ -120,6 +120,8 @@ impl BuildTemplate for Meson {
         project_name: &str,
         license: &str,
         github_branch: &str,
+        organization: &str,
+        repository: &str,
     ) -> Result<ProjectOutput> {
         let mut context = HashMap::new();
         let (ext, params) = match self.kind {
@@ -127,11 +129,13 @@ impl BuildTemplate for Meson {
             ProjectKind::Cxx => ("cpp", "cpp_std=c++11"),
         };
 
-        context.insert("name", Value::from_serializable(&project_name));
-        context.insert("branch", Value::from_serializable(&github_branch));
-        context.insert("exe", Value::from_serializable(&ext));
-        context.insert("params", Value::from_serializable(&params));
-        context.insert("license_id", Value::from_serializable(&license));
+        context.insert("name", Value::from_serialize(project_name));
+        context.insert("branch", Value::from_serialize(github_branch));
+        context.insert("exe", Value::from_serialize(ext));
+        context.insert("params", Value::from_serialize(params));
+        context.insert("license_id", Value::from_serialize(license));
+        context.insert("organization", Value::from_serialize(organization));
+        context.insert("repository", Value::from_serialize(repository));
 
         let (files, dirs) = Meson::project_structure(project_path, project_name, ext);
 

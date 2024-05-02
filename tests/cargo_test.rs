@@ -22,9 +22,14 @@ fn test_cargo_binary() {
 
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo");
-    let data = TemplateData::new(&path, "cargo-rust-binary")
-        .license("MIT")
-        .branch("master");
+    let data = TemplateData::new(
+        &path,
+        "cargo-rust-binary",
+        "SoftengPoliTo",
+        "test-cargo-bin",
+    )
+    .license("MIT")
+    .branch("master");
 
     Cargo::new()
         .docker_image_description("description-docker")
@@ -43,9 +48,14 @@ fn test_cargo_library() {
 
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo_library");
-    let data = TemplateData::new(&path, "cargo-rust-library")
-        .license("MIT")
-        .branch("main");
+    let data = TemplateData::new(
+        &path,
+        "cargo-rust-library",
+        "SoftengPoliTo",
+        "test-cargo-lib",
+    )
+    .license("MIT")
+    .branch("main");
 
     Cargo::new()
         .docker_image_description("description-docker")
@@ -58,7 +68,7 @@ fn test_cargo_library() {
 fn test_cargo_ci() {
     let tmp_dir = temp_dir();
     let path = tmp_dir.join("cargo_ci");
-    let data = TemplateData::new(&path, "cargo-rust-ci")
+    let data = TemplateData::new(&path, "cargo-rust-ci", "SoftengPoliTo", "test-cargo-ci")
         .license("MIT")
         .branch("main");
 

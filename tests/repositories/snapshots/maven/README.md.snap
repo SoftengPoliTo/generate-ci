@@ -13,11 +13,11 @@ maven-java's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/maven-java/actions
-[codecov]: https://codecov.io/gh/<your-account>/maven-java
+[actions]: https://github.com/SoftengPoliTo/test-maven/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-maven
 [license]: LICENSES/BSD-1-Clause.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/maven-java/workflows/maven-java/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/maven-java/branch/master/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-maven/workflows/maven-java/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-maven/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-BSD-1-Clause-blue.svg

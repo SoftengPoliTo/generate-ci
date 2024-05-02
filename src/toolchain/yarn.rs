@@ -63,12 +63,16 @@ impl BuildTemplate for Yarn {
         project_name: &str,
         license: &str,
         github_branch: &str,
+        organization: &str,
+        repository: &str,
     ) -> Result<ProjectOutput> {
         let mut context = HashMap::new();
 
-        context.insert("name", Value::from_serializable(&project_name));
-        context.insert("branch", Value::from_serializable(&github_branch));
-        context.insert("license_id", Value::from_serializable(&license));
+        context.insert("name", Value::from_serialize(project_name));
+        context.insert("branch", Value::from_serialize(github_branch));
+        context.insert("license_id", Value::from_serialize(license));
+        context.insert("organization", Value::from_serialize(organization));
+        context.insert("repository", Value::from_serialize(repository));
 
         let (files, dirs) = Yarn::project_structure(project_path, project_name);
         Ok(ProjectOutput {

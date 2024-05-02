@@ -11,7 +11,7 @@ on:
 
 jobs:
   publish-cargo-rust-library:
-    uses: /cargo-rust-library/.github/workflows/publish-template.yml@main
+    uses: SoftengPoliTo/cargo-rust-library/.github/workflows/publish-template.yml@main
     with:
       crate: cargo-rust-library
     secrets: inherit

@@ -16,13 +16,13 @@ cargo-rust-ci's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/cargo-rust-ci/actions
-[codecov]: https://codecov.io/gh/<your-account>/cargo-rust-ci
-[wcc]: https://<your-account>.github.io/cargo-rust-ci
+[actions]: https://github.com/SoftengPoliTo/test-cargo-ci/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-cargo-ci
+[wcc]: https://SoftengPoliTo.github.io/test-cargo-ci
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/cargo-rust-ci/workflows/cargo-rust-ci/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/cargo-rust-ci/branch/master/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-cargo-ci/workflows/cargo-rust-ci/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-cargo-ci/branch/main/graph/badge.svg
 [wcc badge]: .github/badges/wcc.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

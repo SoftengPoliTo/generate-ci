@@ -13,11 +13,11 @@ poetry-python's description
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/poetry-python/actions
-[codecov]: https://codecov.io/gh/<your-account>/poetry-python
+[actions]: https://github.com/SoftengPoliTo/test-poetry/actions
+[codecov]: https://codecov.io/gh/SoftengPoliTo/test-poetry
 [license]: LICENSES/MIT.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/poetry-python/workflows/poetry-python/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/poetry-python/branch/master/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/test-poetry/workflows/poetry-python/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/test-poetry/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg

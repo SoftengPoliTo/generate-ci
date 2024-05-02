@@ -12,13 +12,13 @@
 # Acknowledgements
 
 <!-- Links -->
-[actions]: https://github.com/<your-account>/{{ name }}/actions
-[codecov]: https://codecov.io/gh/<your-account>/{{ name }}
-[wcc]: https://<your-account>.github.io/{{ name }}
+[actions]: https://github.com/{{ organization }}/{{ repository }}/actions
+[codecov]: https://codecov.io/gh/{{ organization }}/{{ repository }}
+[wcc]: https://{{ organization }}.github.io/{{ repository }}
 [license]: LICENSES/{{ license_id }}.txt
 
 <!-- Badges -->
-[actions badge]: https://github.com/<your-account>/{{ name }}/workflows/{{ name }}/badge.svg
-[codecov badge]: https://codecov.io/gh/<your-account>/{{ name }}/branch/master/graph/badge.svg
+[actions badge]: https://github.com/{{ organization }}/{{ repository }}/workflows/{{ name }}/badge.svg
+[codecov badge]: https://codecov.io/gh/{{ organization }}/{{ repository }}/branch/{{ branch }}/graph/badge.svg
 [wcc badge]: .github/badges/wcc.svg
 [license badge]: https://img.shields.io/badge/license-{{ license_id }}-blue.svg

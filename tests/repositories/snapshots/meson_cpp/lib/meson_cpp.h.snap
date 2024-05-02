@@ -5,5 +5,3 @@ expression: content
 #ifndef MESON_CPP_H
 #define MESON_CPP_H
 #endif // MESON_CPP_H
-
-

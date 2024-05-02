@@ -26,6 +26,13 @@ pub(crate) use builtin_templates;
 fn create_toolchain<T: BuildTemplate>(toolchain: &T, data: TemplateData) -> Result<()> {
     let project_path = path_validation(data.project_path)?;
     let license = define_license(data.license)?;
-    let template = toolchain.build(&project_path, data.name, license.id(), data.branch);
+    let template = toolchain.build(
+        &project_path,
+        data.name,
+        license.id(),
+        data.branch,
+        data.organization,
+        data.repository,
+    );
     compute_template(template?, license, &project_path)
 }
